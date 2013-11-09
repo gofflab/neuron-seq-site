@@ -1,4 +1,6 @@
 # Django settings for cortical_subtypes project.
+import os
+DIR = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -12,7 +14,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'default.sqlite',                      # Or path to database file if using sqlite3.
+        'NAME': os.path.join(DIR,'default.sqlite'),                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
@@ -20,7 +22,7 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     },
     'cuffData': {
-        'NAME': 'cuffData.db',
+        'NAME': os.path.join(DIR,'cuffData.db'),
         'ENGINE': 'django.db.backends.sqlite3',
         'USER': '',
         'PASSWORD': ''
