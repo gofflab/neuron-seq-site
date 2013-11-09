@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 class Cds(models.Model):
-    cds_id = models.CharField(db_column='CDS_id', unique=True, max_length=45) # Field name made lowercase.
+    cds_id = models.CharField(db_column='CDS_id', primary_key=True,unique=True, max_length=45) # Field name made lowercase.
     class_code = models.CharField(max_length=45, blank=True)
     nearest_ref_id = models.CharField(max_length=45, blank=True)
     gene_id = models.CharField(max_length=45, blank=True)
@@ -20,10 +20,11 @@ class Cds(models.Model):
     tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, blank=True) # Field name made lowercase.
     locus = models.CharField(max_length=45, blank=True)
     length = models.IntegerField(blank=True, null=True)
-    coverage = models.TextField(blank=True) # This field type is a guess.
+    coverage = models.FloatField(blank=True) # This field type is a guess.
     class Meta:
         managed = False
         db_table = 'CDS'
+        verbose_name_plural = 'CDS'
 
 class Cdscount(models.Model):
     cds_id = models.CharField(db_column='CDS_id', max_length=45) # Field name made lowercase.
@@ -102,7 +103,7 @@ class Cdsreplicatedata(models.Model):
         db_table = 'CDSReplicateData'
 
 class Tss(models.Model):
-    tss_group_id = models.CharField(db_column='TSS_group_id', unique=True, max_length=45) # Field name made lowercase.
+    tss_group_id = models.CharField(db_column='TSS_group_id', primary_key=True, unique=True, max_length=45) # Field name made lowercase.
     class_code = models.CharField(max_length=45, blank=True)
     nearest_ref_id = models.CharField(max_length=45, blank=True)
     gene_id = models.CharField(max_length=45)
@@ -113,6 +114,7 @@ class Tss(models.Model):
     class Meta:
         managed = False
         db_table = 'TSS'
+        verbose_name_plural = 'TSS'
 
 class Tsscount(models.Model):
     tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45) # Field name made lowercase.
@@ -233,17 +235,6 @@ class Genecount(models.Model):
         managed = False
         db_table = 'geneCount'
 
-class Genedata(models.Model):
-    gene_id = models.CharField(max_length=45)
-    sample_name = models.CharField(max_length=45)
-    fpkm = models.TextField(blank=True) # This field type is a guess.
-    conf_hi = models.TextField(blank=True) # This field type is a guess.
-    conf_lo = models.TextField(blank=True) # This field type is a guess.
-    quant_status = models.CharField(max_length=45, blank=True)
-    class Meta:
-        managed = False
-        db_table = 'geneData'
-
 class Geneexpdiffdata(models.Model):
     gene_id = models.CharField(max_length=45)
     sample_1 = models.CharField(max_length=45)
@@ -281,8 +272,12 @@ class Genereplicatedata(models.Model):
         managed = False
         db_table = 'geneReplicateData'
 
-class Genes(models.Model):
-    gene_id = models.CharField(unique=True, max_length=45)
+#####################################
+# Gene
+#####################################
+
+class Gene(models.Model):
+    gene_id = models.CharField(primary_key=True, unique=True, max_length=45)
     class_code = models.CharField(max_length=45, blank=True)
     nearest_ref_id = models.CharField(max_length=45, blank=True)
     gene_short_name = models.CharField(max_length=45, blank=True)
@@ -292,6 +287,29 @@ class Genes(models.Model):
     class Meta:
         managed = False
         db_table = 'genes'
+
+    def fpkm(self):
+    	fpkmDat = Genedata.objects.filter(gene_id=self.gene_id)
+    	fpkmVals = [x.fpkm for x in fpkmDat]
+    	sampleKeys = [x.sample_name for x in fpkmDat]
+    	return dict(zip(sampleKeys,fpkmVals))
+
+    def expression(self):
+    	expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
+    	samples = [x.sample_name for x in expressionDat]
+    	dat = [x.__dict__ for x in expressionDat]
+    	return dict(zip(samples,dat))
+
+class Genedata(models.Model):
+    gene = models.ForeignKey(Gene,primary_key=True)
+    sample_name = models.CharField(max_length=45)
+    fpkm = models.TextField(blank=True) # This field type is a guess.
+    conf_hi = models.TextField(blank=True) # This field type is a guess.
+    conf_lo = models.TextField(blank=True) # This field type is a guess.
+    quant_status = models.CharField(max_length=45, blank=True)
+    class Meta:
+        managed = False
+        db_table = 'geneData'
 
 class Isoformcount(models.Model):
     isoform_id = models.CharField(max_length=45)
@@ -353,8 +371,8 @@ class Isoformreplicatedata(models.Model):
         managed = False
         db_table = 'isoformReplicateData'
 
-class Isoforms(models.Model):
-    isoform_id = models.CharField(unique=True, max_length=45)
+class Isoform(models.Model):
+    isoform_id = models.CharField(primary_key=True, unique=True, max_length=45)
     gene_id = models.CharField(max_length=45, blank=True)
     cds_id = models.CharField(db_column='CDS_id', max_length=45, blank=True) # Field name made lowercase.
     gene_short_name = models.CharField(max_length=45, blank=True)
@@ -368,7 +386,7 @@ class Isoforms(models.Model):
         managed = False
         db_table = 'isoforms'
 
-class ModelTranscripts(models.Model):
+class ModelTranscript(models.Model):
     model_transcript_id = models.IntegerField(primary_key=True)
     class Meta:
         managed = False
@@ -381,6 +399,7 @@ class Phenodata(models.Model):
     class Meta:
         managed = False
         db_table = 'phenoData'
+        verbose_name_plural = 'phenoData'
 
 class Promoterdiffdata(models.Model):
     gene_id = models.CharField(max_length=45)
@@ -398,7 +417,7 @@ class Promoterdiffdata(models.Model):
         managed = False
         db_table = 'promoterDiffData'
 
-class Replicates(models.Model):
+class Replicate(models.Model):
     file = models.IntegerField()
     sample_name = models.CharField(max_length=45)
     replicate = models.IntegerField()
@@ -418,12 +437,13 @@ class Runinfo(models.Model):
         managed = False
         db_table = 'runInfo'
 
-class Samples(models.Model):
-    sample_index = models.IntegerField()
+class Sample(models.Model):
+    sample_index = models.IntegerField(primary_key=True)
     sample_name = models.CharField(unique=True, max_length=45)
     class Meta:
         managed = False
         db_table = 'samples'
+        verbose_name_plural = 'Samples'
 
 class Splicingdiffdata(models.Model):
     tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45) # Field name made lowercase.
