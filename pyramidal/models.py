@@ -11,6 +11,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+import json
+
 class Cds(models.Model):
     cds_id = models.CharField(db_column='CDS_id', primary_key=True,unique=True, max_length=45) # Field name made lowercase.
     class_code = models.CharField(max_length=45, blank=True)
@@ -299,6 +301,22 @@ class Gene(models.Model):
     	samples = [x.sample_name for x in expressionDat]
     	dat = [x.__dict__ for x in expressionDat]
     	return dict(zip(samples,dat))
+
+    def expressionJson(self):
+        expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
+        res = [x.__dict__ for x in expressionDat]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+        return json.dumps(res, separators=(',',':'))
+
+    def isoforms(self):
+        isoforms = Isoform.objects.filter(gene_id=self.gene_id)
+        return isoforms
+
+    def promoters(self):
+        promoters = Tss.objects.filter(gene_id=self.gene_id)
+        return promoters
+
 
 class Genedata(models.Model):
     gene = models.ForeignKey(Gene,primary_key=True)
