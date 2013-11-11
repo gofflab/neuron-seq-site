@@ -225,13 +225,62 @@ class Features(models.Model):
         managed = False
         db_table = 'features'
 
+
+#####################################
+# Gene
+#####################################
+
+class Gene(models.Model):
+    gene_id = models.CharField(primary_key=True, unique=True, max_length=45)
+    class_code = models.CharField(max_length=45, blank=True)
+    nearest_ref_id = models.CharField(max_length=45, blank=True)
+    gene_short_name = models.CharField(max_length=45, blank=True)
+    locus = models.CharField(max_length=45, blank=True)
+    length = models.IntegerField(blank=True, null=True)
+    coverage = models.FloatField(blank=True)
+    class Meta:
+        managed = False
+        db_table = 'genes'
+
+    def fpkm(self):
+    	fpkmDat = Genedata.objects.filter(gene_id=self.gene_id)
+    	fpkmVals = [x.fpkm for x in fpkmDat]
+    	sampleKeys = [x.sample_name for x in fpkmDat]
+    	return dict(zip(sampleKeys,fpkmVals))
+
+    def expression(self):
+    	expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
+    	samples = [x.sample_name for x in expressionDat]
+    	dat = [x.__dict__ for x in expressionDat]
+    	return dict(zip(samples,dat))
+
+    def expressionJson(self):
+        expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
+        res = [x.__dict__ for x in expressionDat]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+        return json.dumps(res, separators=(',',':'))
+
+    def isoforms(self):
+        isoforms = Isoform.objects.filter(gene_id=self.gene_id)
+        return isoforms
+
+    def promoters(self):
+        promoters = Tss.objects.filter(gene_id=self.gene_id)
+        return promoters
+
+    def __repr__(self):
+        return "Gene object: %s" % (self.gene_short_name)
+
 class Genecount(models.Model):
     gene_id = models.CharField(max_length=45)
     sample_name = models.CharField(max_length=45)
-    count = models.TextField(blank=True) # This field type is a guess.
-    variance = models.TextField(blank=True) # This field type is a guess.
-    uncertainty = models.TextField(blank=True) # This field type is a guess.
-    dispersion = models.TextField(blank=True) # This field type is a guess.
+    count = models.FloatField(blank=True)
+    variance = models.FloatField(blank=True)
+    uncertainty = models.FloatField(blank=True)
+    dispersion = models.FloatField(blank=True)
     status = models.CharField(max_length=45, blank=True)
     class Meta:
         managed = False
@@ -242,12 +291,12 @@ class Geneexpdiffdata(models.Model):
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
     status = models.CharField(max_length=45, blank=True)
-    value_1 = models.TextField(blank=True) # This field type is a guess.
-    value_2 = models.TextField(blank=True) # This field type is a guess.
-    log2_fold_change = models.TextField(blank=True) # This field type is a guess.
-    test_stat = models.TextField(blank=True) # This field type is a guess.
-    p_value = models.TextField(blank=True) # This field type is a guess.
-    q_value = models.TextField(blank=True) # This field type is a guess.
+    value_1 = models.FloatField(blank=True)
+    value_2 = models.FloatField(blank=True)
+    log2_fold_change = models.FloatField(blank=True)
+    test_stat = models.FloatField(blank=True)
+    p_value = models.FloatField(blank=True)
+    q_value = models.FloatField(blank=True)
     significant = models.CharField(max_length=45, blank=True)
     class Meta:
         managed = False
@@ -274,50 +323,6 @@ class Genereplicatedata(models.Model):
         managed = False
         db_table = 'geneReplicateData'
 
-#####################################
-# Gene
-#####################################
-
-class Gene(models.Model):
-    gene_id = models.CharField(primary_key=True, unique=True, max_length=45)
-    class_code = models.CharField(max_length=45, blank=True)
-    nearest_ref_id = models.CharField(max_length=45, blank=True)
-    gene_short_name = models.CharField(max_length=45, blank=True)
-    locus = models.CharField(max_length=45, blank=True)
-    length = models.IntegerField(blank=True, null=True)
-    coverage = models.TextField(blank=True) # This field type is a guess.
-    class Meta:
-        managed = False
-        db_table = 'genes'
-
-    def fpkm(self):
-    	fpkmDat = Genedata.objects.filter(gene_id=self.gene_id)
-    	fpkmVals = [x.fpkm for x in fpkmDat]
-    	sampleKeys = [x.sample_name for x in fpkmDat]
-    	return dict(zip(sampleKeys,fpkmVals))
-
-    def expression(self):
-    	expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
-    	samples = [x.sample_name for x in expressionDat]
-    	dat = [x.__dict__ for x in expressionDat]
-    	return dict(zip(samples,dat))
-
-    def expressionJson(self):
-        expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
-        res = [x.__dict__ for x in expressionDat]
-        for r in range(len(res)):
-            res[r]['_state'] = None
-        return json.dumps(res, separators=(',',':'))
-
-    def isoforms(self):
-        isoforms = Isoform.objects.filter(gene_id=self.gene_id)
-        return isoforms
-
-    def promoters(self):
-        promoters = Tss.objects.filter(gene_id=self.gene_id)
-        return promoters
-
-
 class Genedata(models.Model):
     gene = models.ForeignKey(Gene,primary_key=True)
     sample_name = models.CharField(max_length=45)
@@ -328,6 +333,49 @@ class Genedata(models.Model):
     class Meta:
         managed = False
         db_table = 'geneData'
+
+#########################
+# Isoforms
+##########################
+
+class Isoform(models.Model):
+    isoform_id = models.CharField(primary_key=True, unique=True, max_length=45)
+    gene_id = models.CharField(max_length=45, blank=True)
+    cds_id = models.CharField(db_column='CDS_id', max_length=45, blank=True) # Field name made lowercase.
+    gene_short_name = models.CharField(max_length=45, blank=True)
+    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, blank=True) # Field name made lowercase.
+    class_code = models.CharField(max_length=45, blank=True)
+    nearest_ref_id = models.CharField(max_length=45, blank=True)
+    locus = models.CharField(max_length=45, blank=True)
+    length = models.IntegerField(blank=True, null=True)
+    coverage = models.FloatField(blank=True)
+    class Meta:
+        managed = False
+        db_table = 'isoforms'
+
+    def fpkm(self):
+        fpkmDat = Isoformdata.objects.filter(isoform_id=self.isoform_id)
+        fpkmVals = [x.fpkm for x in fpkmDat]
+        sampleKeys = [x.sample_name for x in fpkmDat]
+        return dict(zip(sampleKeys,fpkmVals))
+
+    def expression(self):
+        expressionDat = Isoformdata.objects.filter(isoform_id=self.isoform_id)
+        samples = [x.sample_name for x in expressionDat]
+        dat = [x.__dict__ for x in expressionDat]
+        return dict(zip(samples,dat))
+
+    def expressionJson(self):
+        expressionDat = Isoformdata.objects.filter(isoform_id=self.isoform_id)
+        res = [x.__dict__ for x in expressionDat]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+        return json.dumps(res, separators=(',',':'))
+
+    def __repr__(self):
+        return "Isoform object: %s" % (self.isoform_id)
 
 class Isoformcount(models.Model):
     isoform_id = models.CharField(max_length=45)
@@ -342,11 +390,11 @@ class Isoformcount(models.Model):
         db_table = 'isoformCount'
 
 class Isoformdata(models.Model):
-    isoform_id = models.CharField(max_length=45)
+    isoform = models.ForeignKey(Isoform,primary_key=True)
     sample_name = models.CharField(max_length=45)
-    fpkm = models.TextField() # This field type is a guess.
-    conf_hi = models.TextField(blank=True) # This field type is a guess.
-    conf_lo = models.TextField(blank=True) # This field type is a guess.
+    fpkm = models.FloatField()
+    conf_hi = models.FloatField(blank=True)
+    conf_lo = models.FloatField(blank=True)
     quant_status = models.CharField(max_length=45, blank=True)
     class Meta:
         managed = False
@@ -357,12 +405,12 @@ class Isoformexpdiffdata(models.Model):
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
     status = models.CharField(max_length=45, blank=True)
-    value_1 = models.TextField(blank=True) # This field type is a guess.
-    value_2 = models.TextField(blank=True) # This field type is a guess.
-    log2_fold_change = models.TextField(blank=True) # This field type is a guess.
-    test_stat = models.TextField(blank=True) # This field type is a guess.
-    p_value = models.TextField(blank=True) # This field type is a guess.
-    q_value = models.TextField(blank=True) # This field type is a guess.
+    value_1 = models.FloatField(blank=True)
+    value_2 = models.FloatField(blank=True)
+    log2_fold_change = models.FloatField(blank=True)
+    test_stat = models.FloatField(blank=True)
+    p_value = models.FloatField(blank=True)
+    q_value = models.FloatField(blank=True)
     significant = models.CharField(max_length=45, blank=True)
     class Meta:
         managed = False
@@ -388,21 +436,6 @@ class Isoformreplicatedata(models.Model):
     class Meta:
         managed = False
         db_table = 'isoformReplicateData'
-
-class Isoform(models.Model):
-    isoform_id = models.CharField(primary_key=True, unique=True, max_length=45)
-    gene_id = models.CharField(max_length=45, blank=True)
-    cds_id = models.CharField(db_column='CDS_id', max_length=45, blank=True) # Field name made lowercase.
-    gene_short_name = models.CharField(max_length=45, blank=True)
-    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, blank=True) # Field name made lowercase.
-    class_code = models.CharField(max_length=45, blank=True)
-    nearest_ref_id = models.CharField(max_length=45, blank=True)
-    locus = models.CharField(max_length=45, blank=True)
-    length = models.IntegerField(blank=True, null=True)
-    coverage = models.TextField(blank=True) # This field type is a guess.
-    class Meta:
-        managed = False
-        db_table = 'isoforms'
 
 class ModelTranscript(models.Model):
     model_transcript_id = models.IntegerField(primary_key=True)
@@ -491,4 +524,17 @@ class Varmodel(models.Model):
     class Meta:
         managed = False
         db_table = 'varModel'
+
+#####################
+# Clustering Info
+#####################
+
+class ClusterAssignment(models.Model):
+    assignment = models.AutoField(primary_key=True)
+    cluster = models.IntegerField()
+    gene = models.ForeignKey(Gene)
+    class Meta:
+        managed = False
+        db_table = 'clusterAssignment'
+
 

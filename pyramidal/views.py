@@ -20,11 +20,19 @@ def genes(request):
 
 def geneDetail(request,gene_id):
 	try:
+		#get Gene object
 		gene = Gene.objects.get(gene_id=gene_id)
+
+		#Get list of Isoform objects
 		isoforms = Isoform.objects.filter(gene_id=gene_id)
+
+		#Expression info as dict
 		expression = gene.expression()
+		#Expression info as cleaned JSON
 		expressionJson = gene.expressionJson
-		response = "You found the gene page for %s"
+
+		#response = "You found the gene page for %s"
+
 		context = {
 			'gene': gene,
 			'isoforms': isoforms,
@@ -35,13 +43,30 @@ def geneDetail(request,gene_id):
 	except Gene.DoesNotExist:
 		return Http404
 
-def isoform(request,isoform_id):
-	response = "You found the isoform page for %s"
-	return HttpResponse(response % isoform_id)
+def isoformDetail(request,isoform_id):
+	try:
+		#get Isoform object
+		isoform = Isoform.objects.get(isoform_id=isoform_id)
+
+		#Expression info as dict
+		expression = isoform.expression()
+		#Expression info as cleaned JSON
+		expressionJson = isoform.expressionJson
+
+		#response = "You found the gene page for %s"
+
+		context = {
+			'isoform': isoform,
+			'expression': expression,
+			'expressionJson': expressionJson,
+		}
+		return render(request,'pyramidal/isoformDetail.html',context)
+	except Gene.DoesNotExist:
+		return Http404
 
 def clusters(request):
 	context={}
-	return HttpResponse("You found the master gene list!")
+	return HttpResponse("You found the master cluster list!")
 
 def clusterDetail(request,cluster):
 	response = "You have found the cluster page for cluster number %s"
