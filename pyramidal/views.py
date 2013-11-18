@@ -41,20 +41,28 @@ def genes(request):
 # Allen Interaction
 ##########
 
-def getAllenExperiments(gene_id='Fezf2'):
-	baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[id$eq3],genes[acronym$eq'%s']&include=genes,section_images,specimen(donor(age))" % gene_id
+def getAllenExperimentIds(gene_id='Fezf2'):
+	#baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[id$eq3],genes[acronym$eq'%s']&include=section_images" % gene_id
+	baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqMouse],genes[acronym$eq%s]" % gene_id
+	#print baseUrl
 	response = urllib2.urlopen(baseUrl)
 	data = json.load(response)
-	return data
+	if data['success']:
+		res = [x['id'] for x in data['msg']]
+	else:
+		res = []
+	return res
 
 def geneDetail(request,gene_id):
 	try:
 		#get Gene object
 		gene = Gene.objects.get(gene_id=gene_id)
+		allenExpIds = getAllenExperimentIds(gene.gene_short_name)
 	except Gene.DoesNotExist:
 		return Http404
 	context = {
-		'gene': gene,	
+		'gene': gene,
+		'sunburstIds': allenExpIds
 	}
 	return render(request,'pyramidal/geneDetail.html',context)
 	

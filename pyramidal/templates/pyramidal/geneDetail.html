@@ -29,10 +29,9 @@
         -webkit-transform: rotate(15deg); /* Safari and Chrome */
 
     }
-
     .errorbar {
-        stroke: #111;
-        stroke-width=2px;
+        stroke: #333;
+        stroke-width:1.5px;
     }
 		 
 		.y.axis line {
@@ -83,7 +82,23 @@
 	</style>
 	<script src="{{ STATIC_URL }}js/d3.v3.js"></script>
 	<!--<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.min.js"></script>-->
-	{% endblock header %}
+	
+  <!-- #Sunburst imports -->
+  <link rel="stylesheet" href="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/css/ui-lightness/jquery-ui-1.10.0.custom.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}js/sunburst/stylesheets/examples.css">
+    <link href="http://www.brain-map.org/external_assets/stylesheets/portal.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="http://www.brain-map.org/external_assets/javascripts/portal.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var _pImagePath = "http://www.brain-map.org/external_assets/portal_only/images/";   // location of plugin image assets (must end with a "/")
+  </script>
+
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/js/jquery-1.9.0.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/js/jquery-ui-1.10.0.custom.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/javascripts/jquery.ie.cors.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/javascripts/modernizr.svg.js"></script>
+  <!--#end of sunburst imports-->
+
+  {% endblock header %}
 
 	{% block navleft%}
  	<h5>{{ gene.gene_id }}</h5>
@@ -150,15 +165,48 @@
         <div class="media-body pull-left" id="info">
         </div>
       </div>
-
-    <!--
-     <h4>Differential Analysis</h4>
-		 
-     <div id="info"></div>
-         <div id="hive"></div>
-         
-      -->
 	</div>
+  </div>
+
+  <div class="panel panel-default">
+      <div class="panel-heading"><h4>Allen Brain Map - Expression</h4></div>
+      <div id="errorDialog" title="API Query Error"></div>
+      <div class="panel-body" id="content">
+        
+        <div class="media" id="sunburst"></div>
+        <div class="media-body">
+
+          <table id="visProperties">
+          <tr>
+          <td>Structure:</td>
+          <td><div id="structureLabel"></div></td>
+          </tr>
+
+          <tr><td class="hrule" colspan=2></td></tr>
+
+          <tr>
+          <td>Expression Energy:</td> 
+          <td><div id="expressionLabel"></div></td>
+          </tr>
+
+          <tr><td class="hrule" colspan=2></td></tr>
+
+          <tr>
+          <td>Scale By:</td>
+          <td>
+            <div id="scaleButtons"></div>
+          </td>
+          </tr>
+          
+        </table>
+        </div>
+      </div>
+      <div class="list-group">
+          {% for sunburstId in sunburstIds %}
+            <a href="?id={{sunburstId}}" class="list-group-item">{{ sunburstId }}</a>
+          {% endfor %}
+      </div>
+  </div>
 
 	<!-- D3.js scripts -->
 	<script type="text/javascript">
@@ -698,7 +746,10 @@ function degrees(radians) {
 </script>
 
 <!-- # Implement later for sunburst -->
-<!--<script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/import.js"></script>-->
-<!--<script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/sunburst.js"></script>-->
+<script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/import.js"></script>
+<script type="text/javascript">
+var sectionDataSetId = {{ sunburstIds|first }};
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/sunburst.js"></script>
 
 	{% endblock main %}

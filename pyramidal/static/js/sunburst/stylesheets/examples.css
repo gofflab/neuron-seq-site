@@ -8,10 +8,10 @@ html {
 	padding: 5px;
 }
 
-#chart {
-	position: absolute;
-	width: 650px;
-	height: 650px;
+#sunburst {
+	//position: absolute;
+	width: 400px;
+	height: 400px;
 }
 
 #description {

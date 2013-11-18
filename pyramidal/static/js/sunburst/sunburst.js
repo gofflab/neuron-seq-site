@@ -17,7 +17,7 @@
 // This uses the Modernizr JS library to check to see if the page supports SVG.
 // If it does not, throw an error.
 if (!Modernizr.svg){
-	$('#chart').append(
+	$('#sunburst').append(
 		$('<div>').addClass('svgError')
 			.html("This demo requires SVG support. " +
 				  "Click <a href='http://caniuse.com/#cats=SVG'>here</a> " + 
@@ -27,7 +27,9 @@ if (!Modernizr.svg){
 
 // Set default SectionDataSetId. Then parse the  parameter string and load a 
 // specified id if requested. 
-var sectionDataSetId = 69855739; 
+//var sectionDataSetId = 69855739;
+//var sectionDataSetId = 100082877;
+//var sectionDataSetId = 1;
 
 var urlVars = getUrlVars();
 if ('id' in urlVars)
@@ -39,8 +41,8 @@ if ('id' in urlVars)
 // * `r`: the radius of the vis. in pixels.
 // * `outerWidth`: how many pixels to reserve for the bar chart.
 
-var w = $("#chart").width();
-var h = $("#chart").height();
+var w = $("#sunburst").width();
+var h = $("#sunburst").height();
 var r = Math.min(w, h) / 2;
 var outerWidth = r/3.5;
 var expDomain = [0,5];
@@ -64,7 +66,7 @@ var highlightcolor = d3.scale.linear().domain(expDomain).range(["#eee", "#fdd"])
 // options are initialized.  This allows the arcs depicting both ontological 
 // structures and gene expression values to be scaled by gene expression magnitude
 // or uniformly.
-$("#chart").css("background","no-repeat center url(\"../images/loading.gif\")");
+$("#sunburst").css("background","no-repeat center url(\"/static/js/sunburst/images/loading.gif\")");
 $("#homeButton").button({ icons: { primary: "ui-icon-home" }});
 
 var structureLabel = $("#structureLabel");
@@ -102,7 +104,7 @@ function expressionValue(d) {
 
 // Construct the main svg element, size it properly, and apply a global 
 // transform shifts the origin to the center.
-var vis = d3.select("#chart").append("svg:svg")
+var vis = d3.select("#sunburst").append("svg:svg")
 	.attr("id","vis")
 	.attr("width", w)
 	.attr("height", h)
@@ -136,7 +138,7 @@ importData(sectionDataSetId, function(structureTree, expression) {
 	rootNode = structureTree;
 	expressionHash = expression;
 
-	$("#chart").css("background", "");
+	$("#sunburst").css("background", "");
 
 	// The mouseover highlight goes first, so that the actual visualization 
 	// elements will be drawn on top due to z-ordering.
