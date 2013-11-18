@@ -22,8 +22,10 @@
 
 var rootId = 8;
 var apiPath = "http://api.brain-map.org/api/v2/";
-var ontologyId = 1; 
-var structureGraphId = 1; 
+var ontologyId = 1; //Mouse
+//var ontologyId = 12; //DevMouse
+var structureGraphId = 1; //Mouse 
+//var structureGraphId = 17; //DevMouse
 
 function importData(id, callback) {
 	var structures = null;

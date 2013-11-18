@@ -42,8 +42,10 @@ def genes(request):
 ##########
 
 def getAllenExperimentIds(gene_id='Fezf2'):
-	#baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[id$eq3],genes[acronym$eq'%s']&include=section_images" % gene_id
+	# Mouse
 	baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqMouse],genes[acronym$eq%s]" % gene_id
+	# DevMouse
+	#baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],genes[acronym$eq%s]" % gene_id 
 	#print baseUrl
 	response = urllib2.urlopen(baseUrl)
 	data = json.load(response)
@@ -53,16 +55,29 @@ def getAllenExperimentIds(gene_id='Fezf2'):
 		res = []
 	return res
 
+def getAllenSectionData(gene_id='Fezf2'):
+	#baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],plane_of_section[name$eq'coronal'],genes[acronym$eq'%s']&include=genes,section_images,specimen(donor(age))" % gene_id
+	baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],genes[acronym$eq'%s']&include=genes,section_images,specimen(donor(age))" % gene_id
+	response = urllib2.urlopen(baseUrl)
+	data = json.load(response)
+	if data['success']:
+		return data
+	else:
+		return False
+
+
 def geneDetail(request,gene_id):
 	try:
 		#get Gene object
 		gene = Gene.objects.get(gene_id=gene_id)
 		allenExpIds = getAllenExperimentIds(gene.gene_short_name)
+		allenSectionData = getAllenSectionData(gene.gene_short_name)
 	except Gene.DoesNotExist:
 		return Http404
 	context = {
 		'gene': gene,
-		'sunburstIds': allenExpIds
+		'sunburstIds': allenExpIds,
+		'sectionData': allenSectionData,
 	}
 	return render(request,'pyramidal/geneDetail.html',context)
 	
