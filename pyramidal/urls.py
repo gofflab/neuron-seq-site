@@ -23,4 +23,7 @@ urlpatterns = patterns('',
 	#Cluster Views
 	url(r'^clusters/$',views.clusters),
 	url(r'^cluster/(?P<cluster>\d+)/$',views.clusterDetail),
+
+	#Search
+	url(r'^search/$', views.search),
 )

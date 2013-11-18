@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Search Results</h3>
+<h5>You searched for:</h5>
+{{ query_string }}
+<h5>Results:</h5>
+<table class="table table-hover">
+
+<tr>
+	<th>Gene ID
+	</th>
+	<th>Name
+	</th>
+	<th>Locus
+	</th>
+	{% with found_genes|first as first_gene %}
+		{% for key in first_gene.expression.keys %}
+			<th>
+				{{key}}
+			</th>
+		{% endfor %}
+	{% endwith %}
+</tr>
+{% for gene in found_genes %}
+<tr>
+	<td><a href="{{ url }}/pyramidal/gene/{{gene.gene_id}}/">{{ gene.gene_id }}</a></td>
+	<td>{{ gene.gene_short_name }}</td>
+	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}" target="_blank">{{ gene.locus }}</a></td>
+	{% for key,value in gene.expression.items %}
+		<td>{{value.fpkm}}</td>
+	{% endfor %}
+</tr>
+{% endfor %}
+</table>
+<ul class="pagination">
+        {% if found_genes.has_previous %}
+           <li> <a href="?page={{ found_genes.previous_page_number }}">previous</a></li>
+        {% endif %}
+        {% if found_genes.has_next %}
+           <li> <a href="?page={{ found_genes.next_page_number }}">next</a></li>
+        {% endif %}
+</ul>
+{% endblock content %}

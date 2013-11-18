@@ -2,31 +2,82 @@
 
 	{% block header %}
 	<style>
-        .slice text {
-            font-size: 12pt;
-            font-family: Arial;
-        }   
+    .slice text {
+      font-size: 12pt;
+      font-family: Arial;
+    }     
 		.chart rect {
 			stroke: white;
-		    fill: steelblue;
+	    fill: steelblue;
 		}
 		 
 		.axis {
-		    shape-rendering: crispEdges;
+	    shape-rendering: crispEdges;
 		}
 		 
+    .axis text {
+            font-size: 12px;
+        }
 		.x.axis line {
 		    stroke: black;
 
 		}
+
+    .x.axis text {
+        transform: rotate(15deg);
+        -ms-transform: rotate(15deg); /* IE 9 */
+        -webkit-transform: rotate(15deg); /* Safari and Chrome */
+
+    }
+
+    .errorbar {
+        stroke: #111;
+        stroke-width=2px;
+    }
 		 
 		.y.axis line {
 		    stroke: black;
 		}
-		 
-		.axis text {
-		    font-size: 12px;
+    
+    #hive {
+      #float:left;
+    }
+
+    #info{
+      float:right;
+    }
+
+		.hivearc {
+		  fill-opacity: .2;
 		}
+
+		.hiveaxis{
+		  stroke: #bbb;
+		  stroke-width: 5px;
+		  #stroke-linecap: square;
+		}
+    .link {
+      fill: none;
+      stroke: #999;
+      stroke-width: 2px;
+      stroke-opacity: .3;
+    }
+
+    .active {
+      fill: none;
+      stroke: #f00;
+      stroke-width: 3px;
+      stroke-opacity: 1;
+    }
+
+    .hivenode circle {
+        stroke: #000;
+    }
+    .hivenode circle .active {
+      stroke: red;
+      stroke-width: 3px;
+    }
+
 	</style>
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.min.js"></script>
@@ -47,28 +98,28 @@
 
 	<h1>{{ isoform.isoform_id }}</h1>
 		<h3>Locus</h3>
-		{{ isoform.locus }}
+		<a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ isoform.locus }}" target="_blank">{{ isoform.locus }}</a>
+  <div class="panel panel-default">
+  <div class="panel-heading"><h4>Expression Distribution</h4></div>
+  <div class="panel-body">
+     <!--<div id="piechart" style="visibility:hidden"></div>-->
+     <div id="barchart"></div>
 
-	<h2>Expression <small>(FPKM)</small></h2>
+  <table class="table table-hover" style="visibility:hidden">
+    <tr>
+      {% for sampleName in isoform.expression.keys %}
+      <th>{{sampleName}}</th>
+      {% endfor %}
+    </tr>
+    <tr>
+      {% for key,fpkm in isoform.expression.items %}
+      <td>{{fpkm.fpkm}}</td>
+      {% endfor %}
+    </tr>
 
-	<div class="well">
-		 <h4>Expression Distribution</h4>
-		 <!--<div id="piechart" style="visibility:hidden"></div>-->
-		 <div id="barchart"></div>
-	</div>
-	<table class="table table-hover" style="visibility:hidden">
-		<tr>
-			{% for sampleName in expression.keys %}
-			<th>{{ sampleName }}</th>
-			{% endfor %}
-		</tr>
-		<tr>
-			{% for key,fpkm in expression.items %}
-			<td>{{ fpkm.fpkm }}</td>
-			{% endfor %}
-		</tr>
-
-	</table>
+  </table>
+  </div>
+  </div>
 
 	<!-- D3.js scripts -->
 	<script type="text/javascript">
@@ -118,14 +169,14 @@
 	<script>
 	//Bar plot script
 var 
-	data = {{ expressionJson|safe }},
+	data = {{ isoform.expressionJson|safe }},
 	samples = ['E15_cpn','E16_cpn','E18_cpn','P1_cpn','E15_subcereb','E16_subcereb','E18_subcereb','P1_subcereb','E15_corticothal','E16_corticothal','E18_corticothal','P1_corticothal'],
 	chart,
 	bars,
 	margin = 100,
 	barWidth = 25,
 	h = 400,
-	width = 750,
+	width = 800,
 	x, y,
 	xAxis, yAxis;
 
@@ -140,10 +191,10 @@ d3.select('svg g')
 
 x = d3.scale.ordinal()
 	.domain(samples)
-	.rangeBands([0, width]);
+	.rangeBands([0, width-margin]);
 
 y = d3.scale.linear()
-    .domain( [0, d3.max( data, function( d ) { return d.fpkm; } )] )
+    .domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] )
     .rangeRound( [0, h - margin] );
 
 // Bars
@@ -153,11 +204,47 @@ bars = chart.append('g')
 bars.selectAll( 'rect' )
     .data( data )
   .enter().append( 'rect' )
-    .attr( 'x', function( d, i ) { return x( d.sample_name ) + width/12; } )
+    .attr( 'x', function( d, i ) { return x( d.sample_name ) + 17; } )
     .attr( 'y', function( d ) { return (h - margin) - y( d.fpkm ) + .5 } )
     .attr( 'width', barWidth )
     .attr( 'height', function( d ) { return y( d.fpkm ) } )
     .append('g');
+
+// lines
+errorbars = chart.append('g')
+      .attr('class','errorbars');
+topmarks = chart.append('g')
+      .attr('class','errorbars');
+bottommarks = chart.append('g')
+      .attr('class','errorbars');
+
+errorbars.selectAll('line')
+      .data( data )
+    .enter().append('line')
+      .attr("class","errorbar")
+      .attr( 'x1', function(d,i) { return x(d.sample_name) + 17 + (barWidth/2);})
+      .attr( 'x2', function(d,i) { return x(d.sample_name) + 17 + (barWidth/2);})
+      .attr( 'y1', function( d ) { return (h - margin) - y( d.conf_lo ) + .5 } )
+      .attr( 'y2', function( d ) { return (h - margin) - y( d.conf_hi ) + .5 } );
+    
+topmarks.selectAll('line')
+      .data( data )
+    .enter().append('line')
+      .attr("class","errorbar")
+      .attr( 'x1', function(d,i) { return x(d.sample_name) + 17 + (barWidth/4);})
+      .attr( 'x2', function(d,i) { return x(d.sample_name) + 17 + 3*(barWidth/4);})
+      .attr( 'y1', function( d ) { return (h - margin) - y( d.conf_hi ) + .5 } )
+      .attr( 'y2', function( d ) { return (h - margin) - y( d.conf_hi ) + .5 } );
+
+bottommarks.selectAll('line')
+      .data( data )
+    .enter().append('line')
+      .attr("class","errorbar")
+      .attr( 'x1', function(d,i) { return x(d.sample_name) + 17 + (barWidth/4);})
+      .attr( 'x2', function(d,i) { return x(d.sample_name) + 17 + 3*(barWidth/4);})
+      .attr( 'y1', function( d ) { return (h - margin) - y( d.conf_lo ) + .5 } )
+      .attr( 'y2', function( d ) { return (h - margin) - y( d.conf_lo ) + .5 } );
+
 
 // Axis
 xAxis = d3.svg.axis()
@@ -166,7 +253,7 @@ xAxis = d3.svg.axis()
     .tickSize(6, 3, 1);
 
 yAxis = d3.svg.axis()
-    .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.fpkm; } )] ).rangeRound( [h - margin, 0] ))
+    .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [h - margin, 0] ))
     .tickSize(6, 3, 1)
     .orient('left');
 
@@ -178,7 +265,13 @@ chart.append('g')
 chart.append('g')
     .attr('class', 'y axis')
     .attr('transform', 'translate(' + x.range()[0] + ')')
-    .call(yAxis);
+    .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("FPKM");
 
 function type(d) {
   d.value = +d.value; // coerce to number
