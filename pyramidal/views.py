@@ -5,25 +5,9 @@ from django.shortcuts import render
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-import json
-
-try:
-  # python 3
-  from urllib.request import urlopen
-  def pullJson(url):
-    response = urlopen(url)
-    encoding = response.headers.get_content_charset()
-    data = json.loads(response.read().decode(encoding))
-    return data
-except ImportError:
-  # python 2
-  from urllib2 import urlopen
-  def pullJson(url):
-    response = urlopen(url)
-    data = json.load(response)
-    return data
-
 from pyramidal.models import Gene,Isoform
+
+from pyramidal.allen import AllenExplorer
 
 def index(request):
 	context = {}
@@ -73,38 +57,12 @@ def genesDetail(request,gene_list):
 # Gene & Isoform detail
 ##################
 
-# Allen Interaction
-##########
-
-def getAllenExperimentIds(gene_id='Fezf2'):
-	# Mouse
-	baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqMouse],genes[acronym$eq%s]" % gene_id
-	# DevMouse
-	#baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],genes[acronym$eq%s]" % gene_id
-	#print baseUrl
-	data = pullJson(baseUrl)
-	if data['success']:
-		res = [x['id'] for x in data['msg']]
-	else:
-		res = []
-	return res
-
-def getAllenSectionData(gene_id='Fezf2'):
-	#baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],plane_of_section[name$eq'coronal'],genes[acronym$eq'%s']&include=genes,section_images,specimen(donor(age))" % gene_id
-	baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],genes[acronym$eq'%s']&include=genes,section_images,specimen(donor(age))" % gene_id
-	data = pullJson(baseUrl)
-	if data['success']:
-		return data
-	else:
-		return False
-
-
 def geneDetail(request,gene_id):
 	try:
 		#get Gene object
 		gene = Gene.objects.get(gene_id=gene_id)
-		allenExpIds = getAllenExperimentIds(gene.gene_short_name)
-		allenSectionData = getAllenSectionData(gene.gene_short_name)
+		allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
+		allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
 	except Gene.DoesNotExist:
 		return Http404
 	context = {
