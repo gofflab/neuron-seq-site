@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -58,24 +58,29 @@ def genesDetail(request,gene_list):
 ##################
 
 def geneDetail(request,gene_id):
-	try:
-		#get Gene object
-		gene = Gene.objects.get(gene_id=gene_id)
-		allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
-		allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
-	except Gene.DoesNotExist:
-		return Http404
-	context = {
-		'gene': gene,
-		'sunburstIds': allenExpIds,
-		'sectionData': allenSectionData,
-	}
-	return render(request,'pyramidal/geneDetail.html',context)
+  try:
+    # Capitalize gene_id and redirect to canonical name
+    gene_id_canonical = gene_id.title();
+    if gene_id_canonical != gene_id:
+      return redirect('gene_detail', gene_id = gene_id_canonical)
+
+    # Get Gene object
+    gene = Gene.objects.get(gene_id=gene_id)
+    allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
+    allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
+  except Gene.DoesNotExist:
+    return Http404
+  context = {
+      'gene': gene,
+      'sunburstIds': allenExpIds,
+      'sectionData': allenSectionData,
+      }
+  return render(request,'pyramidal/geneDetail.html',context)
 
 
 def isoformDetail(request,isoform_id):
 	try:
-		#get Isoform object
+		# Get Isoform object
 		isoform = Isoform.objects.get(isoform_id=isoform_id)
 
 		context = {

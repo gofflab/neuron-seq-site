@@ -12,7 +12,7 @@ urlpatterns = patterns('',
 	url(r'^geneset/(?P<gene_list>[a-zA-Z0-9_\.\+]+)/$',views.genesDetail),
 
 	#Gene detail view
-	url(r'^gene/(?P<gene_id>\w+)/$',views.geneDetail),
+	url(r'^gene/(?P<gene_id>\w+)/$',views.geneDetail,name='gene_detail'),
 	url(r'^gene/(?P<gene_id>[a-zA-Z0-9_\.]+)/$',views.geneDetail), #This my still be kind funky.
 
 	#Isoform Views
