@@ -55,6 +55,10 @@
 		  stroke-width: 5px;
 		  #stroke-linecap: square;
 		}
+
+    .hiveaxislabel{
+      text-decoration: none;
+    }
     .link {
       fill: none;
       stroke: #999;
@@ -164,9 +168,9 @@
 	 
 		  <div class="media">
         <!--<input style="position:relative;top:3px;" type="range" min="0" max="4" value="3">-->
-        <a class="pull-left" href="#">
-          <div id="hive"></div>
-        </a>
+        <!--<a class="pull-left" href="#">-->
+          <div class="pull-left" id="hive"></div>
+        <!--</a>-->
         <div class="media-body pull-left" id="info">
         </div>
       </div>
@@ -581,6 +585,21 @@ var svg = d3.select("#hive")
 //         .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
 //         .attr("x1", radius.range()[0])
 //         .attr("x2", radius.range()[radius.range().length-1]);
+
+svg.selectAll(".hiveaxislabel")
+    .data(celltypes)
+    .enter()
+    .append("text")
+        //.attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".9em")
+        .attr("x",radius.range()[radius.range().length-1]/4)
+        .attr("dx","-1em")
+        .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
+        .text(function(d){return d})
+        .style("stroke", function(d) { return color(d)})
+        .attr("text-decoration","none");
+
 
 
 
