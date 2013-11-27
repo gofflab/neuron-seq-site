@@ -8,7 +8,6 @@
     }     
 		.chart rect {
 			stroke: white;
-	    fill: steelblue;
 		}
 		 
 		.axis {
@@ -308,6 +307,7 @@
 var 
 	data = {{ gene.expressionJson|safe }},
 	samples = ['E15_cpn','E16_cpn','E18_cpn','P1_cpn','E15_subcereb','E16_subcereb','E18_subcereb','P1_subcereb','E15_corticothal','E16_corticothal','E18_corticothal','P1_corticothal'],
+  celltypes = ["cpn","subcereb","corticothal"],
 	chart,
 	bars,
 	margin = 100,
@@ -334,6 +334,10 @@ y = d3.scale.linear()
     .domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] )
     .rangeRound( [0, h - margin] );
 
+color = d3.scale.ordinal()
+    .domain(celltypes) //TODO: make sure this is correct syntax
+    .range(["#31A354","#DE2D26","#3182BD"]); //TODO: make sure this is correct syntax
+
 // Bars
 bars = chart.append('g')
     .attr('class', 'bars');
@@ -341,11 +345,12 @@ bars = chart.append('g')
 bars.selectAll( 'rect' )
     .data( data )
   .enter().append( 'rect' )
+    .style("fill", function(d) { return color(d.celltype)})
     .attr( 'x', function( d, i ) { return x( d.sample_name ) + 17; } )
     .attr( 'y', function( d ) { return (h - margin) - y( d.fpkm ) + .5 } )
     .attr( 'width', barWidth )
-    .attr( 'height', function( d ) { return y( d.fpkm ) } )
-    .append('g');
+    .attr( 'height', function( d ) { return y( d.fpkm ) } );//
+    //.append('g');
 
 // lines
 errorbars = chart.append('g')
@@ -560,8 +565,9 @@ var radius = d3.scale.ordinal()
     .domain(timepoints)
     .rangePoints([20,outerRadius])
 
-var color = d3.scale.category10()
-    .domain(d3.range(celltypes)); //TODO: make sure this is correct syntax
+var color = d3.scale.ordinal()
+    .domain(d3.range(celltypes)) //TODO: make sure this is correct syntax
+    .range(["#31A354","#DE2D26","#3182BD"]); //TODO: make sure this is correct syntax
 
 //Create Info object
 var info = d3.select("#info");
@@ -666,7 +672,7 @@ svg.append("g")
     .enter().append("circle")
         .attr("transform", function(d) { return "rotate(" + degrees(angle(celltypes.indexOf(d.celltype))) + ")"; })
         .attr("cx", function(d) { return radius(d.timepoint); })
-        .attr("r", 5)
+        .attr("r", 6)
         .style("fill", function(d) { return color(d.celltype)})
         .on("mouseover", nodeMouseover)
         .on("mouseout", mouseout);
