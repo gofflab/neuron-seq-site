@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from pyramidal.models import Gene,Isoform
+from pyramidal.models import Gene,Isoform,ClusterAssignment
 
 from pyramidal.allen import AllenExplorer
 
@@ -77,6 +77,25 @@ def geneDetail(request,gene_id):
       }
   return render(request,'pyramidal/geneDetail.html',context)
 
+def geneIsoforms(request, gene_id):
+  try:
+    # Capitalize gene_id and redirect to canonical name
+    gene_id_canonical = gene_id.title();
+    if gene_id_canonical != gene_id:
+      return redirect('gene_detail', gene_id = gene_id_canonical)
+
+    # Get Gene object
+    gene = Gene.objects.get(gene_id=gene_id)
+    allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
+    allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
+  except Gene.DoesNotExist:
+    return Http404
+  context = {
+      'gene': gene,
+      'sunburstIds': allenExpIds,
+      'sectionData': allenSectionData,
+      }
+  return render(request,'pyramidal/geneDetail.html',context)
 
 def isoformDetail(request,isoform_id):
 	try:
@@ -94,9 +113,10 @@ def clusters(request):
 	context={}
 	return HttpResponse("You found the master cluster list!")
 
-def clusterDetail(request,cluster):
-	response = "You have found the cluster page for cluster number %s"
-	return HttpResponse(response % cluster)
+def clusterDetail(request, cluster):
+  response = "You have found the cluster page for cluster number %s"
+  clusters = ClusterAssignment.objects.get(cluster = cluster)
+  return HttpResponse(response % cluster)
 
 #####################
 # Search functionality
