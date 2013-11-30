@@ -10,25 +10,21 @@ urlpatterns = patterns('',
 	url(r'^geneset/(?P<gene_list>[a-zA-Z0-9_\.\+]+)/$',views.genesDetail),
 
 	#Isoform Views
-	url(r'^genes/(?P<gene_id>\w+)/isoforms/$',views.geneIsoforms),
-	url(r'^genes/(?P<gene_id>\w+)/isoform/(?P<isoform_id>\w+)/$',views.isoformDetail),
-	url(r'^genes/(?P<gene_id>\w+)/isoform/(?P<isoform_id>[a-zA-Z0-9_\.]+)/$',views.isoformDetail),
-	url(r'^isoform/(?P<isoform_id>\w+)/$',views.isoformDetail),
-	url(r'^isoform/(?P<isoform_id>[a-zA-Z0-9_\.]+)/$',views.isoformDetail), #This my still be kind funky.
+	url(r'^genes/(?P<gene_id>\w+)/isoforms/$',views.geneIsoforms,name='isoform_index'),
+	url(r'^genes/(?P<gene_id>\w+)/isoforms/(?P<isoform_id>[\w.]+)/$',views.isoformDetail,name='isoform_show'),
 
 	#Gene detail view
-	url(r'^genes/(?P<gene_id>\w+)/$',views.geneDetail,name='gene_detail'),
-	url(r'^genes/(?P<gene_id>[a-zA-Z0-9_\.]+)/$',views.geneDetail), #This my still be kind funky.
+	url(r'^genes/(?P<gene_id>\w+)/$',views.geneDetail,name='gene_show'),
 
 	#All Genes
-	url(r'^genes/',views.genes,name='genes'),
+	url(r'^genes/',views.genes,name='gene_index'),
 
 	#Cluster Views
-	url(r'^clusters/$',views.clusters),
-	url(r'^cluster/(?P<cluster>\d+)/$',views.clusterDetail),
+	url(r'^clusters/$',views.clusters,name='cluster_index'),
+	url(r'^cluster/(?P<cluster>\d+)/$',views.clusterDetail,name='cluster_show'),
 
 	#Search
-	url(r'^search/$', views.search),
+	url(r'^search/$', views.search, name = 'search'),
 
 	#Dev
 	url(r'^dev/$',views.dev),

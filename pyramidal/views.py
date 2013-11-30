@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from pyramidal.models import Gene,Isoform,ClusterAssignment
+from pyramidal.models import Gene,Isoform,ClusterAssignment,Features
 
 from pyramidal.allen import AllenExplorer
 
@@ -62,10 +62,12 @@ def geneDetail(request,gene_id):
     # Capitalize gene_id and redirect to canonical name
     gene_id_canonical = gene_id.title();
     if gene_id_canonical != gene_id:
-      return redirect('gene_detail', gene_id = gene_id_canonical)
+      return redirect('gene_show', gene_id = gene_id_canonical)
 
     # Get Gene object
     gene = Gene.objects.get(gene_id=gene_id)
+    features = Features.objects.get(gene_id=gene_id)
+    print(features)
     allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
     allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
   except Gene.DoesNotExist:
