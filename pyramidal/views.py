@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from pyramidal.models import Gene,Isoform,ClusterAssignment,Features
+from pyramidal.models import Gene,Isoform,ClusterAssignment,Features,Clusters
 
 from pyramidal.allen import AllenExplorer
 
@@ -111,14 +111,24 @@ def isoformDetail(request,isoform_id):
 	except Gene.DoesNotExist:
 		return Http404
 
-def clusters(request):
-	context={}
-	return HttpResponse("You found the master cluster list!")
+def clusterIndex(request):
+  clusters = Clusters.all()
+  context={'clusters': clusters}
+  return render(request,'pyramidal/clusterIndex.html',context)
 
-def clusterDetail(request, cluster):
-  response = "You have found the cluster page for cluster number %s"
-  clusters = ClusterAssignment.objects.get(cluster = cluster)
-  return HttpResponse(response % cluster)
+def clusterShow(request, cluster_id):
+  clusters = Clusters.all()
+  gene_ids = clusters[int(cluster_id)]
+  genes = Gene.objects.filter(gene_id__in=gene_ids)
+  import json
+  heatmap_data = Clusters.geneExpressions(gene_ids)
+  context = {
+    'cluster_id': cluster_id,
+    'gene_ids': gene_ids,
+    'genes': genes,
+    'heatmap_data': heatmap_data,
+  }
+  return render(request,'pyramidal/clusterShow.html',context)
 
 #####################
 # Search functionality

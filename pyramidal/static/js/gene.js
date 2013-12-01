@@ -2,11 +2,13 @@ window.gene_expression = {
   bars: function(selector, headers, data, attr) {
     var colors = ["steelblue", "green", "crimson"];
 
+
+    if (attr == undefined) { attr = {}; }
     attr.width  = attr.width  || 800;
     attr.height = attr.height || 400;
     attr.margin = attr.margin || 100;
 
-    chart_attr = {
+    var chart_attr = {
       width:  attr.width,
       height: attr.height
     };
@@ -153,6 +155,11 @@ window.gene_expression = {
     attr.height = attr.height || 400;
     attr.margin = attr.margin || 100;
 
+    var chart_attr = {
+      width:  attr.width,
+      height: attr.height
+    };
+
     var chart = d3.select(selector)
       .append("svg:svg")
       .attr("class", "chart")
@@ -288,7 +295,7 @@ window.gene_expression = {
     attr.height = attr.height || 100;
     attr.margin = attr.margin || 10;
 
-    chart_attr = {
+    var chart_attr = {
       width:  attr.width,
       height: attr.height
     };
@@ -386,5 +393,133 @@ window.gene_expression = {
           stroke: "none",
           fill:   "crimson"});
     });
+  },
+
+  clusterHeatmap: function(selector, headers, data, attr) {
+    var colors = ["steelblue", "green", "crimson"];
+
+    var gene_ids = data.map(function(gene) {
+      return gene[0].gene_id;
+    });
+
+    if (attr == undefined) { attr = {}; }
+    attr.width  = attr.width  || 800;
+    attr.height = attr.height || (20 * data.length);
+    attr.margin = attr.margin || {left: 120, right: 10, bottom: 80, top: 10};
+
+    var chart_attr = {
+      width:  attr.width+attr.margin.left+attr.margin.right,
+      height: attr.height+attr.margin.top+attr.margin.bottom
+    };
+
+    var chart = d3.select(selector)
+      .append("svg:svg")
+      .attr("class", "chart")
+      .attr(chart_attr)
+      .append("svg:g")
+      .attr("transform", "translate("+attr.margin.left+","+attr.margin.top+")");
+
+    // Get extents
+    var fpkm_max = Math.max.apply(null,
+      data.map(function(gene_data, i) {
+        return Math.max.apply(null,
+          gene_data.map(function(elem) {
+            return elem.fpkm;
+          })
+        );
+      })
+    );
+
+    var all_headers = [];
+    headers[1].forEach(function(header) {
+      headers[0].forEach(function(subheader) {
+        all_headers.push(header+'_'+subheader);
+      });
+    });
+
+    var x0 = d3.scale.ordinal()
+              .domain(all_headers)
+              .rangeBands([0, attr.width]);
+
+    var x1 = d3.scale.ordinal()
+               .domain(headers[1])
+               .rangeBands([0, attr.width]);
+
+    var y = d3.scale.ordinal()
+              .domain(gene_ids)
+              .rangeBands([0, attr.height]);
+
+    // Axis
+    var xAxis = d3.svg.axis()
+      .scale(x0)
+      .ticks(12)
+      .tickSize(6, 3, 1)
+      .tickFormat(function(d,i) {
+        return headers[0][i % 4]
+      })
+      .orient('bottom');
+
+    var xAxisLegend = d3.svg.axis()
+      .scale(x1)
+      .ticks(headers[1].length)
+      .tickSize(6, 3, 0)
+      .tickValues(headers[1])
+      .orient('bottom');
+
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .ticks(data.length)
+      .tickSize(6, 3, 1)
+      .orient('left');
+
+    chart.append('g')
+      .attr('class', 'x axis')
+      .attr("transform", "translate(0,"+attr.height+")")
+      .call(xAxis);
+
+    chart.append('g')
+      .attr('class', 'x legend')
+      .attr("transform", "translate(0,"+(attr.height+30)+")")
+      .call(xAxisLegend);
+
+    chart.append('g')
+      .attr('class', 'y axis')
+      .call(yAxis)
+
+    chart.selectAll('.tick line')
+      .style({
+        "fill": "none",
+        "stroke": "none"});
+
+    chart.selectAll('.tick text')
+      .style({
+        "cursor": "pointer"})
+      .on("click", function(d) {
+        document.location.href = "/pyramidal/genes/"+d
+      });
+
+    chart.selectAll('.axis line')
+      .style({
+        "stroke": "none"});
+
+    chart.append('svg:g')
+         .attr('class', 'rows');
+
+    var rows = chart.selectAll( '.rows' )
+      .data( data )
+      .enter().append('svg:g')
+
+    var map = rows.selectAll('rect')
+      .data(function(d,i,j) { return d })
+      .enter().append('rect')
+      .attr('x', function(d,i,j) { return x0(d.sample_name) })
+      .attr('y', function(d,i,j) { return y(d.gene_id)})
+      .attr('width', attr.width / 12)
+      .attr('height', y(data[1][0].gene_id) - y(data[0][0].gene_id))
+      .style({
+        stroke: "none",
+        opacity: function(d) { return d.fpkm / fpkm_max },
+        fill:   function(d,i,j) { return colors[Math.floor(i/4)]}
+      });
   }
 };
