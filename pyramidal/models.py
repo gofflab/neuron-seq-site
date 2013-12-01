@@ -194,7 +194,7 @@ class Biasdata(models.Model):
         db_table = 'biasData'
 
 class Features(models.Model):
-    seqnames = models.TextField(blank=True)
+    seqnames = models.TextField(blank=True, primary_key=True) # This is NOT the primary key, but we MUST have one
     start = models.IntegerField(blank=True, null=True)
     end = models.IntegerField(blank=True, null=True)
     width = models.IntegerField(blank=True, null=True)
@@ -401,11 +401,24 @@ class Isoform(models.Model):
         managed = False
         db_table = 'isoforms'
 
+    def safe_name(self):
+      return self.isoform_id.replace('.', '_')
+
     def fpkm(self):
         fpkmDat = Isoformdata.objects.filter(isoform_id=self.isoform_id)
         fpkmVals = [x.fpkm for x in fpkmDat]
         sampleKeys = [x.sample_name for x in fpkmDat]
         return dict(zip(sampleKeys,fpkmVals))
+
+    def features(self):
+      return Features.objects.filter(isoform_id=self.isoform_id)
+
+    def featuresJson(self):
+      features = self.features()
+      res = [x.__dict__ for x in features]
+      for r in range(len(res)):
+        res[r]['_state'] = None
+      return json.dumps(res, separators=(',',':'))
 
     def expression(self):
         expressionDat = Isoformdata.objects.filter(isoform_id=self.isoform_id)

@@ -22,7 +22,7 @@
  	<h5>{{ gene.gene_id }}</h5>
  	<h6>Isoforms</h6>
 		<ul>
-		{% for isoform in gene.isoforms %}
+		{% for isoform in isoforms %}
 			<li><a href="{% url 'isoform_show' gene_id=gene.gene_id isoform_id=isoform.isoform_id %}">{{isoform.isoform_id}}</a></li>
 		{% endfor %}
 		</ul>
@@ -48,34 +48,22 @@
 		<h3>Locus</h3>
 		<a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}" target="_blank">{{ gene.locus }}</a>
   </br>
-    <!--
-		<h3>Number of Isoforms</h3>
-		{{ gene.isoforms|length }}
-
-		<h3>Number of TSS</h3>
-		{{ gene.promoters|length }}
-  -->
   <div class="panel panel-default">
   <div class="panel-heading"><h4>Expression Distribution</h4></div>
-  <div class="panel-body">
-     <div id="barchart"></div>
-     <div id="linechart"></div>
-
- <!--<table class="table table-hover table-condensed" style="visibility:hidden">
-    <tr>
-      {% for sampleName in gene.expression.keys %}
-      <th>{{sampleName}}</th>
-      {% endfor %}
-    </tr>
-    <tr>
-      {% for key,fpkm in gene.expression.items %}
-      <td>{{fpkm.fpkm}}</td>
-      {% endfor %}
-    </tr>
-
-  </table>
-  end of FPKM table -->
+    <div class="panel-body">
+       <div id="barchart"></div>
+       <div id="linechart"></div>
+    </div>
   </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading"><h4>Isoforms</h4></div>
+    <div class="panel-body">
+       {% for isoform in isoforms %}
+       <h5>{{ isoform.isoform_id }}</h5>
+       <div class="isoform" id="isoform-{{ isoform.safe_name }}"></div>
+       {% endfor %}
+    </div>
   </div>
 	<div class="panel panel-default">
   <div class="panel-heading"><h4>Differential Analysis</h4></div>
@@ -191,6 +179,14 @@
 
     gene_expression.bars('#barchart',   gene_headers, gene_data, { width: 800, height: 400 });
     gene_expression.lines('#linechart', gene_headers, gene_data, { width: 800, height: 400 });
+
+    var isoforms = {
+     {% for isoform in isoforms %}
+     "{{ isoform.isoform_id }}": {{ isoform.featuresJson|safe }},
+     {% endfor %}
+    };
+
+    gene_expression.isoforms('.isoform', isoforms);
   </script>
   <!-- # Implement later for sunburst -->
   <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/import.js"></script>

@@ -66,14 +66,14 @@ def geneDetail(request,gene_id):
 
     # Get Gene object
     gene = Gene.objects.get(gene_id=gene_id)
-    features = Features.objects.get(gene_id=gene_id)
-    print(features)
+    isoforms = gene.isoforms()
     allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
     allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
   except Gene.DoesNotExist:
     return Http404
   context = {
       'gene': gene,
+      'isoforms': isoforms,
       'sunburstIds': allenExpIds,
       'sectionData': allenSectionData,
       }
