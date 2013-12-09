@@ -99,7 +99,7 @@ def geneIsoforms(request, gene_id):
       }
   return render(request,'pyramidal/geneDetail.html',context)
 
-def isoformDetail(request,isoform_id):
+def isoformDetail(request,gene_id,isoform_id):
 	try:
 		# Get Isoform object
 		isoform = Isoform.objects.get(isoform_id=isoform_id)

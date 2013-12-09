@@ -61,6 +61,7 @@
   </div>
 
   <script src="http://d3js.org/d3.hive.v0.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/cluster_{{cluster_id}}.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/gene.js"></script>
   <script type="text/javascript">
     var gene_headers = [
@@ -68,9 +69,7 @@
       ['corticothal', 'cpn', 'subcereb']
     ];
 
-    var cluster_data = {{ heatmap_data|safe }};
-
-    gene_expression.clusterHeatmap('#heatmap', gene_headers, cluster_data);
+    gene_expression.clusterHeatmap('#heatmap', gene_headers, cluster_{{cluster_id}});
   </script>
 	{% endblock main %}
 	</div>

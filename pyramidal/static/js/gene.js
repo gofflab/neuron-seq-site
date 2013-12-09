@@ -292,7 +292,7 @@ window.gene_expression = {
 
     if (attr == undefined) { attr = {}; }
     attr.width  = attr.width  || 700;
-    attr.height = attr.height || 100;
+    attr.height = attr.height || 50;
     attr.margin = attr.margin || 10;
 
     var chart_attr = {
@@ -398,13 +398,11 @@ window.gene_expression = {
   clusterHeatmap: function(selector, headers, data, attr) {
     var colors = ["steelblue", "green", "crimson"];
 
-    var gene_ids = data.map(function(gene) {
-      return gene[0].gene_id;
-    });
+    var gene_ids = Object.keys(data);
 
     if (attr == undefined) { attr = {}; }
     attr.width  = attr.width  || 800;
-    attr.height = attr.height || (20 * data.length);
+    attr.height = attr.height || (20 * gene_ids.length);
     attr.margin = attr.margin || {left: 120, right: 10, bottom: 80, top: 10};
 
     var chart_attr = {
@@ -421,11 +419,17 @@ window.gene_expression = {
 
     // Get extents
     var fpkm_max = Math.max.apply(null,
-      data.map(function(gene_data, i) {
+      gene_ids.map(function(gene_id, i) {
         return Math.max.apply(null,
-          gene_data.map(function(elem) {
-            return elem.fpkm;
-          })
+          data[gene_id]
+        );
+      })
+    );
+
+    var fpkm_min = Math.min.apply(null,
+      gene_ids.map(function(gene_id, i) {
+        return Math.min.apply(null,
+          data[gene_id]
         );
       })
     );
@@ -438,8 +442,8 @@ window.gene_expression = {
     });
 
     var x0 = d3.scale.ordinal()
-              .domain(all_headers)
-              .rangeBands([0, attr.width]);
+               .domain(all_headers)
+               .rangeBands([0, attr.width]);
 
     var x1 = d3.scale.ordinal()
                .domain(headers[1])
@@ -506,20 +510,50 @@ window.gene_expression = {
          .attr('class', 'rows');
 
     var rows = chart.selectAll( '.rows' )
-      .data( data )
+      .data( gene_ids )
       .enter().append('svg:g')
 
+      console.log(fpkm_max);
+      console.log(fpkm_min);
+
     var map = rows.selectAll('rect')
-      .data(function(d,i,j) { return d })
+      .data(function(gene_id,i,j) { return data[gene_id] })
       .enter().append('rect')
-      .attr('x', function(d,i,j) { return x0(d.sample_name) })
-      .attr('y', function(d,i,j) { return y(d.gene_id)})
+      .attr('x', function(gene,i,j) {
+        var type_index = i % 3;
+        var time_index = Math.floor(i/3);
+
+        // cpn and corticothal are swapped in the cluster data
+        if (type_index == 0) {
+          type_index = 1;
+        }
+        else if (type_index == 1) {
+          type_index = 0;
+        }
+        console.log(gene_ids[j] + ":" + headers[0][time_index] + "_" + headers[1][type_index] + " = " + gene);
+        return x0(headers[0][time_index] + "_" + headers[1][type_index])
+      })
+      .attr('y', function(gene,i,j) { return y(gene_ids[j])})
       .attr('width', attr.width / 12)
-      .attr('height', y(data[1][0].gene_id) - y(data[0][0].gene_id))
+      .attr('height', y(gene_ids[1]) - y(gene_ids[0]))
       .style({
         stroke: "none",
-        opacity: function(d) { return d.fpkm / fpkm_max },
-        fill:   function(d,i,j) { return colors[Math.floor(i/4)]}
+        opacity: function(fpkm) {
+          if (fpkm < 0) {
+            return fpkm / fpkm_min;
+          }
+          else {
+            return fpkm / fpkm_max;
+          }
+        },
+        fill:   function(fpkm,i,j) {
+          if (fpkm < 0) {
+            return colors[0];
+          }
+          else {
+            return colors[2];
+          }
+        }
       });
   }
 };
