@@ -597,23 +597,3 @@ class ClusterAssignment(models.Model):
     class Meta:
         managed = False
         db_table = 'clusterAssignment'
-
-class Clusters:
-  def all():
-    import re
-
-    fname = "pyramidal/clusters.txt"
-
-    with open(fname) as f:
-      content = f.readlines()
-
-    return [[x.rstrip().split(' ')[0] for x in content if re.search('\s'+str(i-1)+'$',x)] for i in range(21)]
-  def geneExpressions(gene_ids):
-    expressionDat = Genedata.objects.filter(gene_id__in=gene_ids)
-    res = [x.__dict__ for x in expressionDat]
-    for r in range(len(res)):
-      res[r]['_state'] = None
-      res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
-      res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
-    res = [[gene for gene in res if gene["gene_id"] == gene_id] for gene_id in gene_ids]
-    return json.dumps(res, separators=(',',':'))

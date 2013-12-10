@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from pyramidal.models import Gene,Isoform,ClusterAssignment,Features,Clusters
+from pyramidal.models import Gene,Isoform,ClusterAssignment,Features
 
 from pyramidal.allen import AllenExplorer
 
@@ -112,21 +112,13 @@ def isoformDetail(request,gene_id,isoform_id):
 		return Http404
 
 def clusterIndex(request):
-  clusters = Clusters.all()
-  context={'clusters': clusters}
+  context = {
+  }
   return render(request,'pyramidal/clusterIndex.html',context)
 
 def clusterShow(request, cluster_id):
-  clusters = Clusters.all()
-  gene_ids = clusters[int(cluster_id)]
-  genes = Gene.objects.filter(gene_id__in=gene_ids)
-  import json
-  heatmap_data = Clusters.geneExpressions(gene_ids)
   context = {
-    'cluster_id': cluster_id,
-    'gene_ids': gene_ids,
-    'genes': genes,
-    'heatmap_data': heatmap_data,
+    'cluster_id': cluster_id
   }
   return render(request,'pyramidal/clusterShow.html',context)
 
