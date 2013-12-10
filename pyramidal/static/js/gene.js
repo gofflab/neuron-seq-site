@@ -28,7 +28,8 @@ window.gene_expression = {
       .attr("class", "chart")
       .data([data])
       .attr(chart_attr)
-      .append("svg:g").attr('transform', 'translate(50, 50)');
+      .append("svg:g")
+        .attr('transform', 'translate(50, 50)');
 
     var x0 = d3.scale.ordinal()
                .domain(headers[0])
@@ -180,6 +181,14 @@ window.gene_expression = {
       .attr(chart_attr)
       .append("svg:g").attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
 
+    chart.append("svg:clipPath")
+      .attr("id", "clip-boundary")
+      .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", attr.width)
+        .attr("height", attr.height);
+
     var lines,
         xAxis, yAxis;
 
@@ -235,7 +244,8 @@ window.gene_expression = {
         fill: "none",
         "stroke-width": attr.width/100,
         stroke: function(d, i){return colors[i%3];}})
-      .attr('d', line);
+      .attr('d', line)
+      .attr("clip-path", "url(#clip-boundary)");
 
     // Axis
     if ((attr.margin.left+attr.margin.right) > 10) {

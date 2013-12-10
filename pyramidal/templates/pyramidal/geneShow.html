@@ -61,8 +61,8 @@
     <div class="panel-body">
        {% for isoform in isoforms %}
        <h5>{{ isoform.isoform_id }}</h5>
+       <div style="float:right" class="isoform-graph" id="isoform-{{ isoform.safe_name }}-graph"></div>
        <div class="isoform" id="isoform-{{ isoform.safe_name }}"></div>
-       <div class="isoform-graph" id="isoform-{{ isoform.safe_name }}-graph"></div>
        {% endfor %}
     </div>
   </div>
