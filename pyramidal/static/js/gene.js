@@ -28,8 +28,7 @@ window.gene_expression = {
       .attr("class", "chart")
       .data([data])
       .attr(chart_attr)
-      .append("svg:g")
-        .attr('transform', 'translate(50, 50)');
+      .append("svg:g").attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
 
     var x0 = d3.scale.ordinal()
                .domain(headers[0])
