@@ -15,7 +15,7 @@
 </tr>
 {% for gene in genes %}
 <tr>
-	<td><a href="{{ url }}/pyramidal/gene/{{gene.gene_id}}/">{{ gene.gene_id }}</a></td>
+	<td><a href="{% url 'gene_show' gene_id=gene.gene_id %}">{{ gene.gene_id }}</a></td>
 	<td>{{ gene.gene_short_name }}</td>
 	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}" target="_blank">{{ gene.locus }}</a></td>
 	<td>{{ gene.isoforms|length }}</td>
