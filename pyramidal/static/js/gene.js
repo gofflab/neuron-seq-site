@@ -361,10 +361,11 @@ window.gene_expression = {
                       .attr('class', 'rail');
 
       var x_min_local = Math.min.apply(null, starts);
+      var x_max_local = Math.max.apply(null, ends);
       rail.append( 'rect' )
-          .attr( 'x', x(x_min))
+          .attr( 'x', x(x_min_local))
           .attr( 'y', (isoform_height-(isoform_height*isoform_rail_height))/2)
-          .attr( 'width', x(x_max) - x(x_min))
+          .attr( 'width', x(x_max_local) - x(x_min_local))
           .attr( 'height', isoform_height * isoform_rail_height)
           .style({
             stroke: "none",
