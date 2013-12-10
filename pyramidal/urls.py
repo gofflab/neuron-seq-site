@@ -14,10 +14,10 @@ urlpatterns = patterns('',
 	url(r'^genes/(?P<gene_id>\w+)/isoforms/(?P<isoform_id>[\w.]+)/?$',views.isoformDetail,name='isoform_show'),
 
 	#Gene detail view
-	url(r'^genes/(?P<gene_id>[\w.-]+)/?$',views.geneDetail,name='gene_show'),
+	url(r'^genes/(?P<gene_id>[\w.-]+)/?$',views.geneShow,name='gene_show'),
 
 	#All Genes
-	url(r'^genes/?$',views.genes,name='gene_index'),
+	url(r'^genes/?$',views.geneIndex,name='gene_index'),
 
 	#Cluster Views
 	url(r'^clusters/?$',views.clusterIndex,name='cluster_index'),

@@ -13,7 +13,7 @@ def index(request):
 	context = {}
 	return render(request,'pyramidal/index.html',context)
 
-def genes(request):
+def geneIndex(request):
 	if ('order_by' in request.GET) and request.GET['order_by'].strip():
 		order_by = request.GET.get('order_by','defaultOrderField')
 	else:
@@ -32,7 +32,7 @@ def genes(request):
 	context = {
 		'genes': genes,
 	}
-	return render(request,'pyramidal/genes.html',context)
+	return render(request,'pyramidal/geneIndex.html',context)
 
 def genesDetail(request,gene_list):
 	"""Takes a '+'-separated list of genes as <gene_list>"""
@@ -57,7 +57,7 @@ def genesDetail(request,gene_list):
 # Gene & Isoform detail
 ##################
 
-def geneDetail(request,gene_id):
+def geneShow(request,gene_id):
   try:
     # Capitalize gene_id and redirect to canonical name
     gene_id_canonical = gene_id.title();
@@ -77,14 +77,14 @@ def geneDetail(request,gene_id):
       'sunburstIds': allenExpIds,
       'sectionData': allenSectionData,
       }
-  return render(request,'pyramidal/geneDetail.html',context)
+  return render(request,'pyramidal/geneShow.html',context)
 
 def geneIsoforms(request, gene_id):
   try:
     # Capitalize gene_id and redirect to canonical name
     gene_id_canonical = gene_id.title();
     if gene_id_canonical != gene_id:
-      return redirect('gene_detail', gene_id = gene_id_canonical)
+      return redirect('gene_show', gene_id = gene_id_canonical)
 
     # Get Gene object
     gene = Gene.objects.get(gene_id=gene_id)
@@ -97,7 +97,7 @@ def geneIsoforms(request, gene_id):
       'sunburstIds': allenExpIds,
       'sectionData': allenSectionData,
       }
-  return render(request,'pyramidal/geneDetail.html',context)
+  return render(request,'pyramidal/geneShow.html',context)
 
 def isoformDetail(request,gene_id,isoform_id):
 	try:
