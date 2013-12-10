@@ -151,13 +151,19 @@ window.gene_expression = {
   lines: function(selector, headers, data, attr) {
     var colors = ["steelblue", "green", "crimson"];
 
-    attr.width  = attr.width  || 800;
-    attr.height = attr.height || 400;
-    attr.margin = attr.margin || 100;
+    if (!("width" in attr)) {
+      attr.width = 800;
+    }
+    if (!("height" in attr)) {
+      attr.height = 400;
+    }
+    if (!("margin" in attr)) {
+      attr.margin = {left: 50, right: 10, bottom: 80, top: 10};
+    }
 
     var chart_attr = {
-      width:  attr.width,
-      height: attr.height
+      width:  attr.width+attr.margin.left+attr.margin.right,
+      height: attr.height+attr.margin.top+attr.margin.bottom
     };
 
     var chart = d3.select(selector)
@@ -165,29 +171,23 @@ window.gene_expression = {
       .attr("class", "chart")
       .data([data])
       .attr(chart_attr)
-      .append("svg:g").attr('transform', 'translate(50, 50)');
+      .append("svg:g").attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
 
     var lines,
-        margin = attr.margin,
-        x, y,
         xAxis, yAxis;
 
-    var x0 = d3.scale.ordinal()
-               .domain(headers[0])
-               .rangeBands([0, attr.width - margin]);
-
-    var x1 = d3.scale.ordinal()
-               .domain(headers[1])
-               .rangeBands([0, attr.width - margin]);
+    var x = d3.scale.linear()
+              .domain([0, headers[0].length-1])
+              .range([0, attr.width]);
 
     var y = d3.scale.linear()
               .domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] )
-              .rangeRound( [0, attr.height - margin] );
+              .rangeRound( [0, attr.height] );
 
     // Data
     var line = d3.svg.line()
-      .x(function(d) { return x0(d.timepoint) + 84 })
-      .y(function(d) { return (attr.height - margin) - y(d.fpkm) + .5 });
+      .x(function(d) { return x(headers[0].indexOf(d.timepoint)) })
+      .y(function(d) { return attr.height - y(d.fpkm) + .5 });
 
     var data_lines = headers[1].map(function(elem) {
       return data.filter(function(datapoint) {
@@ -205,10 +205,10 @@ window.gene_expression = {
       .attr("points", function(d) {
         return [
           d.map(function(elem) {
-            return [x0(elem.timepoint) + 84, (attr.height - margin) - y(elem.conf_lo) + 0.5].join(",")
+            return [x(headers[0].indexOf(elem.timepoint)) , attr.height - y(elem.conf_lo) + 0.5].join(",")
           }).join(" "),
           d.map(function(elem) {
-            return [x0(elem.timepoint) + 84, (attr.height - margin) - y(elem.conf_hi) + 0.5].join(",")
+            return [x(headers[0].indexOf(elem.timepoint)) , attr.height - y(elem.conf_hi) + 0.5].join(",")
           }).reverse().join(" ")
         ].join(" ")
       })
@@ -226,65 +226,67 @@ window.gene_expression = {
       .enter().append('path')
       .style({
         fill: "none",
-        "stroke-width": 5,
+        "stroke-width": attr.width/100,
         stroke: function(d, i){return colors[i%3];}})
       .attr('d', line);
 
     // Axis
-    xAxis = d3.svg.axis()
-      .scale(x0)
-      .ticks(headers[0].length)
-      .tickSize(6, 3, 1)
-      .tickValues(headers[0]);
+    if ((attr.margin.left+attr.margin.right) > 10) {
+      xAxis = d3.svg.axis()
+        .scale(x)
+        .ticks(headers[0].length)
+        .tickSize(6, 3, 1)
+        .tickFormat(function(tick) {
+          return headers[0][tick]
+        });
 
-    yAxis = d3.svg.axis()
-      .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [attr.height - margin, 0] ))
-      .tickSize(6, 3, 1)
-      .orient('left');
+      yAxis = d3.svg.axis()
+        .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [attr.height, 0] ))
+        .tickSize(6, 3, 1)
+        .orient('left');
 
-    chart.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', 'translate(0, ' + (attr.height - margin) + ')')
-      .call(xAxis);
+      chart.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0, ' + attr.height + ')')
+        .call(xAxis);
 
-    chart.append('g')
-      .attr('class', 'y axis')
-      .attr('transform', 'translate(' + x0.range()[0] + ')')
-      .call(yAxis)
-      .append("text")
-      .style()
-      .style({
-        "text-anchor": "end"})
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .text("FPKM");
+      chart.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+        .append("text")
+        .style()
+        .style({
+          "text-anchor": "end"})
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .text("FPKM");
 
-    chart.selectAll('.axis line')
-      .style({
-        "stroke": "black"});
+      chart.selectAll('.axis line')
+        .style({
+          "stroke": "black"});
 
-    chart.selectAll('.tick line')
-      .style({
-        "stroke": "black"});
+      chart.selectAll('.tick line')
+        .style({
+          "stroke": "black"});
 
-    var legend = chart.selectAll(".legend")
-                      .data(headers[1])
-                      .enter().append("g")
-                      .attr("class", "legend")
-                      .attr("y", 400)
-                      .attr("transform", function(d, i) { return "translate(" + (((attr.width / 3) * i) + 60) + "," + (attr.height - 60) + ")"; });
+      var legend = chart.selectAll(".legend")
+                        .data(headers[1])
+                        .enter().append("g")
+                        .attr("class", "legend")
+                        .attr("transform", function(d, i) { return "translate(" + (((attr.width / 3) * i) + attr.margin.left + (attr.width/3*0.4)) + "," + (attr.height+attr.margin.top+attr.margin.bottom-40) + ")"; });
 
-    legend.append("rect")
-      .attr("transform", "translate(10,-9)")
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", function(d,i){return colors[i]});
+      legend.append("rect")
+        .attr("transform", "translate(10,-9)")
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", function(d,i){return colors[i]});
 
-    legend.append("text")
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d; });
+      legend.append("text")
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function(d) { return d; });
+    }
   },
 
   isoforms: function(selector, data, attr) {
