@@ -58,12 +58,6 @@
     .hiveaxislabel{
       text-decoration: none;
     }
-    .link {
-      fill: none;
-      stroke: #999;
-      stroke-width: 2px;
-      stroke-opacity: .3;
-    }
 
     .active {
       fill: none;
@@ -569,6 +563,17 @@ var color = d3.scale.ordinal()
     .domain(d3.range(celltypes)) //TODO: make sure this is correct syntax
     .range(["#31A354","#DE2D26","#3182BD"]); //TODO: make sure this is correct syntax
 
+var logFCarray = d3.entries(data)
+      .sort(function(a,b){return d3.ascending(Math.abs(a.value.values.log2_fold_change),Math.abs(b.value.values.log2_fold_change))});
+
+var fcMin = logFCarray[0].value.values.log2_fold_change;
+var fcMax = Math.abs(d3.min([logFCarray[logFCarray.length-1].value.values.log2_fold_change,10]));
+
+var linkSize = d3.scale.linear()
+    .domain([fcMin,fcMax])
+    .range([0.5,10])
+    .clamp(true);
+
 //Create Info object
 var info = d3.select("#info");
       //.text(defaultInfo = "Test");
@@ -632,9 +637,15 @@ svg.selectAll(".hiveaxislabel")
       .attr("d", link()
         .angle(function(d) { return angle(celltypes.indexOf(d.celltype)); })
         .radius(function(d) { return radius(d.timepoint); }))
+      .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
+      .style("stroke","#999")
+      .style("fill","none")
+      .style("stroke-opacity",".3")
       .on("mouseover", function(d){
             d3.select(this)
-                .classed("active",true);
+                .classed("active",true)
+                .style("stroke","#f00")
+                .style("stroke-opacity","1");
             info.html("<h4>" +
                d.source.sample +
                " vs " +
@@ -656,7 +667,11 @@ svg.selectAll(".hiveaxislabel")
                 })
       .on("mouseout", function(d){
             d3.select(this)
-                .classed("active", false);
+                .classed("active", false)
+                .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
+                .style("stroke","#999")
+                .style("fill","none")
+                .style("stroke-opacity",".3");
       //      info.text(defaultInfo);
       });
 
@@ -723,7 +738,7 @@ d3.select("input[type=range]").on("change", function() {
   // Clear any highlighted nodes or links.
   function mouseout() {
     svg.selectAll(".active").classed("active", false);
-    info.text(defaultInfo);
+    //info.text(defaultInfo);
   }
 
 // A shape generator for Hive links, based on a source and a target.

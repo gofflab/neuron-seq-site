@@ -1,0 +1,50 @@
+{% extends 'pyramidal/geneBase.html' %}
+
+	{% block header %}
+	<style>
+
+	</style>
+	<!--<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.min.js"></script>-->
+	
+  <!-- #Sunburst imports -->
+ 
+  <!--#end of sunburst imports-->
+
+  {% endblock header %}
+
+	{% block navleft%}
+    <ul>
+      {% for gene in genes %}
+        <li><a href="{% url 'pyramidal.views.geneDetail' gene.gene_id %}">{{gene.gene_id}}</a></li>
+     	{% endfor %}
+    </ul>
+	{% endblock navleft %}
+
+	{% block main %}
+    <div id="genelist">
+
+    </div>
+
+
+    <script>
+    //variables
+    var w = 800;
+    var h = 500;
+    var barWidth = 25;
+    var barHeight = 10;
+
+    //Data
+    var expressionData = {{ expression|safe }};
+    var diffData = {{ diffData|safe }};
+
+    //scales
+
+    //Initialize SVG
+    plot = d3.select( '#genelist' ).append( 'svg:svg' )
+    .attr( 'class', 'chart' )
+    .attr( 'width', w )
+    .attr( 'height', h )
+    .append('g');
+
+    </script>
+	{% endblock main %}

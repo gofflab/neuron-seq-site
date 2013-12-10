@@ -251,8 +251,12 @@ class Gene(models.Model):
     def expression(self):
     	expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
     	samples = [x.sample_name for x in expressionDat]
-    	dat = [x.__dict__ for x in expressionDat]
-    	return dict(zip(samples,dat))
+    	res = [x.__dict__ for x in expressionDat]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+    	return dict(zip(samples,res))
 
     def expressionJson(self):
         expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
@@ -262,6 +266,17 @@ class Gene(models.Model):
             res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
             res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
         return json.dumps(res, separators=(',',':'))
+
+    def diffData(self):
+        diffDat = Geneexpdiffdata.objects.filter(gene_id=self.gene_id)
+        res = [x.__dict__ for x in diffDat]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint_1'] = res[r]['sample_1'].rstrip().split("_")[0]
+            res[r]['celltype_1'] = res[r]['sample_1'].rstrip().split("_")[1]
+            res[r]['timepoint_2'] = res[r]['sample_2'].rstrip().split("_")[0]
+            res[r]['celltype_2'] = res[r]['sample_2'].rstrip().split("_")[1]
+        return res
 
     def diffDataJson(self):
         diffDat = Geneexpdiffdata.objects.filter(gene_id=self.gene_id)

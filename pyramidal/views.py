@@ -34,6 +34,25 @@ def genes(request):
 	}
 	return render(request,'pyramidal/genes.html',context)
 
+def genesDetail(request,gene_list):
+	"""Takes a comma-separated list of genes as <gene_list>"""
+	gene_list_clean = gene_list.rstrip().split(",")
+	try:
+		genes = Gene.objects.filter(gene_id__in=gene_list_clean)
+		expression = {}
+		diffData = {}
+		for gene in genes:
+			expression[gene.gene_id]=gene.expression()
+			diffData[gene.gene_id]=gene.diffData()
+	except Gene.DoesNotExist:
+		return Http404
+	context = {
+		'genes': genes,
+		'diffData': json.dumps(diffData,separators=(',',':')),
+		'expression' :json.dumps(expression,separators=(',',':'))
+	}
+	return render(request,'pyramidal/genesDetail.html',context)
+
 ##################
 # Gene & Isoform detail
 ##################
