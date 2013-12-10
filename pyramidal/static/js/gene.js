@@ -2,18 +2,26 @@ window.gene_expression = {
   bars: function(selector, headers, data, attr) {
     var colors = ["steelblue", "green", "crimson"];
 
-
-    if (attr == undefined) { attr = {}; }
-    attr.width  = attr.width  || 800;
-    attr.height = attr.height || 400;
-    attr.margin = attr.margin || 100;
+    if (!("width" in attr)) {
+      attr.width = 800;
+    }
+    if (!("height" in attr)) {
+      attr.height = 400;
+    }
+    if (!("margin" in attr)) {
+      attr.margin = {left: 50, right: 10, bottom: 80, top: 10};
+    }
 
     var chart_attr = {
-      width:  attr.width,
-      height: attr.height
+      width:  attr.width+attr.margin.left+attr.margin.right,
+      height: attr.height+attr.margin.top+attr.margin.bottom
     };
 
-    var barWidth = 25;
+    var rangeWidth = attr.width / 4;
+    var barPadding = rangeWidth / 20;
+    var barWidth = (attr.width - (barPadding * 11)) / 18;
+    var barSpan = barWidth + barPadding;
+    var rangeSpan = barWidth * 3 + barPadding * 2;
 
     var chart = d3.select(selector)
       .append("svg:svg")
@@ -24,15 +32,15 @@ window.gene_expression = {
 
     var x0 = d3.scale.ordinal()
                .domain(headers[0])
-               .rangeBands([0, attr.width - attr.margin]);
+               .rangeBands([0, attr.width]);
 
     var x1 = d3.scale.ordinal()
                .domain(headers[1])
-               .rangeBands([0, attr.width - attr.margin]);
+               .rangeBands([0, attr.width]);
 
     var y = d3.scale.linear()
               .domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] )
-              .rangeRound( [0, attr.height - attr.margin] );
+              .rangeRound( [0, attr.height] );
 
     // Bars
     var bars = chart.append('g')
@@ -41,9 +49,9 @@ window.gene_expression = {
     bars.selectAll( 'rect' )
       .data( data )
       .enter().append( 'rect' )
-      .attr( 'x', function( d, i ) { return x0( d.timepoint ) + 44 + (i%3) * (barWidth+5); } )
-      .attr( 'y', function( d ) { return (attr.height - attr.margin) - y( d.fpkm ) + .5 } )
-      .attr( 'width', barWidth )
+      .attr( 'x', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5; } )
+      .attr( 'y', function( d ) { return attr.height - y( d.fpkm ) + .5 } )
+      .attr( 'width', barWidth)
       .attr( 'height', function( d ) { return y( d.fpkm ) } )
       .style({
         stroke: "white",
@@ -61,10 +69,10 @@ window.gene_expression = {
       .data( data )
       .enter().append('line')
       .attr("class","errorbar")
-      .attr( 'x1', function(d,i) { return x0(d.timepoint) + 44 + (i%3) * (barWidth+5) + (barWidth/2);})
-      .attr( 'x2', function(d,i) { return x0(d.timepoint) + 44 + (i%3) * (barWidth+5) + (barWidth/2);})
-      .attr( 'y1', function( d ) { return (attr.height - attr.margin) - y( d.conf_lo ) + .5 } )
-      .attr( 'y2', function( d ) { return (attr.height - attr.margin) - y( d.conf_hi ) + .5 } )
+      .attr( 'x1', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (barWidth / 2); } )
+      .attr( 'x2', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (barWidth / 2); } )
+      .attr( 'y1', function( d ) { return attr.height - y( d.conf_lo ) + .5 } )
+      .attr( 'y2', function( d ) { return attr.height - y( d.conf_hi ) + .5 } )
       .style({
         "stroke": "black"});
 
@@ -72,10 +80,10 @@ window.gene_expression = {
       .data( data )
       .enter().append('line')
       .attr("class","errorbar")
-      .attr( 'x1', function(d,i) { return x0(d.timepoint) + 44 + (i%3) * (barWidth+5) + (barWidth/4);})
-      .attr( 'x2', function(d,i) { return x0(d.timepoint) + 44 + (i%3) * (barWidth+5) + 3*(barWidth/4);})
-      .attr( 'y1', function( d ) { return (attr.height - attr.margin) - y( d.conf_hi ) + .5 } )
-      .attr( 'y2', function( d ) { return (attr.height - attr.margin) - y( d.conf_hi ) + .5 } )
+      .attr( 'x1', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (barWidth / 4); } )
+      .attr( 'x2', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (3 * barWidth / 4); } )
+      .attr( 'y1', function( d ) { return attr.height - y( d.conf_hi ) + .5 } )
+      .attr( 'y2', function( d ) { return attr.height - y( d.conf_hi ) + .5 } )
       .style({
         "stroke": "black"});
 
@@ -83,10 +91,10 @@ window.gene_expression = {
       .data( data )
       .enter().append('line')
       .attr("class","errorbar")
-      .attr( 'x1', function(d,i) { return x0(d.timepoint) + 44 + (i%3) * (barWidth+5) + (barWidth/4);})
-      .attr( 'x2', function(d,i) { return x0(d.timepoint) + 44 + (i%3) * (barWidth+5) + 3*(barWidth/4);})
-      .attr( 'y1', function( d ) { return (attr.height - attr.margin) - y( d.conf_lo ) + .5 } )
-      .attr( 'y2', function( d ) { return (attr.height - attr.margin) - y( d.conf_lo ) + .5 } )
+      .attr( 'x1', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (barWidth / 4); } )
+      .attr( 'x2', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (3 * barWidth / 4); } )
+      .attr( 'y1', function( d ) { return attr.height - y( d.conf_lo ) + .5 } )
+      .attr( 'y2', function( d ) { return attr.height - y( d.conf_lo ) + .5 } )
       .style({
         "stroke": "black"});
 
@@ -99,13 +107,13 @@ window.gene_expression = {
       .tickValues(headers[0]);
 
     var yAxis = d3.svg.axis()
-      .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [attr.height - attr.margin, 0] ))
+      .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [attr.height, 0] ))
       .tickSize(6, 3, 1)
       .orient('left');
 
     chart.append('g')
       .attr('class', 'x axis')
-      .attr('transform', 'translate(0, ' + (attr.height - attr.margin) + ')')
+      .attr('transform', 'translate(0, ' + attr.height + ')')
       .call(xAxis)
 
     chart.selectAll('.axis line')
@@ -133,8 +141,7 @@ window.gene_expression = {
                       .data(headers[1])
                       .enter().append("g")
                       .attr("class", "legend")
-                      .attr("y", 400)
-                      .attr("transform", function(d, i) { return "translate(" + (((attr.width / 3) * i) + 60) + "," + (attr.height - 60) + ")"; });
+                      .attr("transform", function(d, i) { return "translate(" + (((attr.width / 3) * i) + attr.margin.left + (attr.width/3*0.4)) + "," + (attr.height+attr.margin.top+attr.margin.bottom-40) + ")"; });
 
     legend.append("rect")
       .attr("transform", "translate(10,-9)")
