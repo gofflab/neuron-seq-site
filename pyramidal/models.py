@@ -242,6 +242,9 @@ class Gene(models.Model):
         managed = False
         db_table = 'genes'
 
+    def safe_name(self):
+      return self.gene_id.replace('.', '_')
+
     def fpkm(self):
     	fpkmDat = Genedata.objects.filter(gene_id=self.gene_id)
     	fpkmVals = [x.fpkm for x in fpkmDat]

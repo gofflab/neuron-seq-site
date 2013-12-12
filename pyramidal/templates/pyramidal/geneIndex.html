@@ -12,6 +12,7 @@
 	<th><a href="?{% url_replace request 'order_by' 'gene_short_name'%}">Name</a></th>
 	<th>Locus</th>
 	<th>Number of isoforms</th>
+	<th>Expression</th>
 </tr>
 {% for gene in genes %}
 <tr>
@@ -19,6 +20,7 @@
 	<td>{{ gene.gene_short_name }}</td>
 	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}" target="_blank">{{ gene.locus }}</a></td>
 	<td>{{ gene.isoforms|length }}</td>
+  <td><div class="gene-expression" id="gene-{{ gene.safe_name }}"></div></td>
 </tr>
 {% endfor %}
 </table>
@@ -30,4 +32,20 @@
            <li> <a href="?page={{ genes.next_page_number }}">next</a></li>
         {% endif %}
 </ul>
+
+	<!-- D3.js scripts -->
+  <script type="text/javascript" src="{{ STATIC_URL }}js/gene.js"></script>
+
+  <script type="text/javascript">
+    var gene_headers = [
+      ['E15','E16','E18','P1'],
+      ['corticothal', 'cpn', 'subcereb']
+    ];
+    {% for gene in genes %}
+    gene_expression.lines('.gene-expression#gene-{{ gene.safe_name }}',
+        gene_headers,
+        {{ gene.expressionJson|safe }},
+        { width: 100, height: 50, margin: {left: 0, right: 0, top: 0, bottom: 0} });
+    {% endfor %}
+  </script>
 {% endblock content %}
