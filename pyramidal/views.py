@@ -35,8 +35,8 @@ def genes(request):
 	return render(request,'pyramidal/genes.html',context)
 
 def genesDetail(request,gene_list):
-	"""Takes a comma-separated list of genes as <gene_list>"""
-	gene_list_clean = gene_list.rstrip().split(",")
+	"""Takes a '+'-separated list of genes as <gene_list>"""
+	gene_list_clean = gene_list.rstrip().split("+")
 	try:
 		genes = Gene.objects.filter(gene_id__in=gene_list_clean)
 		expression = []

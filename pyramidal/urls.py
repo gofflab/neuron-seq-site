@@ -10,7 +10,7 @@ urlpatterns = patterns('',
 	#All Genes
 	url(r'^genes/',views.genes,name='genes'),
 	
-	url(r'^genelist/(?P<gene_list>[a-zA-Z0-9_\.,]+)/$',views.genesDetail),
+	url(r'^geneset/(?P<gene_list>[a-zA-Z0-9_\.\+]+)/$',views.genesDetail),
 
 	#Gene detail view
 	url(r'^gene/(?P<gene_id>\w+)/$',views.geneDetail),
