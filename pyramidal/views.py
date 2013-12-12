@@ -39,10 +39,10 @@ def genesDetail(request,gene_list):
 	gene_list_clean = gene_list.rstrip().split(",")
 	try:
 		genes = Gene.objects.filter(gene_id__in=gene_list_clean)
-		expression = {}
+		expression = []
 		diffData = {}
 		for gene in genes:
-			expression[gene.gene_id]=gene.expression()
+			expression.append(gene.expression())
 			diffData[gene.gene_id]=gene.diffData()
 	except Gene.DoesNotExist:
 		return Http404

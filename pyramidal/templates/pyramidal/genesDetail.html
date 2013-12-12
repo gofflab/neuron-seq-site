@@ -21,6 +21,15 @@
 	{% endblock navleft %}
 
 	{% block main %}
+    <form name="pickTimepoint">
+            <label for=silder>Time point:</label> <input type="range" id="slider" min="0" max="3" value="3" style="display:inline-block; vertical-align:middle" onchange="outputUpdate(value)" />
+        <output for=slider id="timeOutput">P1</output>
+<script>
+    function outputUpdate(output) {
+document.querySelector('#timeOutput').value = timeScale(output);
+}
+</script>
+    </form>
     <div id="genelist">
 
     </div>
@@ -28,23 +37,107 @@
 
     <script>
     //variables
-    var w = 800;
-    var h = 500;
-    var barWidth = 25;
-    var barHeight = 10;
+    var margin = {top: 40, right: 40, bottom: 40, left: 40};
+    var w = 850 - margin.left - margin.right;
+    var h = 500 - margin.top - margin.bottom;
+    //var barWidth = 75;
+    //var barHeight = 25;
+    var numCols = 10;
+
+    var timepoint = "P1";
+    document.getElementById('slider').addEventListener('change', function() {
+        timepoint = timeScale(document.getElementById("slider").value);
+        redraw();
+    });
 
     //Data
     var expressionData = {{ expression|safe }};
     var diffData = {{ diffData|safe }};
 
     //scales
+    var xScale = d3.scale.ordinal()
+                    .domain(d3.range(0,numCols))
+                    .rangeBands([0,w],0.2);
+
+    var yScale = d3.scale.ordinal()
+                    .domain(d3.range(0,Math.floor(expressionData.length/numCols)+1))
+                    .rangeBands([0,h],0.2);
+
+    var rScale = d3.scale.linear()
+                    .domain([0,6])
+                    .range([5,40])
+                    .clamp(true);
+
+    var timeScale = d3.scale.ordinal()
+                    .domain(d3.range(0,4))
+                    .range(["E15","E16","E18","P1"])
+
+    //Helper Functions
+    function makeRGB(r,g,b){
+        tot = r+g+b
+        r_1 = (r/tot)*255
+        g_1 = (g/tot)*255
+        b_1 = (b/tot)*255
+        return d3.rgb(r_1,g_1,b_1).brighter(1)
+    };
 
     //Initialize SVG
-    plot = d3.select( '#genelist' ).append( 'svg:svg' )
+    var svg = d3.select( '#genelist' ).append( 'svg:svg' )
     .attr( 'class', 'chart' )
     .attr( 'width', w )
     .attr( 'height', h )
-    .append('g');
+    .style('position','absolute')
+    .append('g')
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var geneset = svg.selectAll(".circle")
+                    .data(expressionData)
+                    .enter().append("circle")
+                        .attr("class","circle")
+                        .attr("cx", function (d, i) { return xScale(i); })
+                        .attr("cy", function (d, i) { return yScale(Math.floor(i/numCols)); })
+                        .attr("r", function (d, i) { return rScale(Math.log(d3.max([
+                            d[timepoint+"_subcereb"].fpkm,
+                            d[timepoint+"_cpn"].fpkm,
+                            d[timepoint+"_corticothal"].fpkm])),10)})
+                        //.attr("fill","white")
+                        .attr("fill", function (d, i){
+                            return makeRGB(
+                                d[timepoint+"_subcereb"].fpkm,
+                                d[timepoint+"_cpn"].fpkm,
+                                d[timepoint+"_corticothal"].fpkm);
+                        })
+                        .attr("stroke","black")
+                    ;
+
+    svg.selectAll(".label")
+        .data(expressionData)
+        .enter().append("text")
+            .attr("class","label")
+            .attr("x", function (d, i) { return xScale(i); })
+            .attr("y", function (d, i) { return yScale(Math.floor(i/numCols))+3; })
+            .attr("text-anchor", "middle")
+            .attr("fill","black")
+            .text(function(d){return d.E16_subcereb.gene_id; });
+
+    function redraw(){
+        geneset
+            .data(expressionData)
+            .transition()
+                .duration(300)
+                .attr("r", function (d, i) { return rScale(Math.log(d3.max([
+                            d[timepoint+"_subcereb"].fpkm,
+                            d[timepoint+"_cpn"].fpkm,
+                            d[timepoint+"_corticothal"].fpkm])),10)
+                })
+                .attr("fill", function (d, i){
+                            return makeRGB(
+                                d[timepoint+"_subcereb"].fpkm,
+                                d[timepoint+"_cpn"].fpkm,
+                                d[timepoint+"_corticothal"].fpkm);
+                });
+
+    }
 
     </script>
 	{% endblock main %}
