@@ -28,4 +28,8 @@ urlpatterns = patterns('',
 
 	#Search
 	url(r'^search/$', views.search),
+
+	#Dev
+	url(r'^dev/$',views.dev),
+	
 )

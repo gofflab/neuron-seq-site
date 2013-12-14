@@ -175,7 +175,14 @@ def search(request):
         entry_query = get_query(query_string, ['gene_id', 'gene_short_name',])
         
         found_genes = Gene.objects.filter(entry_query).order_by('gene_id')
-
     return render(request,'pyramidal/search_results.html',
                           { 'query_string': query_string, 'found_genes': found_genes }
                  )
+
+
+ ####################
+ # Development
+ #####################
+def dev(request):
+	context = {}
+	return render(request,'pyramidal/testKegg.html',context)

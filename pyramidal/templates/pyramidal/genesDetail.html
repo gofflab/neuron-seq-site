@@ -2,7 +2,15 @@
 
 	{% block header %}
 	<style>
+    .legendLabel{
+        font-family:sans-serif;
+        font-size:10pt;
+    }
+    .label{
+        font-family:sans-serif;
+        font-size:10pt;
 
+    }
 	</style>
 	<!--<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.min.js"></script>-->
 	
@@ -21,6 +29,7 @@
 	{% endblock navleft %}
 
 	{% block main %}
+    <div id="legend"></div>
     <form name="pickTimepoint">
             <label for=silder>Time point:</label> <input type="range" id="slider" min="0" max="3" value="3" style="display:inline-block; vertical-align:middle" onchange="outputUpdate(value)" />
         <output for=slider id="timeOutput">P1</output>
@@ -30,10 +39,7 @@ document.querySelector('#timeOutput').value = timeScale(output);
 }
 </script>
     </form>
-    <div id="genelist">
-
-    </div>
-
+    <div id="genelist"></div>
 
     <script>
     //variables
@@ -78,7 +84,7 @@ document.querySelector('#timeOutput').value = timeScale(output);
         r_1 = (r/tot)*255
         g_1 = (g/tot)*255
         b_1 = (b/tot)*255
-        return d3.rgb(r_1,g_1,b_1).brighter(1)
+        return d3.rgb(r_1,g_1,b_1)
     };
 
     //Initialize SVG
@@ -86,7 +92,7 @@ document.querySelector('#timeOutput').value = timeScale(output);
     .attr( 'class', 'chart' )
     .attr( 'width', w )
     .attr( 'height', h )
-    .style('position','absolute')
+    //.style('position','absolute')
     .append('g')
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -137,7 +143,138 @@ document.querySelector('#timeOutput').value = timeScale(output);
                                 d[timepoint+"_corticothal"].fpkm);
                 });
 
-    }
+    };
+
+    //Setup legend
+    var sw = 200;
+    var sh = 200;
+
+    var lw = 150;
+    var lh = lw*(Math.sqrt(3)/2);
+
+    //Scales
+    rotate = d3.scale.ordinal()
+                .domain(d3.range(0,3))
+                .rangeBands([0,360]);
+
+    legendColor = d3.scale.ordinal()
+                .domain(d3.range(0,3))
+                .range(["green","blue","red"]);
+
+    sampleScale = d3.scale.ordinal()
+                .domain(d3.range(0,3))
+                .range(['CPN','CthPN',"ScPN"])
+
+    legendFillColor = d3.scale.ordinal()
+                .domain(d3.range(0,3))
+                .range(["url(#gradientGreen)","url(#gradientBlue)","url(#gradientRed)"])
+
+    //Helper Funcs
+    // var triangle = d3.svg.line()
+    //     .x(function(d){return [0,lw/2,lw];})
+    //     .y(function(d){return [lh,0,lh];})
+    //     ;
+
+    //Create Canvas
+    legend = d3.select( '#legend' )
+                .append('svg:svg')
+                .attr('class','legend')
+                .attr( 'width', sw )
+                .attr( 'height', sh )
+                //.style('position','absolute')
+                .append('g')
+                .attr(
+                       'transform',
+                       'translate(' + (sw - lw)/2 + ',' + (sh - lh)/2 + ')'
+                     );
+
+    //SVG gradients            
+    defs = svg.append('defs');
+
+    var gradientGreen = defs.append( 'linearGradient' )
+                                   .attr( 'id', 'gradientGreen' )
+                                   .attr( 'x1', '0' )
+                                   .attr( 'x2', '0' )
+                                   .attr( 'y1', '0' )
+                                   .attr( 'y2', '1' );
+
+        gradientGreen.append('stop')
+                .attr('class','gradientGreenStop1')
+                .attr('offset','0%')
+                .attr('stop-color','#00ff00');
+
+        gradientGreen.append('stop')
+                .attr('class','gradientGreenStop2')
+                .attr('offset','100%')
+                .attr('stop-opacity','0%')
+                .attr('stop-color','#303030');
+
+    var gradientRed = defs.append( 'linearGradient' )
+                                   .attr( 'id', 'gradientRed' )
+                                   .attr( 'x1', '0' )
+                                   .attr( 'x2', '0' )
+                                   .attr( 'y1', '0' )
+                                   .attr( 'y2', '1' );
+
+        gradientRed.append('stop')
+                .attr('class','gradientRedStop1')
+                .attr('offset','0%')
+                .attr('stop-color','#ff0000');
+
+        gradientRed.append('stop')
+                .attr('class','gradientRedStop2')
+                .attr('offset','100%')
+                .attr('stop-opacity','0%')
+                .attr('stop-color','#303030');
+
+    var gradientBlue = defs.append( 'linearGradient' )
+                                   .attr( 'id', 'gradientBlue' )
+                                   .attr( 'x1', '0' )
+                                   .attr( 'x2', '0' )
+                                   .attr( 'y1', '0' )
+                                   .attr( 'y2', '1' );
+
+        gradientBlue.append('stop')
+                .attr('class','gradientBlueStop1')
+                .attr('offset','0%')
+                .attr('stop-color','#0000ff');
+
+        gradientBlue.append('stop')
+                .attr('class','gradientBlueStop2')
+                .attr('offset','100%')
+                .attr('stop-opacity','0%')
+                .attr('stop-color','#303030');
+
+    //Triangles
+    legend.selectAll('.triangle')
+            .data(d3.range(0,3))
+            .enter().append("path")
+                .attr('class','triangle')
+                //.attr('d',"M " + 0 + " " + lh +
+                //            "L " + lw/2 + " " + 0 +
+                //            "L " + lw + " " + lh +
+                //            "L " + 0 + " " + lh + 
+                //            "Z")
+                //.attr('transform',function(d){return "translate("+lw/2+","+lh/2+")";})
+                .attr("d", "M "+0+" "+lh+" L "+lw/2+" "+0+" L "+lw+" "+lh+" z")
+                .attr("stroke","black")
+                .attr("transform",function(d){ return "rotate("+rotate(d)+","+lw/2+","+(lh/3)*2+")"})
+                //.attr("rotation-point",lw/2+" "+lh/2)
+                .attr("fill",function(d){return legendFillColor(d);})
+                ;
+
+    //Labels
+    legend.selectAll('.legendLabel')
+            .data(d3.range(0,3))
+            .enter().append("text")
+                .attr('class','legendLabel')
+                .attr("x",lw/2)
+                .attr("y",-5)
+                .attr("text-anchor","middle")
+                .attr("transform",function(d){ return "rotate("+rotate(d)+","+lw/2+","+(lh/3)*2+")"})
+                .attr("fill",function(d){return legendColor(d);})
+                .text(function(d){ return sampleScale(d);});
+
 
     </script>
 	{% endblock main %}

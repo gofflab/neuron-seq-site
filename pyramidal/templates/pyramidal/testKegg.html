@@ -1,0 +1,86 @@
+<html>
+<head>
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+
+<style>
+.label{
+	font-family:sans-serif;
+	font-size:10;
+}
+</style>
+
+</head>
+<body>
+Test
+<div id="chart">
+
+</div>
+</body>
+<script>
+var margin = {top: 40, right: 40, bottom: 40, left: 40};
+var w = 1500 - margin.left - margin.right;
+var h = 1200 - margin.top - margin.bottom;
+
+// xScale = d3.scale.linear()
+// 	.domain()
+// 	.range([0,w]);
+
+var kgml = '{{ STATIC_URL }}data/mmu04360.kgml';
+
+//Setup canvas
+var svg = d3.select( '#chart' ).append( 'svg:svg' )
+    .attr( 'class', 'chart' )
+    .attr( 'width', w )
+    .attr( 'height', h )
+    //.style('position','absolute')
+    .append('g')
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var nodes = []
+var links = []
+
+var entries = []
+var relations = []
+
+d3.xml(kgml,'application/xml',function(xml){	
+	entries = d3.select(xml).selectAll('entry')[0];
+	relations = d3.select(xml).selectAll('relation')[0];
+
+	drawNodes(xml);
+	drawLinks(xml);
+});
+	
+
+// drawNodes(xml);
+// drawLinks(xml);
+
+// shapes
+	function drawNodes(xml){
+		svg.selectAll(".rect")
+		.data(xml.documentElement.getElementsByTagName("entry"))
+		.enter().append("rect")
+			.attr("x",function(d){ return d.getElementsByTagName('graphics')[0].getAttribute('x'); })
+			.attr("y",function(d){ return d.getElementsByTagName('graphics')[0].getAttribute('y'); })
+			.attr("height",function(d){ return d.getElementsByTagName('graphics')[0].getAttribute('height'); })
+			.attr("width",function(d){ return d.getElementsByTagName('graphics')[0].getAttribute('width'); })
+			.attr("stroke","black")
+			.attr("fill",function(d){ return d.getElementsByTagName('graphics')[0].getAttribute('bgcolor'); });
+	};
+	
+	//text
+	function drawLinks(xml){
+		svg.selectAll(".label")
+		.data(xml.documentElement.getElementsByTagName("graphics"))
+		.enter().append("text")
+			.attr("class","label")
+			.attr("x",function(d){ return parseInt(d.getAttribute('x'))+(parseInt(d.getAttribute('width'))/2); })
+			.attr("y",function(d){ return parseInt(d.getAttribute('y'))+(parseInt(d.getAttribute('height'))/2)+2; })
+			.attr("height",function(d){ return d.getAttribute('height'); })
+			.attr("width",function(d){ return d.getAttribute('width'); })
+			.attr("fill","black")
+			.attr("text-anchor","middle")
+			.text(function(d){ return d.getAttribute('name').split(",")[0]});
+	};
+
+</script>
+</html>
