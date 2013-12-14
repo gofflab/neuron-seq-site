@@ -162,8 +162,11 @@
 
 <script src="http://d3js.org/d3.hive.v0.min.js"></script>
 
+  <script type="text/javascript" src="{{ STATIC_URL }}js/hive.js"></script>
+
   <script type="text/javascript">
     var gene_hive = {{ gene.diffDataHive|safe }};
+    hive.plot('#hive', gene_hive);
   </script>
 
 	<!-- D3.js scripts -->
