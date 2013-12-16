@@ -11,6 +11,9 @@ window.gene_expression = {
     if (!("margin" in attr)) {
       attr.margin = {left: 50, right: 10, bottom: 80, top: 10};
     }
+    if (!("resizable" in attr)) {
+      attr.resizable = false;
+    }
 
     var chart_attr = {
       width:  attr.width+attr.margin.left+attr.margin.right,
@@ -23,12 +26,26 @@ window.gene_expression = {
     var barSpan = barWidth + barPadding;
     var rangeSpan = barWidth * 3 + barPadding * 2;
 
-    var chart = d3.select(selector)
+    var svg = d3.select(selector)
       .append("svg:svg")
       .attr("class", "chart")
       .data([data])
-      .attr(chart_attr)
-      .append("svg:g").attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
+      .attr('preserveAspectRatio', 'xMidYMid')
+      .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
+      .attr(chart_attr);
+
+    var chart = svg.append("svg:g")
+                   .attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
+
+    if (attr.resizable) {
+      var aspect_ratio = chart_attr.width / chart_attr.height;
+      var chart_dom = $(selector).find('svg');
+      $(window).on("resize", function() {
+        var width = chart_dom.parent().width();
+        svg.attr("width", width);
+        svg.attr("height", width / aspect_ratio);
+      }).trigger("resize");
+    }
 
     var x0 = d3.scale.ordinal()
                .domain(headers[0])
@@ -167,20 +184,40 @@ window.gene_expression = {
     if (!("margin" in attr)) {
       attr.margin = {left: 50, right: 10, bottom: 80, top: 10};
     }
+    if (!("resizable" in attr)) {
+      attr.resizable = false;
+    }
 
     var chart_attr = {
       width:  attr.width+attr.margin.left+attr.margin.right,
       height: attr.height+attr.margin.top+attr.margin.bottom
     };
 
-    var chart = d3.select(selector)
+    var svg = d3.select(selector)
       .append("svg:svg")
       .attr("class", "chart")
       .data([data])
-      .attr(chart_attr)
-      .append("svg:g").attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
+      .attr('preserveAspectRatio', 'xMidYMid')
+      .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
+      .attr(chart_attr);
 
-    chart.append("svg:clipPath")
+    var chart = svg.append("svg:g")
+                   .attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
+
+    if (attr.resizable) {
+      var aspect_ratio = chart_attr.width / chart_attr.height;
+      var chart_dom = $(selector).find('svg');
+      $(window).on("resize", function() {
+        var width = chart_dom.parent().width();
+        svg.attr("width", width);
+        svg.attr("height", width / aspect_ratio);
+      }).trigger("resize");
+    }
+
+    var chart_graphic = chart.append("svg:g")
+                             .attr("class", "plot");
+
+    chart_graphic.append("svg:clipPath")
       .attr("id", "clip-boundary")
       .append("rect")
         .attr("x", 0)
@@ -211,7 +248,7 @@ window.gene_expression = {
     });
 
     // Confidence areas
-    errorPolys = chart.append('g')
+    errorPolys = chart_graphic.append('g')
       .attr('class','errorpolys');
 
     errorPolys.selectAll('polygon')
@@ -233,7 +270,7 @@ window.gene_expression = {
         "stroke": "none"});
 
     // Lines
-    lines = chart.append('g')
+    lines = chart_graphic.append('g')
       .attr('class', 'lines');
 
     lines.selectAll('path')
@@ -312,6 +349,9 @@ window.gene_expression = {
     attr.width  = attr.width  || 700;
     attr.height = attr.height || 50;
     attr.margin = attr.margin || 10;
+    if (!("resizable" in attr)) {
+      attr.resizable = false;
+    }
 
     var chart_attr = {
       width:  attr.width,
@@ -367,12 +407,25 @@ window.gene_expression = {
 
       var isoform_selector = selector + "#isoform-" + isoform.replace('.', '_');
 
-      var chart = d3.select(isoform_selector)
+      var svg = d3.select(isoform_selector)
         .append("svg:svg")
         .attr("class", "chart")
         .data([data])
-        .attr(chart_attr)
-        .append("svg:g").attr('transform', 'translate(5, 5)');
+        .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
+        .attr(chart_attr);
+
+      var chart = svg.append("svg:g")
+                     .attr('transform', 'translate(5, 5)');
+
+      if (attr.resizable) {
+        var aspect_ratio = chart_attr.width / chart_attr.height;
+        var chart_dom = $(selector).find('svg');
+        $(window).on("resize", function() {
+          var width = chart_dom.parent().width();
+          svg.attr("width", width);
+          svg.attr("height", chart_dom.parent().height());
+        }).trigger("resize");
+      }
 
       // Middle Rail
       var rail = chart.append('g')
@@ -420,21 +473,44 @@ window.gene_expression = {
     var gene_ids = Object.keys(data);
 
     if (attr == undefined) { attr = {}; }
-    attr.width  = attr.width  || 800;
-    attr.height = attr.height || (20 * gene_ids.length);
-    attr.margin = attr.margin || {left: 120, right: 10, bottom: 80, top: 10};
+    if (!("width" in attr)) {
+      attr.width = 800;
+    }
+    if (!("height" in attr)) {
+      attr.height = (20 * gene_ids.length);
+    }
+    if (!("margin" in attr)) {
+      attr.margin = {left: 120, right: 10, bottom: 80, top: 10};
+    }
+    if (!("resizable" in attr)) {
+      attr.resizable = false;
+    }
 
     var chart_attr = {
       width:  attr.width+attr.margin.left+attr.margin.right,
       height: attr.height+attr.margin.top+attr.margin.bottom
     };
 
-    var chart = d3.select(selector)
+    var svg = d3.select(selector)
       .append("svg:svg")
       .attr("class", "chart")
-      .attr(chart_attr)
-      .append("svg:g")
-      .attr("transform", "translate("+attr.margin.left+","+attr.margin.top+")");
+      .data([data])
+      .attr('preserveAspectRatio', 'xMidYMid')
+      .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
+      .attr(chart_attr);
+
+    var chart = svg.append("svg:g")
+                   .attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
+
+    if (attr.resizable) {
+      var aspect_ratio = chart_attr.width / chart_attr.height;
+      var chart_dom = $(selector).find('svg');
+      $(window).on("resize", function() {
+        var width = chart_dom.parent().width();
+        svg.attr("width", width);
+        svg.attr("height", width / aspect_ratio);
+      }).trigger("resize");
+    }
 
     // Get extents
     var fpkm_max = Math.max.apply(null,

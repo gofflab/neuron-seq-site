@@ -243,7 +243,10 @@ class Gene(models.Model):
         db_table = 'genes'
 
     def safe_name(self):
-      return self.gene_id.replace('.', '_')
+      return self.gene_id.replace('.', '_').replace(' ', '_')
+
+    def url_name(self):
+      return self.gene_id.replace(' ', '_')
 
     def fpkm(self):
     	fpkmDat = Genedata.objects.filter(gene_id=self.gene_id)
@@ -405,7 +408,7 @@ class Isoform(models.Model):
         db_table = 'isoforms'
 
     def safe_name(self):
-      return self.isoform_id.replace('.', '_')
+      return self.isoform_id.replace('.', '_').replace(' ', '_')
 
     def fpkm(self):
         fpkmDat = Isoformdata.objects.filter(isoform_id=self.isoform_id)

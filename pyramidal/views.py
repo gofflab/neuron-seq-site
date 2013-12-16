@@ -60,11 +60,12 @@ def genesDetail(request,gene_list):
 def geneShow(request,gene_id):
   try:
     # Capitalize gene_id and redirect to canonical name
-    gene_id_canonical = gene_id.title();
+    gene_id_canonical = gene_id.capitalize();
     if gene_id_canonical != gene_id:
       return redirect('gene_show', gene_id = gene_id_canonical)
 
     # Get Gene object
+    gene_id = gene_id.replace("_", " ")
     gene = Gene.objects.get(gene_id=gene_id)
     isoforms = gene.isoforms()
     allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)

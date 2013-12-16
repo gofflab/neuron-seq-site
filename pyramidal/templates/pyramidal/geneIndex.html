@@ -14,7 +14,7 @@
 </tr>
 {% for gene in genes %}
 <tr>
-	<td><a href="{% url 'gene_show' gene_id=gene.gene_id %}">{{ gene.gene_short_name }}</a></td>
+	<td><a href="{% url 'gene_show' gene_id=gene.url_name %}">{{ gene.gene_short_name }}</a></td>
 	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}" target="_blank">{{ gene.locus }}</a></td>
 	<td>{{ gene.isoforms|length }}</td>
   <td><div class="gene-expression" id="gene-{{ gene.safe_name }}"></div></td>

@@ -23,7 +23,7 @@
  	<h6>Isoforms</h6>
 		<ul>
 		{% for isoform in isoforms %}
-			<li><a href="{% url 'isoform_show' gene_id=gene.gene_id isoform_id=isoform.isoform_id %}">{{isoform.isoform_id}}</a></li>
+			<li><a href="{% url 'isoform_show' gene_id=gene.url_name isoform_id=isoform.isoform_id %}">{{isoform.isoform_id}}</a></li>
 		{% endfor %}
 		</ul>
   <h6>Resources</h6>
@@ -60,8 +60,8 @@
     <div class="panel-body">
        {% for isoform in isoforms %}
        <h5>{{ isoform.isoform_id }}</h5>
-       <div style="float:right" class="isoform-graph" id="isoform-{{ isoform.safe_name }}-graph"></div>
-       <div class="isoform" id="isoform-{{ isoform.safe_name }}"></div>
+       <div style="float:right; width: 100px; height: 50px" class="isoform-graph" id="isoform-{{ isoform.safe_name }}-graph"></div>
+       <div class="isoform" style="margin-right: 120px; height: 50px" id="isoform-{{ isoform.safe_name }}"></div>
        {% endfor %}
     </div>
   </div>
@@ -180,8 +180,8 @@
       ['corticothal', 'cpn', 'subcereb']
     ];
 
-    gene_expression.bars('#barchart',   gene_headers, gene_data, { width: 800, height: 400 });
-    gene_expression.lines('#linechart', gene_headers, gene_data, { width: 800, height: 400 });
+    gene_expression.bars('#barchart',   gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+    gene_expression.lines('#linechart', gene_headers, gene_data, { width: 800, height: 400, resizable: true });
 
     var isoforms = {
      {% for isoform in isoforms %}
@@ -189,7 +189,7 @@
      {% endfor %}
     };
 
-    gene_expression.isoforms('.isoform', isoforms);
+    gene_expression.isoforms('.isoform', isoforms, { resizable: true } );
 
     var isoform_data = {
      {% for isoform in isoforms %}
