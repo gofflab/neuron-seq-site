@@ -601,15 +601,9 @@ window.gene_expression = {
       .style({
         "stroke": "none"});
 
-    chart.append('svg:g')
-         .attr('class', 'rows');
-
     var rows = chart.selectAll( '.rows' )
       .data( gene_ids )
-      .enter().append('svg:g')
-
-      console.log(fpkm_max);
-      console.log(fpkm_min);
+      .enter().append('svg:g').attr("class", "rows")
 
     var map = rows.selectAll('rect')
       .data(function(gene_id,i,j) { return data[gene_id] })
@@ -628,7 +622,7 @@ window.gene_expression = {
         console.log(gene_ids[j] + ":" + headers[0][time_index] + "_" + headers[1][type_index] + " = " + gene);
         return x0(headers[0][time_index] + "_" + headers[1][type_index])
       })
-      .attr('y', function(gene,i,j) { return y(gene_ids[j])})
+      .attr('y', function(gene,i,j) { console.log(j); console.log(gene_ids[j]); return y(gene_ids[j])})
       .attr('width', attr.width / 12)
       .attr('height', y(gene_ids[1]) - y(gene_ids[0]))
       .style({
@@ -641,7 +635,7 @@ window.gene_expression = {
             return fpkm / fpkm_max;
           }
         },
-        fill:   function(fpkm,i,j) {
+        fill: function(fpkm,i,j) {
           if (fpkm < 0) {
             return colors[0];
           }
