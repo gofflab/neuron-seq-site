@@ -50,6 +50,8 @@ document.querySelector('#timeOutput').value = timeScale(output);
     //var barHeight = 25;
     var numCols = 10;
 
+    var qFilter = 0.001;
+
     var timepoint = "P1";
     document.getElementById('slider').addEventListener('change', function() {
         timepoint = timeScale(document.getElementById("slider").value);
@@ -78,6 +80,10 @@ document.querySelector('#timeOutput').value = timeScale(output);
                     .domain(d3.range(0,4))
                     .range(["E15","E16","E18","P1"])
 
+    // var borderScale = d3.scale.ordinal()
+    //                 .domain([true,false])
+    //                 .range(["red","black"])
+
     //Helper Functions
     function makeRGB(r,g,b){
         tot = r+g+b
@@ -86,6 +92,18 @@ document.querySelector('#timeOutput').value = timeScale(output);
         b_1 = (b/tot)*255
         return d3.rgb(r_1,g_1,b_1)
     };
+
+    // function isSig(diffArray,timepoint){
+    //     var sig = false;
+    //     for (i=0;i<diffArray.length;i++){
+    //         if(diffArray[i].timepoint_1 == diffArray[i].timepoint_2 == timepoint){
+    //             if (diffArray[i].q_value<=qFilter){
+    //                 sig = true;
+    //             }
+    //         }
+    //     }
+    //     return sig;
+    // }
 
     //Initialize SVG
     var svg = d3.select( '#genelist' ).append( 'svg:svg' )
