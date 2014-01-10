@@ -477,7 +477,7 @@ window.gene_expression = {
       attr.width = 800;
     }
     if (!("height" in attr)) {
-      attr.height = (20 * gene_ids.length);
+      attr.height = (5*gene_ids.length)/10 + 20*10;
     }
     if (!("margin" in attr)) {
       attr.margin = {left: 120, right: 10, bottom: 80, top: 10};
@@ -536,6 +536,10 @@ window.gene_expression = {
       });
     });
 
+    gene_ids_subset = gene_ids.filter(function(e,i) {
+      return (i % 10) == 0;
+    });
+
     var x0 = d3.scale.ordinal()
                .domain(all_headers)
                .rangeBands([0, attr.width]);
@@ -545,8 +549,8 @@ window.gene_expression = {
                .rangeBands([0, attr.width]);
 
     var y = d3.scale.ordinal()
-              .domain(gene_ids)
-              .rangeBands([0, attr.height]);
+              .domain(gene_ids_subset)
+              .rangeBands([0, attr.height-200]);
 
     // Axis
     var xAxis = d3.svg.axis()
@@ -582,28 +586,118 @@ window.gene_expression = {
       .call(xAxisLegend);
 
     chart.append('g')
-      .attr('class', 'y axis')
-      .call(yAxis)
+      .attr('class', 'y axis');
 
     chart.selectAll('.tick line')
       .style({
         "fill": "none",
         "stroke": "none"});
 
-    chart.selectAll('.tick text')
-      .style({
-        "cursor": "pointer"})
-      .on("click", function(d) {
-        document.location.href = "/pyramidal/genes/"+d
-      });
-
     chart.selectAll('.axis line')
       .style({
         "stroke": "none"});
 
     var rows = chart.selectAll( '.rows' )
-      .data( gene_ids )
+      .data(gene_ids_subset)
       .enter().append('svg:g').attr("class", "rows")
+                              .attr("id", function(d,i) { return "row-"+i; });
+
+    var yAxisSelection = chart.append('g')
+                              .attr('class', 'y axis');
+
+    var createInset = function(row, i) {
+      // Hide old inset
+      if (toggled_row > -1) {
+        d3.selectAll('#row-'+toggled_row+' .sub-rows')
+          .remove();
+      }
+
+      // Get rid of / add back the row
+      if (toggled_row > -1) {
+        d3.selectAll('#row-'+toggled_row+' rect').style("fill-opacity", null);
+      }
+      d3.selectAll('#row-'+i+' rect').style("fill-opacity", 0);
+
+      // Move rows down to fit expanded inset
+      d3.selectAll('.rows')
+        .attr("transform", function(d, j) { if (j <= i) return null; else return "translate(0,195)"; });
+
+      // Determine data for inset
+      var datas = gene_ids.slice(i*10, (i+1)*10);
+
+      var sub_y = d3.scale.ordinal()
+                          .domain(datas)
+                          .rangeBands([0, 20*datas.length]);
+
+      var subYAxis = d3.svg.axis()
+        .scale(sub_y)
+        .ticks(datas.length)
+        .tickSize(6, 3, 1)
+        .orient('left');
+
+      yAxisSelection.attr("transform", "translate(0,"+y(gene_ids_subset[i])+")")
+                    .call(subYAxis);
+
+      chart.selectAll('.tick text')
+        .style({
+          "cursor": "pointer"})
+        .on("click", function(d) {
+          document.location.href = "/pyramidal/genes/"+d
+        });
+
+      // Create inset
+      var sub_rows = d3.select('#row-'+i).selectAll('.sub-rows')
+        .data(datas)
+        .enter().append('svg:g')
+        .style("fill", "#fff")
+        .attr("class", "sub-rows")
+        .attr("id", function(d,j) { return "sub-row-"+i+"-"+j; });
+
+      var sub_map = sub_rows.selectAll('rect')
+        .data(function(gene_id, j, k) { return data[gene_id] })
+        .enter().append('rect')
+        .attr('x', function(gene, i, j) {
+          var type_index = i % 3;
+          var time_index = Math.floor(i/3);
+
+          // cpn and corticothal are swapped in the cluster data
+          if (type_index == 0) {
+            type_index = 1;
+          }
+          else if (type_index == 1) {
+            type_index = 0;
+          }
+        return x0(headers[0][time_index] + "_" + headers[1][type_index])
+        })
+        .attr('y', function(gene,j,k) { return y(gene_ids_subset[i]) + (k * 20) })
+        .attr('width', attr.width / 12)
+        .attr('height', 20)
+        .style({
+          stroke: "none",
+          opacity: function(fpkm) {
+            if (fpkm < 0) {
+              return fpkm / fpkm_min;
+            }
+            else {
+              return fpkm / fpkm_max;
+            }
+          },
+          fill: function(fpkm,i,j) {
+            if (fpkm < 0) {
+              return colors[0];
+            }
+            else {
+              return colors[2];
+            }
+          }
+        });
+
+      toggled_row = i;
+    };
+
+    var toggled_row = -1;
+    chart.selectAll('.rows')
+         .on("click", createInset);
 
     var map = rows.selectAll('rect')
       .data(function(gene_id,i,j) { return data[gene_id] })
@@ -619,12 +713,11 @@ window.gene_expression = {
         else if (type_index == 1) {
           type_index = 0;
         }
-        console.log(gene_ids[j] + ":" + headers[0][time_index] + "_" + headers[1][type_index] + " = " + gene);
         return x0(headers[0][time_index] + "_" + headers[1][type_index])
       })
-      .attr('y', function(gene,i,j) { console.log(j); console.log(gene_ids[j]); return y(gene_ids[j])})
+      .attr('y', function(gene,i,j) { return y(gene_ids_subset[j]) })
       .attr('width', attr.width / 12)
-      .attr('height', y(gene_ids[1]) - y(gene_ids[0]))
+      .attr('height', y(gene_ids_subset[1]) - y(gene_ids_subset[0]))
       .style({
         stroke: "none",
         opacity: function(fpkm) {
@@ -644,5 +737,7 @@ window.gene_expression = {
           }
         }
       });
+
+    createInset(d3.select('#row-0'), 0);
   }
 };
