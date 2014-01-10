@@ -59,13 +59,13 @@ def genesDetail(request,gene_list):
 
 def geneShow(request,gene_id):
   try:
-    # Capitalize gene_id and redirect to canonical name
-    gene_id_canonical = gene_id.capitalize();
-    if gene_id_canonical != gene_id:
-      return redirect('gene_show', gene_id = gene_id_canonical)
-
     # Get Gene object
     gene_id = gene_id.replace("_", " ")
+    gene = Gene.objects.get(gene_id__iexact=gene_id)
+    if gene.gene_id != gene_id:
+      return redirect('gene_show', gene_id = gene.gene_id)
+
+    # Get Gene object
     gene = Gene.objects.get(gene_id=gene_id)
     isoforms = gene.isoforms()
     allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
@@ -82,13 +82,11 @@ def geneShow(request,gene_id):
 
 def geneIsoforms(request, gene_id):
   try:
-    # Capitalize gene_id and redirect to canonical name
-    gene_id_canonical = gene_id.title();
-    if gene_id_canonical != gene_id:
-      return redirect('gene_show', gene_id = gene_id_canonical)
-
     # Get Gene object
-    gene = Gene.objects.get(gene_id=gene_id)
+    gene = Gene.objects.get(gene_id__iexact=gene_id)
+    if gene.gene_id != gene_id:
+      return redirect('gene_show', gene_id = gene.gene_id)
+
     allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
     allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
   except Gene.DoesNotExist:
