@@ -1,30 +1,45 @@
 window.hive = {
-  plot: function(selector, data) {
+  plot: function(selector, info_selector, data) {
     var colors = ["steelblue", "green", "crimson"];
 
     //New Hive plot
-    var width = 300;
-    var height = 300;
-    var innerRadius = 20;
-    var outerRadius = 120;
+    var width  = 450;
+    var height = 450;
+    var innerRadius = (height/2)/6;
+    var outerRadius = (height/2)*5/6;
 
     //Load data
     var celltypes = ["cpn","subcereb","corticothal"];
     var timepoints = ["E15","E16","E18","P1"];
 
-    var nodes = [
-      {"celltype":"cpn","timepoint":"E15"},
-      {"celltype":"cpn","timepoint":"E16"},
-      {"celltype":"cpn","timepoint":"E18"},
-      {"celltype":"cpn","timepoint":"P1"},
-      {"celltype":"subcereb","timepoint":"E15"},
-      {"celltype":"subcereb","timepoint":"E16"},
-      {"celltype":"subcereb","timepoint":"E18"},
-      {"celltype":"subcereb","timepoint":"P1"},
-      {"celltype":"corticothal","timepoint":"E15"},
-      {"celltype":"corticothal","timepoint":"E16"},
-      {"celltype":"corticothal","timepoint":"E18"},
-      {"celltype":"corticothal","timepoint":"P1"},
+    var nodesByName = {
+      "E15_cpn":{"celltype":"cpn","timepoint":"E15","name":"E15_cpn"},
+      "E16_cpn":{"celltype":"cpn","timepoint":"E16","name":"E16_cpn"},
+      "E18_cpn":{"celltype":"cpn","timepoint":"E18","name":"E18_cpn"},
+      "P1_cpn":{"celltype":"cpn","timepoint":"P1","name":"P1_cpn"},
+      "E15_subcereb":{"celltype":"subcereb","timepoint":"E15","name":"E15_subcereb"},
+      "E16_subcereb":{"celltype":"subcereb","timepoint":"E16","name":"E16_subcereb"},
+      "E18_subcereb":{"celltype":"subcereb","timepoint":"E18","name":"E18_subcereb"},
+      "P1_subcereb":{"celltype":"subcereb","timepoint":"P1","name":"P1_subcereb"},
+      "E15_corticothal":{"celltype":"corticothal","timepoint":"E15","name":"E15_corticothal"},
+      "E16_corticothal":{"celltype":"corticothal","timepoint":"E16","name":"E16_corticothal"},
+      "E18_corticothal":{"celltype":"corticothal","timepoint":"E18","name":"E18_corticothal"},
+      "P1_corticothal":{"celltype":"corticothal","timepoint":"P1","name":"P1_corticothal"},
+    };
+
+    var nodes= [
+      {"celltype":"cpn","timepoint":"E15","name":"E15_cpn"},
+      {"celltype":"cpn","timepoint":"E16","name":"E16_cpn"},
+      {"celltype":"cpn","timepoint":"E18","name":"E18_cpn"},
+      {"celltype":"cpn","timepoint":"P1","name":"P1_cpn"},
+      {"celltype":"subcereb","timepoint":"E15","name":"E15_subcereb"},
+      {"celltype":"subcereb","timepoint":"E16","name":"E16_subcereb"},
+      {"celltype":"subcereb","timepoint":"E18","name":"E18_subcereb"},
+      {"celltype":"subcereb","timepoint":"P1","name":"P1_subcereb"},
+      {"celltype":"corticothal","timepoint":"E15","name":"E15_corticothal"},
+      {"celltype":"corticothal","timepoint":"E16","name":"E16_corticothal"},
+      {"celltype":"corticothal","timepoint":"E18","name":"E18_corticothal"},
+      {"celltype":"corticothal","timepoint":"P1","name":"P1_corticothal"},
     ];
 
     //Helper functions
@@ -36,7 +51,30 @@ window.hive = {
       .domain(timepoints)
       .rangePoints([innerRadius,outerRadius]);
 
-    //create svg object
+    var logFCarray =
+      d3.entries(data)
+        .sort(function(a,b){
+          return d3.ascending(
+            Math.abs(a.value.values.log2_fold_change),
+            Math.abs(b.value.values.log2_fold_change))
+        });
+
+    var fcMin = logFCarray[0].value.values.log2_fold_change;
+    var fcMax = Math.abs(d3.min([logFCarray[logFCarray.length-1].value.values.log2_fold_change,10]));
+
+    var linkSize = d3.scale.linear()
+                           .domain([fcMin,fcMax])
+                           .range([0.5,10])
+                           .clamp(true);
+
+    var info = d3.select(info_selector);
+    var qFilter = 0.001;
+
+    info.html("<h4>" +
+      "Hover or tap a line to investigate" +
+      "</h4>");
+
+    // Create svg object
     var svg = d3.select(selector)
       .append("svg:svg")
       .attr("width", width)
@@ -53,19 +91,68 @@ window.hive = {
       .attr("x1", radius.range()[0])
       .attr("x2", radius.range()[1]);
 
-    //This will be the tricky part
-    //Draw the links
-/*     svg.append("g")
-      .attr("class","hivelinks")
-      .selectAll(".hivelink")
-      .data(data)
-      .enter().append("path")
-      .attr("class","hivelink")
-      .attr("d", link())*/
-//      .angle(function(d) { return angle(d.celltype_1); })
-//      .radius(function(d) { return radius(d.timepoint_1); })
+      // Draw the links.
+      svg.append("g")
+        .attr("class", "links")
+        .selectAll(".link")
+        .data(data)
+        .enter().append("path")
+        .filter(function(d) { return d.values.q_value <= qFilter })
+        .attr("class", "link")
+        .attr("d", link()
+            .angle(function(d) { return angle(celltypes.indexOf(d.celltype)); })
+            .radius(function(d) { return radius(d.timepoint); }))
+        .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
+        .style("stroke","#999")
+        .style("fill","none")
+        .style("stroke-opacity",".3")
+        .on("mouseover", function(d){
+          d3.select(this)
+          .classed("active",true)
+          .style("stroke","#f00")
+          .style("stroke-opacity","1");
 
-    //TODO: Make node drawing work.
+        info.html("<h4>" +
+          d.source.sample +
+          " vs " +
+          d.target.sample +
+          "</h4> <table class='table table-striped table-condensed'>" +
+          "<tr><td><h5>"+d.values.sample_1+"</h5></td><td>" + d.values.value_1 + "</td></tr>" +
+          "<tr><td><h5>" + d.values.sample_2 +"</h5></td><td>" + d.values.value_2 + "</td></tr>" +
+          "<tr><td><h5>Log2 Ratio:</h5></td><td>" +
+          d.values.log2_fold_change + "</td></tr>" +
+          "<tr><td><h5>Test Statistic:</h5></td><td>" +
+          d.values.test_stat + "</td></tr>" +
+          "<tr><td><h5>p-value:</h5></td><td>" +
+          d.values.p_value + "</td></tr>" +
+          "<tr><td><h5>q-value:</h5></td><td>" +
+          d.values.q_value + "</td></tr>" +
+          "<tr><td><h5>Significant</h5></td><td>" +
+          d.values.significant + "</td></tr>" +
+          "</table>");
+        })
+      .on("mouseout", function(d){
+        d3.select(this)
+        .classed("active", false)
+        .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
+        .style("stroke","#999")
+        .style("fill","none")
+        .style("stroke-opacity",".3");
+      });
+
+   svg.selectAll(".hiveaxislabel")
+      .data(celltypes)
+      .enter()
+        .append("text")
+        .attr("y", 6)
+        .attr("dy", ".9em")
+        .attr("x",radius.range()[radius.range().length-1]/4)
+        .attr("dx","-1em")
+        .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
+        .text(function(d){return d})
+        .style("stroke", function(d,i) { return colors[i]; })
+        .attr("text-decoration","none");
+
     //Draw the nodes
     svg.append("g")
       .attr("class","hivenodes")
