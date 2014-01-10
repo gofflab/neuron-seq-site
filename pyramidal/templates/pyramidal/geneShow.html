@@ -50,8 +50,8 @@
   <div class="panel panel-default">
   <div class="panel-heading"><h4>Expression Distribution</h4></div>
     <div class="panel-body">
-       <div id="barchart"></div>
        <div id="linechart"></div>
+       <div id="barchart"></div>
     </div>
   </div>
 
@@ -68,15 +68,8 @@
 	<div class="panel panel-default">
   <div class="panel-heading"><h4>Differential Analysis</h4></div>
   <div class="panel-body">
-
-		  <div class="media">
-        <!--<input style="position:relative;top:3px;" type="range" min="0" max="4" value="3">-->
-        <!--<a class="pull-left" href="#">-->
-          <div class="pull-left" id="hive"></div>
-        <!--</a>-->
-        <div class="media-body pull-left" id="info">
-        </div>
-      </div>
+    <div id="hive" style="display: inline-block; width: 450px; height: 450px; vertical-align:middle"></div>
+    <div id="hive_info" style="display: inline-block; width: 350px; height: 350px; vertical-align:middle"></div>
 	</div>
   </div>
 
@@ -166,7 +159,7 @@
 
   <script type="text/javascript">
     var gene_hive = {{ gene.diffDataHive|safe }};
-    hive.plot('#hive', gene_hive);
+    hive.plot('#hive', '#hive_info', gene_hive);
   </script>
 
 	<!-- D3.js scripts -->
@@ -180,8 +173,8 @@
       ['corticothal', 'cpn', 'subcereb']
     ];
 
-    gene_expression.bars('#barchart',   gene_headers, gene_data, { width: 800, height: 400, resizable: true });
     gene_expression.lines('#linechart', gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+    gene_expression.bars('#barchart',   gene_headers, gene_data, { width: 800, height: 400, resizable: true });
 
     var isoforms = {
      {% for isoform in isoforms %}
