@@ -2,6 +2,8 @@ window.hive = {
   plot: function(selector, info_selector, data) {
     var colors = ["steelblue", "green", "crimson"];
 
+    colors = [colors[1], colors[0], colors[2]];
+
     //New Hive plot
     var width  = 450;
     var height = 450;
@@ -9,7 +11,7 @@ window.hive = {
     var outerRadius = (height/2)*5/6;
 
     //Load data
-    var celltypes = ["cpn","subcereb","corticothal"];
+    var celltypes = ["cpn","corticothal","subcereb"];
     var timepoints = ["E15","E16","E18","P1"];
 
     var nodesByName = {
@@ -17,14 +19,14 @@ window.hive = {
       "E16_cpn":{"celltype":"cpn","timepoint":"E16","name":"E16_cpn"},
       "E18_cpn":{"celltype":"cpn","timepoint":"E18","name":"E18_cpn"},
       "P1_cpn":{"celltype":"cpn","timepoint":"P1","name":"P1_cpn"},
-      "E15_subcereb":{"celltype":"subcereb","timepoint":"E15","name":"E15_subcereb"},
-      "E16_subcereb":{"celltype":"subcereb","timepoint":"E16","name":"E16_subcereb"},
-      "E18_subcereb":{"celltype":"subcereb","timepoint":"E18","name":"E18_subcereb"},
-      "P1_subcereb":{"celltype":"subcereb","timepoint":"P1","name":"P1_subcereb"},
       "E15_corticothal":{"celltype":"corticothal","timepoint":"E15","name":"E15_corticothal"},
       "E16_corticothal":{"celltype":"corticothal","timepoint":"E16","name":"E16_corticothal"},
       "E18_corticothal":{"celltype":"corticothal","timepoint":"E18","name":"E18_corticothal"},
       "P1_corticothal":{"celltype":"corticothal","timepoint":"P1","name":"P1_corticothal"},
+      "E15_subcereb":{"celltype":"subcereb","timepoint":"E15","name":"E15_subcereb"},
+      "E16_subcereb":{"celltype":"subcereb","timepoint":"E16","name":"E16_subcereb"},
+      "E18_subcereb":{"celltype":"subcereb","timepoint":"E18","name":"E18_subcereb"},
+      "P1_subcereb":{"celltype":"subcereb","timepoint":"P1","name":"P1_subcereb"},
     };
 
     var nodes= [
@@ -32,14 +34,14 @@ window.hive = {
       {"celltype":"cpn","timepoint":"E16","name":"E16_cpn"},
       {"celltype":"cpn","timepoint":"E18","name":"E18_cpn"},
       {"celltype":"cpn","timepoint":"P1","name":"P1_cpn"},
-      {"celltype":"subcereb","timepoint":"E15","name":"E15_subcereb"},
-      {"celltype":"subcereb","timepoint":"E16","name":"E16_subcereb"},
-      {"celltype":"subcereb","timepoint":"E18","name":"E18_subcereb"},
-      {"celltype":"subcereb","timepoint":"P1","name":"P1_subcereb"},
       {"celltype":"corticothal","timepoint":"E15","name":"E15_corticothal"},
       {"celltype":"corticothal","timepoint":"E16","name":"E16_corticothal"},
       {"celltype":"corticothal","timepoint":"E18","name":"E18_corticothal"},
       {"celltype":"corticothal","timepoint":"P1","name":"P1_corticothal"},
+      {"celltype":"subcereb","timepoint":"E15","name":"E15_subcereb"},
+      {"celltype":"subcereb","timepoint":"E16","name":"E16_subcereb"},
+      {"celltype":"subcereb","timepoint":"E18","name":"E18_subcereb"},
+      {"celltype":"subcereb","timepoint":"P1","name":"P1_subcereb"},
     ];
 
     //Helper functions
@@ -159,7 +161,7 @@ window.hive = {
       .selectAll(".hivenode")
       .data(nodes)
       .enter().append("circle")
-      .style("fill", function(d,i) { console.log(JSON.stringify(d)); console.log(Math.floor(i/4)); return colors[Math.floor(i/4)]; })
+      .style("fill", function(d,i) { return colors[Math.floor(i/4)]; })
       .attr("transform", function(d) { return "rotate(" + degrees(angle(d.celltype)) + ")"; })
       .attr("cx", function(d) { return radius(d.timepoint) })
       .attr("r", 5);
