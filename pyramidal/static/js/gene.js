@@ -477,7 +477,7 @@ window.gene_expression = {
       attr.width = 800;
     }
     if (!("height" in attr)) {
-      attr.height = (5*gene_ids.length)/10 + 20*10;
+      attr.height = 5*gene_ids.length + 20*10;
     }
     if (!("margin" in attr)) {
       attr.margin = {left: 120, right: 10, bottom: 80, top: 10};
@@ -536,9 +536,7 @@ window.gene_expression = {
       });
     });
 
-    gene_ids_subset = gene_ids.filter(function(e,i) {
-      return (i % 10) == 0;
-    });
+    gene_ids_subset = gene_ids;
 
     var x0 = d3.scale.ordinal()
                .domain(all_headers)
@@ -605,6 +603,8 @@ window.gene_expression = {
     var yAxisSelection = chart.append('g')
                               .attr('class', 'y axis');
 
+    var single_row_height = y(gene_ids_subset[1]) - y(gene_ids_subset[0]);
+
     var createInset = function(row, i) {
       // Hide old inset
       if (toggled_row > -1) {
@@ -620,10 +620,11 @@ window.gene_expression = {
 
       // Move rows down to fit expanded inset
       d3.selectAll('.rows')
-        .attr("transform", function(d, j) { if (j <= i) return null; else return "translate(0,195)"; });
+        .attr("transform", function(d, j) { if (j <= (i+9)) return null; else return "translate(0,"+(20*10 - single_row_height*10)+")"; })
+        .style("opacity", function(d, j) { if (j > i && j <= (i+9)) return "0.0"; else return null } );
 
       // Determine data for inset
-      var datas = gene_ids.slice(i*10, (i+1)*10);
+      var datas = gene_ids.slice(i, (i+10));
 
       var sub_y = d3.scale.ordinal()
                           .domain(datas)
@@ -717,7 +718,7 @@ window.gene_expression = {
       })
       .attr('y', function(gene,i,j) { return y(gene_ids_subset[j]) })
       .attr('width', attr.width / 12)
-      .attr('height', y(gene_ids_subset[1]) - y(gene_ids_subset[0]))
+      .attr('height', single_row_height)
       .style({
         stroke: "none",
         opacity: function(fpkm) {
@@ -737,6 +738,28 @@ window.gene_expression = {
           }
         }
       });
+
+    var old_scale = 1.0;
+    var zoom = d3.behavior.zoom()
+      .on("zoom", function() {
+        var delta = -4;
+        if (old_scale > d3.event.scale) {
+          delta = 4;
+        }
+        old_scale = d3.event.scale;
+        var new_toggled = toggled_row + delta;
+
+        if (new_toggled < 0) {
+          new_toggled = 0;
+        }
+        else if (new_toggled > gene_ids.length - 10) {
+          new_toggled = gene_ids.length - 10;
+        }
+
+        createInset(d3.select("#row-" + new_toggled), new_toggled);
+      });
+
+    chart.call(zoom);
 
     createInset(d3.select('#row-0'), 0);
   }
