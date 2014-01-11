@@ -255,14 +255,14 @@ class Gene(models.Model):
     	return dict(zip(sampleKeys,fpkmVals))
 
     def expression(self):
-    	expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
-    	samples = [x.sample_name for x in expressionDat]
-    	res = [x.__dict__ for x in expressionDat]
-        for r in range(len(res)):
-            res[r]['_state'] = None
-            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
-            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
-    	return dict(zip(samples,res))
+      expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
+      samples = [x.sample_name for x in expressionDat]
+      res = [x.__dict__ for x in expressionDat]
+      for r in range(len(res)):
+        res[r]['_state'] = None
+        res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+        res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+      return dict(zip(samples,res))
 
     def expressionJson(self):
         expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
