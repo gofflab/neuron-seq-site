@@ -1,19 +1,19 @@
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-import json, urllib2
+from pyramidal.models import Gene,Isoform,ClusterAssignment,Features
 
-from pyramidal.models import Gene,Isoform
+from pyramidal.allen import AllenExplorer
 
 def index(request):
 	context = {}
 	return render(request,'pyramidal/index.html',context)
 
-def genes(request):
+def geneIndex(request):
 	if ('order_by' in request.GET) and request.GET['order_by'].strip():
 		order_by = request.GET.get('order_by','defaultOrderField')
 	else:
@@ -32,7 +32,7 @@ def genes(request):
 	context = {
 		'genes': genes,
 	}
-	return render(request,'pyramidal/genes.html',context)
+	return render(request,'pyramidal/geneIndex.html',context)
 
 def genesDetail(request,gene_list):
 	"""Takes a '+'-separated list of genes as <gene_list>"""
@@ -57,55 +57,52 @@ def genesDetail(request,gene_list):
 # Gene & Isoform detail
 ##################
 
-# Allen Interaction
-##########
+def geneShow(request,gene_id):
+  try:
+    # Get Gene object
+    gene_id = gene_id.replace("_", " ")
+    gene = Gene.objects.get(gene_id__iexact=gene_id)
+    if gene.gene_id != gene_id:
+      return redirect('gene_show', gene_id = gene.gene_id)
 
-def getAllenExperimentIds(gene_id='Fezf2'):
-	# Mouse
-	baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqMouse],genes[acronym$eq%s]" % gene_id
-	# DevMouse
-	#baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],genes[acronym$eq%s]" % gene_id 
-	#print baseUrl
-	response = urllib2.urlopen(baseUrl)
-	data = json.load(response)
-	if data['success']:
-		res = [x['id'] for x in data['msg']]
-	else:
-		res = []
-	return res
+    # Get Gene object
+    gene = Gene.objects.get(gene_id=gene_id)
+    isoforms = gene.isoforms()
+    allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
+    allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
+  except Gene.DoesNotExist:
+    return Http404
+  context = {
+      'gene': gene,
+      'isoforms': isoforms,
+      'sunburstIds': allenExpIds,
+      'sectionData': allenSectionData,
+      }
+  return render(request,'pyramidal/geneShow.html',context)
 
-def getAllenSectionData(gene_id='Fezf2'):
-	#baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],plane_of_section[name$eq'coronal'],genes[acronym$eq'%s']&include=genes,section_images,specimen(donor(age))" % gene_id
-	baseUrl = "http://api.brain-map.org/api/v2/data/SectionDataSet/query.json?criteria=[failed$eqfalse],products[abbreviation$eqDevMouse],genes[acronym$eq'%s']&include=genes,section_images,specimen(donor(age))" % gene_id
-	response = urllib2.urlopen(baseUrl)
-	data = json.load(response)
-	if data['success']:
-		return data
-	else:
-		return False
+def geneIsoforms(request, gene_id):
+  try:
+    # Get Gene object
+    gene = Gene.objects.get(gene_id__iexact=gene_id)
+    if gene.gene_id != gene_id:
+      return redirect('gene_show', gene_id = gene.gene_id)
 
+    allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
+    allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
+  except Gene.DoesNotExist:
+    return Http404
+  context = {
+      'gene': gene,
+      'sunburstIds': allenExpIds,
+      'sectionData': allenSectionData,
+      }
+  return render(request,'pyramidal/geneShow.html',context)
 
-def geneDetail(request,gene_id):
+def isoformDetail(request,gene_id,isoform_id):
 	try:
-		#get Gene object
-		gene = Gene.objects.get(gene_id=gene_id)
-		allenExpIds = getAllenExperimentIds(gene.gene_short_name)
-		allenSectionData = getAllenSectionData(gene.gene_short_name)
-	except Gene.DoesNotExist:
-		return Http404
-	context = {
-		'gene': gene,
-		'sunburstIds': allenExpIds,
-		'sectionData': allenSectionData,
-	}
-	return render(request,'pyramidal/geneDetail.html',context)
-	
-
-def isoformDetail(request,isoform_id):
-	try:
-		#get Isoform object
+		# Get Isoform object
 		isoform = Isoform.objects.get(isoform_id=isoform_id)
-		
+
 		context = {
 			'isoform': isoform,
 		}
@@ -113,13 +110,16 @@ def isoformDetail(request,isoform_id):
 	except Gene.DoesNotExist:
 		return Http404
 
-def clusters(request):
-	context={}
-	return HttpResponse("You found the master cluster list!")
+def clusterIndex(request):
+  context = {
+  }
+  return render(request,'pyramidal/clusterIndex.html',context)
 
-def clusterDetail(request,cluster):
-	response = "You have found the cluster page for cluster number %s"
-	return HttpResponse(response % cluster)
+def clusterShow(request, cluster_id):
+  context = {
+    'cluster_id': cluster_id
+  }
+  return render(request,'pyramidal/clusterShow.html',context)
 
 #####################
 # Search functionality
@@ -129,60 +129,59 @@ import re
 from django.db.models import Q
 
 def normalize_query(query_string,
-                    findterms=re.compile(r'"([^"]+)"|(\S+)').findall,
-                    normspace=re.compile(r'\s{2,}').sub):
-    ''' Splits the query string in invidual keywords, getting rid of unecessary spaces
-        and grouping quoted words together.
-        Example:
-        
-        >>> normalize_query('  some random  words "with   quotes  " and   spaces')
-        ['some', 'random', 'words', 'with quotes', 'and', 'spaces']
-    
-    '''
-    return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)] 
+	                  findterms=re.compile(r'"([^"]+)"|(\S+)').findall,
+	                  normspace=re.compile(r'\s{2,}').sub):
+	  ''' Splits the query string in invidual keywords, getting rid of unecessary spaces
+	      and grouping quoted words together.
+	      Example:
+
+	      >>> normalize_query('  some random  words "with   quotes  " and   spaces')
+	      ['some', 'random', 'words', 'with quotes', 'and', 'spaces']
+
+	  '''
+	  return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)]
 
 def get_query(query_string, search_fields):
-    ''' Returns a query, that is a combination of Q objects. That combination
-        aims to search keywords within a model by testing the given search fields.
-    
-    '''
-    query = None # Query to search for every search term        
-    terms = normalize_query(query_string)
-    for term in terms:
-        or_query = None # Query to search for a given term in each field
-        for field_name in search_fields:
-            q = Q(**{"%s__icontains" % field_name: term})
-            if or_query is None:
-                or_query = q
-            else:
-                or_query = or_query | q
-        if query is None:
-            query = or_query
-        else:
-            query = query & or_query
-    return query
+	  ''' Returns a query, that is a combination of Q objects. That combination
+	      aims to search keywords within a model by testing the given search fields.
+
+	  '''
+	  query = None # Query to search for every search term
+	  terms = normalize_query(query_string)
+	  for term in terms:
+	      or_query = None # Query to search for a given term in each field
+	      for field_name in search_fields:
+	          q = Q(**{"%s__icontains" % field_name: term})
+	          if or_query is None:
+	              or_query = q
+	          else:
+	              or_query = or_query | q
+	      if query is None:
+	          query = or_query
+	      else:
+	          query = query & or_query
+	  return query
 
 
 ##############
 # Search
 ##############
 def search(request):
-    query_string = ''
-    found_genes = None
-    if ('q' in request.GET) and request.GET['q'].strip():
-        query_string = request.GET['q']
-        
-        entry_query = get_query(query_string, ['gene_id', 'gene_short_name',])
-        
-        found_genes = Gene.objects.filter(entry_query).order_by('gene_id')
-    return render(request,'pyramidal/search_results.html',
-                          { 'query_string': query_string, 'found_genes': found_genes }
-                 )
+  query_string = ''
+  found_genes = None
+  if ('q' in request.GET) and request.GET['q'].strip():
+    query_string = request.GET['q']
 
+  entry_query = get_query(query_string, ['gene_id', 'gene_short_name',])
 
- ####################
- # Development
- #####################
+  found_genes = Gene.objects.filter(entry_query).order_by('gene_id')
+  return render(request,'pyramidal/search_results.html',
+        { 'query_string': query_string, 'found_genes': found_genes }
+               )
+
+####################
+# Development
+#####################
 def dev(request):
 	context = {}
 	return render(request,'pyramidal/testKegg.html',context)

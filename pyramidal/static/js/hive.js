@@ -1,179 +1,256 @@
-//New Hive plot
-var width = 300,
-    height = 300,
-    innerRadius = 20,
-    outerRadius = 120;
-    //majorAngle = 2 * Math.PI / 3,
-    //minorAngle = 1 * Math.PI / 12;
+window.hive = {
+  plot: function(selector, info_selector, data) {
+    var colors = ["steelblue", "green", "crimson"];
 
-//Load data
-var data = {{ gene.diffDataHive|safe }};
-var celltypes = ["cpn","subcereb","corticothal"];
-var timepoints = ["E15","E16","E18","P1"];
+    colors = [colors[1], colors[0], colors[2]];
 
-var nodes = [
-    {"celltype":"cpn","timepoint":"E15"},
-    {"celltype":"cpn","timepoint":"E16"},
-    {"celltype":"cpn","timepoint":"E18"},
-    {"celltype":"cpn","timepoint":"P1"},
-    {"celltype":"subcereb","timepoint":"E15"},
-    {"celltype":"subcereb","timepoint":"E16"},
-    {"celltype":"subcereb","timepoint":"E18"},
-    {"celltype":"subcereb","timepoint":"P1"},
-    {"celltype":"corticothal","timepoint":"E15"},
-    {"celltype":"corticothal","timepoint":"E16"},
-    {"celltype":"corticothal","timepoint":"E18"},
-    {"celltype":"corticothal","timepoint":"P1"},
-];
-//Sample data
-//{"name":"flare.analytics.cluster.AgglomerativeCluster","size":3938,"imports":["flare.animate.Transitioner","flare.vis.data.DataList","flare.util.math.IMatrix","flare.analytics.cluster.MergeEdge","flare.analytics.cluster.HierarchicalCluster","flare.vis.data.Data"]},
-//{"name":"flare.analytics.cluster.CommunityStructure","size":3812,"imports":["flare.analytics.cluster.HierarchicalCluster","flare.animate.Transitioner","flare.vis.data.DataList","flare.analytics.cluster.MergeEdge","flare.util.math.IMatrix"]},
-//{"name":"flare.analytics.cluster.HierarchicalCluster","size":6714,"imports":["flare.vis.data.EdgeSprite","flare.vis.data.NodeSprite","flare.vis.data.DataList","flare.vis.data.Tree","flare.util.Arrays","flare.analytics.cluster.MergeEdge","flare.util.Sort","flare.vis.operator.Operator","flare.util.Property","flare.vis.data.Data"]},
-//{"name":"flare.analytics.cluster.MergeEdge","size":743,"imports":[]},
-//{"name":"flare.analytics.graph.BetweennessCentrality","size":3534,"imports":["flare.animate.Transitioner","flare.vis.data.NodeSprite","flare.vis.data.DataList","flare.util.Arrays","flare.vis.data.Data","flare.util.Property","flare.vis.operator.Operator"]},
+    //New Hive plot
+    var width  = 450;
+    var height = 450;
+    var innerRadius = (height/2)/6;
+    var outerRadius = (height/2)*5/6;
 
-//Helper functions
-var angle = d3.scale.ordinal()
-    .domain(d3.range(celltypes.length + 1))
-    .rangePoints([0, 2* Math.PI]);
+    //Load data
+    var celltypes = ["cpn","corticothal","subcereb"];
+    var timepoints = ["E15","E16","E18","P1"];
 
-var radius = d3.scale.linear()
-    //.domain(d3.range(timepoints.length))
-    //.rangePoints([innerRadius,outerRadius]);
-    .range([innerRadius,outerRadius]);
+    var nodesByName = {
+      "E15_cpn":{"celltype":"cpn","timepoint":"E15","name":"E15_cpn"},
+      "E16_cpn":{"celltype":"cpn","timepoint":"E16","name":"E16_cpn"},
+      "E18_cpn":{"celltype":"cpn","timepoint":"E18","name":"E18_cpn"},
+      "P1_cpn":{"celltype":"cpn","timepoint":"P1","name":"P1_cpn"},
+      "E15_corticothal":{"celltype":"corticothal","timepoint":"E15","name":"E15_corticothal"},
+      "E16_corticothal":{"celltype":"corticothal","timepoint":"E16","name":"E16_corticothal"},
+      "E18_corticothal":{"celltype":"corticothal","timepoint":"E18","name":"E18_corticothal"},
+      "P1_corticothal":{"celltype":"corticothal","timepoint":"P1","name":"P1_corticothal"},
+      "E15_subcereb":{"celltype":"subcereb","timepoint":"E15","name":"E15_subcereb"},
+      "E16_subcereb":{"celltype":"subcereb","timepoint":"E16","name":"E16_subcereb"},
+      "E18_subcereb":{"celltype":"subcereb","timepoint":"E18","name":"E18_subcereb"},
+      "P1_subcereb":{"celltype":"subcereb","timepoint":"P1","name":"P1_subcereb"},
+    };
 
-var color = d3.scale.category10()
-    .domain(d3.rangePoints(celltypes)); //TODO: make sure this is correct syntax
+    var nodes= [
+      {"celltype":"cpn","timepoint":"E15","name":"E15_cpn"},
+      {"celltype":"cpn","timepoint":"E16","name":"E16_cpn"},
+      {"celltype":"cpn","timepoint":"E18","name":"E18_cpn"},
+      {"celltype":"cpn","timepoint":"P1","name":"P1_cpn"},
+      {"celltype":"corticothal","timepoint":"E15","name":"E15_corticothal"},
+      {"celltype":"corticothal","timepoint":"E16","name":"E16_corticothal"},
+      {"celltype":"corticothal","timepoint":"E18","name":"E18_corticothal"},
+      {"celltype":"corticothal","timepoint":"P1","name":"P1_corticothal"},
+      {"celltype":"subcereb","timepoint":"E15","name":"E15_subcereb"},
+      {"celltype":"subcereb","timepoint":"E16","name":"E16_subcereb"},
+      {"celltype":"subcereb","timepoint":"E18","name":"E18_subcereb"},
+      {"celltype":"subcereb","timepoint":"P1","name":"P1_subcereb"},
+    ];
 
-//create svg object on .hive
-var svg = d3.select("#hive")
-    .append("svg:svg")
-    .attr("width", width)
-    .attr("height",height)
-    .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    //Helper functions
+    var angle = d3.scale.ordinal()
+      .domain(celltypes)
+      .rangePoints([0, 4* Math.PI/3]);
 
-//Draw the axes
-svg.selectAll(".hiveaxis")
-    .data(d3.range(celltypes.length))
-    .enter().append("line")
-        .attr("class", "hiveaxis")
+    var radius = d3.scale.ordinal()
+      .domain(timepoints)
+      .rangePoints([innerRadius,outerRadius]);
+
+    var logFCarray =
+      d3.entries(data)
+        .sort(function(a,b){
+          return d3.ascending(
+            Math.abs(a.value.values.log2_fold_change),
+            Math.abs(b.value.values.log2_fold_change))
+        });
+
+    var fcMin = logFCarray[0].value.values.log2_fold_change;
+    var fcMax = Math.abs(d3.min([logFCarray[logFCarray.length-1].value.values.log2_fold_change,10]));
+
+    var linkSize = d3.scale.linear()
+                           .domain([fcMin,fcMax])
+                           .range([0.5,10])
+                           .clamp(true);
+
+    var info = d3.select(info_selector);
+    var qFilter = 0.001;
+
+    info.html("<h4>" +
+      "Hover or tap a line to investigate" +
+      "</h4>");
+
+    // Create svg object
+    var svg = d3.select(selector)
+      .append("svg:svg")
+      .attr("width", width)
+      .attr("height",height)
+      .append("g")
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    //Draw the axes
+    svg.selectAll(".hiveaxis")
+      .data(celltypes)
+      .enter().append("line")
+      .attr("class", "hiveaxis")
+      .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
+      .attr("x1", radius.range()[0])
+      .attr("x2", radius.range()[1]);
+
+      // Draw the links.
+      svg.append("g")
+        .attr("class", "links")
+        .selectAll(".link")
+        .data(data)
+        .enter().append("path")
+        .filter(function(d) { return d.values.q_value <= qFilter })
+        .attr("class", "link")
+        .attr("d", link()
+            .angle(function(d) { return angle(celltypes.indexOf(d.celltype)); })
+            .radius(function(d) { return radius(d.timepoint); }))
+        .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
+        .style("stroke","#999")
+        .style("fill","none")
+        .style("stroke-opacity",".3")
+        .on("mouseover", function(d){
+          d3.select(this)
+          .classed("active",true)
+          .style("stroke","#f00")
+          .style("stroke-opacity","1");
+
+        info.html("<h4>" +
+          d.source.sample +
+          " vs " +
+          d.target.sample +
+          "</h4> <table class='table table-striped table-condensed'>" +
+          "<tr><td><h5>"+d.values.sample_1+"</h5></td><td>" + d.values.value_1 + "</td></tr>" +
+          "<tr><td><h5>" + d.values.sample_2 +"</h5></td><td>" + d.values.value_2 + "</td></tr>" +
+          "<tr><td><h5>Log2 Ratio:</h5></td><td>" +
+          d.values.log2_fold_change + "</td></tr>" +
+          "<tr><td><h5>Test Statistic:</h5></td><td>" +
+          d.values.test_stat + "</td></tr>" +
+          "<tr><td><h5>p-value:</h5></td><td>" +
+          d.values.p_value + "</td></tr>" +
+          "<tr><td><h5>q-value:</h5></td><td>" +
+          d.values.q_value + "</td></tr>" +
+          "<tr><td><h5>Significant</h5></td><td>" +
+          d.values.significant + "</td></tr>" +
+          "</table>");
+        })
+      .on("mouseout", function(d){
+        d3.select(this)
+        .classed("active", false)
+        .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
+        .style("stroke","#999")
+        .style("fill","none")
+        .style("stroke-opacity",".3");
+      });
+
+   svg.selectAll(".hiveaxislabel")
+      .data(celltypes)
+      .enter()
+        .append("text")
+        .attr("y", 6)
+        .attr("dy", ".9em")
+        .attr("x",radius.range()[radius.range().length-1]/4)
+        .attr("dx","-1em")
         .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
-        .attr("x1", radius.range()[0])
-        .attr("x2", radius.range()[1]);
+        .text(function(d){return d})
+        .style("stroke", function(d,i) { return colors[i]; })
+        .attr("text-decoration","none");
 
+    //Draw the nodes
+    svg.append("g")
+      .attr("class","hivenodes")
+      .selectAll(".hivenode")
+      .data(nodes)
+      .enter().append("circle")
+      .style("fill", function(d,i) { return colors[Math.floor(i/4)]; })
+      .attr("transform", function(d) { return "rotate(" + degrees(angle(d.celltype)) + ")"; })
+      .attr("cx", function(d) { return radius(d.timepoint) })
+      .attr("r", 5);
 
-//This will be the tricky part
-//Draw the links
-// svg.append("g")
-//  .attr("class","hivelinks")
-//  .selectAll(".hivelink")
-//  .data(data)
-//  .enter().append("path")
-//  .attr("class","hivelink")
-//  .attr("d", link())
-//  .angle(function(d) { return angle(d.celltype_1); })
-//  .radius(function(d) { return radius(d.timepoint_1); })
+    // A shape generator for Hive links, based on a source and a target.
+    // The source and target are defined in polar coordinates (angle and radius).
+    // Ratio links can also be drawn by using a startRadius and endRadius.
+    // This class is modeled after d3.svg.chord.
+    function link() {
+      var source = function(d) { return d.source; },
+          target = function(d) { return d.target; },
+          angle = function(d) { return d.angle; },
+          startRadius = function(d) { return d.radius; },
+          endRadius = startRadius,
+          arcOffset = -Math.PI / 2;
 
-//TODO: Make node drawing work.
-//Draw the nodes
-svg.append("g")
-    .attr("class","hivenodes")
-    .selectAll(".hivenode")
-        .data(nodes)
-    .enter().append("g")
-        .attr("class","hivenode")
-        .style("fill", function(d) { return color(d.celltype); })
-    .selectAll("circle")
-        .data(nodes)
-    .enter().append("circle")
-        .attr("transform", function(d) { return "rotate(" + degrees(angle(d.celltype)) + ")"; })
-        .attr("cx", function(d) { return radius(d.timepoint) })
-        .attr("r", 5)
+      function link(d, i) {
+        var s = node(source, this, d, i),
+            t = node(target, this, d, i),
+            x;
+        if (t.a < s.a) x = t, t = s, s = x;
+        if (t.a - s.a > Math.PI) s.a += 2 * Math.PI;
+        var a1 = s.a + (t.a - s.a) / 3,
+          a2 = t.a - (t.a - s.a) / 3;
+        return s.r0 - s.r1 || t.r0 - t.r1
+          ? "M" + Math.cos(s.a) * s.r0 + "," + Math.sin(s.a) * s.r0
+          + "L" + Math.cos(s.a) * s.r1 + "," + Math.sin(s.a) * s.r1
+          + "C" + Math.cos(a1) * s.r1 + "," + Math.sin(a1) * s.r1
+          + " " + Math.cos(a2) * t.r1 + "," + Math.sin(a2) * t.r1
+          + " " + Math.cos(t.a) * t.r1 + "," + Math.sin(t.a) * t.r1
+          + "L" + Math.cos(t.a) * t.r0 + "," + Math.sin(t.a) * t.r0
+          + "C" + Math.cos(a2) * t.r0 + "," + Math.sin(a2) * t.r0
+          + " " + Math.cos(a1) * s.r0 + "," + Math.sin(a1) * s.r0
+          + " " + Math.cos(s.a) * s.r0 + "," + Math.sin(s.a) * s.r0
+          : "M" + Math.cos(s.a) * s.r0 + "," + Math.sin(s.a) * s.r0
+          + "C" + Math.cos(a1) * s.r1 + "," + Math.sin(a1) * s.r1
+          + " " + Math.cos(a2) * t.r1 + "," + Math.sin(a2) * t.r1
+          + " " + Math.cos(t.a) * t.r1 + "," + Math.sin(t.a) * t.r1;
+      }
 
-// A shape generator for Hive links, based on a source and a target.
-// The source and target are defined in polar coordinates (angle and radius).
-// Ratio links can also be drawn by using a startRadius and endRadius.
-// This class is modeled after d3.svg.chord.
-function link() {
-  var source = function(d) { return d.source; },
-      target = function(d) { return d.target; },
-      angle = function(d) { return d.angle; },
-      startRadius = function(d) { return d.radius; },
-      endRadius = startRadius,
-      arcOffset = -Math.PI / 2;
+      function node(method, thiz, d, i) {
+        var node = method.call(thiz, d, i),
+            a = +(typeof angle === "function" ? angle.call(thiz, node, i) : angle) + arcOffset,
+            r0 = +(typeof startRadius === "function" ? startRadius.call(thiz, node, i) : startRadius),
+            r1 = (startRadius === endRadius ? r0 : +(typeof endRadius === "function" ? endRadius.call(thiz, node, i) : endRadius));
+        return {r0: r0, r1: r1, a: a};
+      }
 
-  function link(d, i) {
-    var s = node(source, this, d, i),
-        t = node(target, this, d, i),
-        x;
-    if (t.a < s.a) x = t, t = s, s = x;
-    if (t.a - s.a > Math.PI) s.a += 2 * Math.PI;
-    var a1 = s.a + (t.a - s.a) / 3,
-        a2 = t.a - (t.a - s.a) / 3;
-    return s.r0 - s.r1 || t.r0 - t.r1
-        ? "M" + Math.cos(s.a) * s.r0 + "," + Math.sin(s.a) * s.r0
-        + "L" + Math.cos(s.a) * s.r1 + "," + Math.sin(s.a) * s.r1
-        + "C" + Math.cos(a1) * s.r1 + "," + Math.sin(a1) * s.r1
-        + " " + Math.cos(a2) * t.r1 + "," + Math.sin(a2) * t.r1
-        + " " + Math.cos(t.a) * t.r1 + "," + Math.sin(t.a) * t.r1
-        + "L" + Math.cos(t.a) * t.r0 + "," + Math.sin(t.a) * t.r0
-        + "C" + Math.cos(a2) * t.r0 + "," + Math.sin(a2) * t.r0
-        + " " + Math.cos(a1) * s.r0 + "," + Math.sin(a1) * s.r0
-        + " " + Math.cos(s.a) * s.r0 + "," + Math.sin(s.a) * s.r0
-        : "M" + Math.cos(s.a) * s.r0 + "," + Math.sin(s.a) * s.r0
-        + "C" + Math.cos(a1) * s.r1 + "," + Math.sin(a1) * s.r1
-        + " " + Math.cos(a2) * t.r1 + "," + Math.sin(a2) * t.r1
-        + " " + Math.cos(t.a) * t.r1 + "," + Math.sin(t.a) * t.r1;
+      link.source = function(_) {
+        if (!arguments.length) return source;
+        source = _;
+        return link;
+      };
+
+      link.target = function(_) {
+        if (!arguments.length) return target;
+        target = _;
+        return link;
+      };
+
+      link.angle = function(_) {
+        if (!arguments.length) return angle;
+        angle = _;
+        return link;
+      };
+
+      link.radius = function(_) {
+        if (!arguments.length) return startRadius;
+        startRadius = endRadius = _;
+        return link;
+      };
+
+      link.startRadius = function(_) {
+        if (!arguments.length) return startRadius;
+        startRadius = _;
+        return link;
+      };
+
+      link.endRadius = function(_) {
+        if (!arguments.length) return endRadius;
+        endRadius = _;
+        return link;
+      };
+
+      return link;
+    }
+
+    function degrees(radians) {
+      return radians / Math.PI * 180 - 90;
+    }
   }
-
-  function node(method, thiz, d, i) {
-    var node = method.call(thiz, d, i),
-        a = +(typeof angle === "function" ? angle.call(thiz, node, i) : angle) + arcOffset,
-        r0 = +(typeof startRadius === "function" ? startRadius.call(thiz, node, i) : startRadius),
-        r1 = (startRadius === endRadius ? r0 : +(typeof endRadius === "function" ? endRadius.call(thiz, node, i) : endRadius));
-    return {r0: r0, r1: r1, a: a};
-  }
-
-  link.source = function(_) {
-    if (!arguments.length) return source;
-    source = _;
-    return link;
-  };
-
-  link.target = function(_) {
-    if (!arguments.length) return target;
-    target = _;
-    return link;
-  };
-
-  link.angle = function(_) {
-    if (!arguments.length) return angle;
-    angle = _;
-    return link;
-  };
-
-  link.radius = function(_) {
-    if (!arguments.length) return startRadius;
-    startRadius = endRadius = _;
-    return link;
-  };
-
-  link.startRadius = function(_) {
-    if (!arguments.length) return startRadius;
-    startRadius = _;
-    return link;
-  };
-
-  link.endRadius = function(_) {
-    if (!arguments.length) return endRadius;
-    endRadius = _;
-    return link;
-  };
-
-  return link;
-}
-
-function degrees(radians) {
-  return radians / Math.PI * 180 - 90;
 }

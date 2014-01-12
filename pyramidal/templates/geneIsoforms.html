@@ -5,15 +5,16 @@
     .slice text {
       font-size: 12pt;
       font-family: Arial;
-    }     
+    }
 		.chart rect {
 			stroke: white;
+	    fill: steelblue;
 		}
-		 
+
 		.axis {
 	    shape-rendering: crispEdges;
 		}
-		 
+
     .axis text {
             font-size: 12px;
         }
@@ -32,11 +33,11 @@
         stroke: #333;
         stroke-width:1.5px;
     }
-		 
+
 		.y.axis line {
 		    stroke: black;
 		}
-    
+
     #hive {
       #float:left;
     }
@@ -54,9 +55,11 @@
 		  stroke-width: 5px;
 		  #stroke-linecap: square;
 		}
-
-    .hiveaxislabel{
-      text-decoration: none;
+    .link {
+      fill: none;
+      stroke: #999;
+      stroke-width: 2px;
+      stroke-opacity: .3;
     }
 
     .active {
@@ -78,7 +81,7 @@
 
 	</style>
 	<!--<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.min.js"></script>-->
-	
+
   <!-- #Sunburst imports -->
   <link rel="stylesheet" href="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/css/ui-lightness/jquery-ui-1.10.0.custom.css">
   <link rel="stylesheet" href="{{ STATIC_URL }}js/sunburst/stylesheets/examples.css">
@@ -158,12 +161,12 @@
 	<div class="panel panel-default">
   <div class="panel-heading"><h4>Differential Analysis</h4></div>
   <div class="panel-body">
-	 
+
 		  <div class="media">
         <!--<input style="position:relative;top:3px;" type="range" min="0" max="4" value="3">-->
-        <!--<a class="pull-left" href="#">-->
-          <div class="pull-left" id="hive"></div>
-        <!--</a>-->
+        <a class="pull-left" href="#">
+          <div id="hive"></div>
+        </a>
         <div class="media-body pull-left" id="info">
         </div>
       </div>
@@ -174,7 +177,7 @@
       <div class="panel-heading"><h4>Allen Brain Map - Expression</h4></div>
       <div id="errorDialog" title="API Query Error"></div>
       <div class="panel-body" id="content">
-        
+
         <div class="media" id="sunburst"></div>
         <div class="media-body">
 
@@ -187,7 +190,7 @@
           <tr><td class="hrule" colspan=2></td></tr>
 
           <tr>
-          <td>Expression Energy:</td> 
+          <td>Expression Energy:</td>
           <td><div id="expressionLabel"></div></td>
           </tr>
 
@@ -199,7 +202,7 @@
             <div id="scaleButtons"></div>
           </td>
           </tr>
-          
+
         </table>
         </div>
       </div>
@@ -236,7 +239,7 @@
           <a class="pull-left" href="#">
             <img src="http://api.brain-map.org/api/v2/section_image_download/{{ image.id }}?downsample=5">
           </a>
-        
+
           <div class="media-body">
             <h5 class="media-heading">Image Id:{{ image.id }}</h5>
             Section Number: {{ image.section_number }}
@@ -252,14 +255,14 @@
 
 	<!-- D3.js scripts -->
 	<script type="text/javascript">
- 
+
     var w = 300,                        //width
     h = 300,                            //height
     r = 100,                            //radius
     color = d3.scale.category20c();     //builtin range of colors
- 
+
     var data = {{ gene.expressionJson|safe }};
-    
+
     var pievis = d3.select("#piechart")
     	//.selectAll('svg')
         .append("svg:svg")
@@ -268,23 +271,23 @@
             .attr("height", h)
         .append("svg:g")                //make a group to hold our pie chart
             .attr("transform", "translate(" + r + "," + r + ")")    //move the center of the pie chart from 0, 0 to radius, radius
- 
+
     var arc = d3.svg.arc()              //this will create <path> elements for us using arc data
         .outerRadius(r);
- 
+
     var pie = d3.layout.pie()           //this will create arc data for us given a list of values
         .value(function(d) { return d.fpkm; });    //we must tell it out to access the value of each element in our data array
- 
+
     var arcs = pievis.selectAll("g.slice")     //this selects all <g> elements with class slice (there aren't any yet)
-        .data(pie)                          //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) 
+        .data(pie)                          //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
         .enter()                            //this will create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array
             .append("svg:g")                //create a group to hold each slice (we will have a <path> and a <text> element associated with each slice)
                 .attr("class", "slice");    //allow us to style things in the slices (like text)
- 
+
         arcs.append("svg:path")
                 .attr("fill", function(d, i) { return color(i); } ) //set the color for each slice to be chosen from the color function defined above
                 .attr("d", arc);                                    //this creates the actual SVG path using the associated data (pie) with the arc drawing function
- 
+
         arcs.append("svg:text")                                     //add a label to each slice
                 .attr("transform", function(d) {                    //set the label's origin to the center of the arc
                 //we have to make sure to set these before calling arc.centroid
@@ -298,10 +301,9 @@
 	<script src="http://d3js.org/d3.hive.v0.min.js"></script>
 	<script>
 	//Bar plot script
-var 
+var
 	data = {{ gene.expressionJson|safe }},
 	samples = ['E15_cpn','E16_cpn','E18_cpn','P1_cpn','E15_subcereb','E16_subcereb','E18_subcereb','P1_subcereb','E15_corticothal','E16_corticothal','E18_corticothal','P1_corticothal'],
-  celltypes = ["cpn","subcereb","corticothal"],
 	chart,
 	bars,
 	margin = 100,
@@ -328,10 +330,6 @@ y = d3.scale.linear()
     .domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] )
     .rangeRound( [0, h - margin] );
 
-color = d3.scale.ordinal()
-    .domain(celltypes) //TODO: make sure this is correct syntax
-    .range(["#31A354","#DE2D26","#3182BD"]); //TODO: make sure this is correct syntax
-
 // Bars
 bars = chart.append('g')
     .attr('class', 'bars');
@@ -339,12 +337,11 @@ bars = chart.append('g')
 bars.selectAll( 'rect' )
     .data( data )
   .enter().append( 'rect' )
-    .style("fill", function(d) { return color(d.celltype)})
     .attr( 'x', function( d, i ) { return x( d.sample_name ) + 17; } )
     .attr( 'y', function( d ) { return (h - margin) - y( d.fpkm ) + .5 } )
     .attr( 'width', barWidth )
-    .attr( 'height', function( d ) { return y( d.fpkm ) } );//
-    //.append('g');
+    .attr( 'height', function( d ) { return y( d.fpkm ) } )
+    .append('g');
 
 // lines
 errorbars = chart.append('g')
@@ -362,7 +359,7 @@ errorbars.selectAll('line')
       .attr( 'x2', function(d,i) { return x(d.sample_name) + 17 + (barWidth/2);})
       .attr( 'y1', function( d ) { return (h - margin) - y( d.conf_lo ) + .5 } )
       .attr( 'y2', function( d ) { return (h - margin) - y( d.conf_hi ) + .5 } );
-    
+
 topmarks.selectAll('line')
       .data( data )
     .enter().append('line')
@@ -559,20 +556,8 @@ var radius = d3.scale.ordinal()
     .domain(timepoints)
     .rangePoints([20,outerRadius])
 
-var color = d3.scale.ordinal()
-    .domain(d3.range(celltypes)) //TODO: make sure this is correct syntax
-    .range(["#31A354","#DE2D26","#3182BD"]); //TODO: make sure this is correct syntax
-
-var logFCarray = d3.entries(data)
-      .sort(function(a,b){return d3.ascending(Math.abs(a.value.values.log2_fold_change),Math.abs(b.value.values.log2_fold_change))});
-
-var fcMin = logFCarray[0].value.values.log2_fold_change;
-var fcMax = Math.abs(d3.min([logFCarray[logFCarray.length-1].value.values.log2_fold_change,10]));
-
-var linkSize = d3.scale.linear()
-    .domain([fcMin,fcMax])
-    .range([0.5,10])
-    .clamp(true);
+var color = d3.scale.category10()
+    .domain(d3.range(celltypes)); //TODO: make sure this is correct syntax
 
 //Create Info object
 var info = d3.select("#info");
@@ -596,21 +581,6 @@ var svg = d3.select("#hive")
 //         .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
 //         .attr("x1", radius.range()[0])
 //         .attr("x2", radius.range()[radius.range().length-1]);
-
-svg.selectAll(".hiveaxislabel")
-    .data(celltypes)
-    .enter()
-    .append("text")
-        //.attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".9em")
-        .attr("x",radius.range()[radius.range().length-1]/4)
-        .attr("dx","-1em")
-        .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
-        .text(function(d){return d})
-        .style("stroke", function(d) { return color(d)})
-        .attr("text-decoration","none");
-
 
 
 
@@ -637,15 +607,9 @@ svg.selectAll(".hiveaxislabel")
       .attr("d", link()
         .angle(function(d) { return angle(celltypes.indexOf(d.celltype)); })
         .radius(function(d) { return radius(d.timepoint); }))
-      .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
-      .style("stroke","#999")
-      .style("fill","none")
-      .style("stroke-opacity",".3")
       .on("mouseover", function(d){
             d3.select(this)
-                .classed("active",true)
-                .style("stroke","#f00")
-                .style("stroke-opacity","1");
+                .classed("active",true);
             info.html("<h4>" +
                d.source.sample +
                " vs " +
@@ -667,11 +631,7 @@ svg.selectAll(".hiveaxislabel")
                 })
       .on("mouseout", function(d){
             d3.select(this)
-                .classed("active", false)
-                .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
-                .style("stroke","#999")
-                .style("fill","none")
-                .style("stroke-opacity",".3");
+                .classed("active", false);
       //      info.text(defaultInfo);
       });
 
@@ -687,7 +647,7 @@ svg.append("g")
     .enter().append("circle")
         .attr("transform", function(d) { return "rotate(" + degrees(angle(celltypes.indexOf(d.celltype))) + ")"; })
         .attr("cx", function(d) { return radius(d.timepoint); })
-        .attr("r", 6)
+        .attr("r", 5)
         .style("fill", function(d) { return color(d.celltype)})
         .on("mouseover", nodeMouseover)
         .on("mouseout", mouseout);
@@ -738,7 +698,7 @@ d3.select("input[type=range]").on("change", function() {
   // Clear any highlighted nodes or links.
   function mouseout() {
     svg.selectAll(".active").classed("active", false);
-    //info.text(defaultInfo);
+    info.text(defaultInfo);
   }
 
 // A shape generator for Hive links, based on a source and a target.

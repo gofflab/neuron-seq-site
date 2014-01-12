@@ -194,7 +194,7 @@ class Biasdata(models.Model):
         db_table = 'biasData'
 
 class Features(models.Model):
-    seqnames = models.TextField(blank=True)
+    seqnames = models.TextField(blank=True, primary_key=True) # This is NOT the primary key, but we MUST have one
     start = models.IntegerField(blank=True, null=True)
     end = models.IntegerField(blank=True, null=True)
     width = models.IntegerField(blank=True, null=True)
@@ -242,6 +242,12 @@ class Gene(models.Model):
         managed = False
         db_table = 'genes'
 
+    def safe_name(self):
+      return self.gene_id.replace('.', '_').replace(' ', '_')
+
+    def url_name(self):
+      return self.gene_id.replace(' ', '_')
+
     def fpkm(self):
     	fpkmDat = Genedata.objects.filter(gene_id=self.gene_id)
     	fpkmVals = [x.fpkm for x in fpkmDat]
@@ -249,14 +255,14 @@ class Gene(models.Model):
     	return dict(zip(sampleKeys,fpkmVals))
 
     def expression(self):
-    	expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
-    	samples = [x.sample_name for x in expressionDat]
-    	res = [x.__dict__ for x in expressionDat]
-        for r in range(len(res)):
-            res[r]['_state'] = None
-            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
-            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
-    	return dict(zip(samples,res))
+      expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
+      samples = [x.sample_name for x in expressionDat]
+      res = [x.__dict__ for x in expressionDat]
+      for r in range(len(res)):
+        res[r]['_state'] = None
+        res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+        res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+      return dict(zip(samples,res))
 
     def expressionJson(self):
         expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
@@ -401,11 +407,24 @@ class Isoform(models.Model):
         managed = False
         db_table = 'isoforms'
 
+    def safe_name(self):
+      return self.isoform_id.replace('.', '_').replace(' ', '_')
+
     def fpkm(self):
         fpkmDat = Isoformdata.objects.filter(isoform_id=self.isoform_id)
         fpkmVals = [x.fpkm for x in fpkmDat]
         sampleKeys = [x.sample_name for x in fpkmDat]
         return dict(zip(sampleKeys,fpkmVals))
+
+    def features(self):
+      return Features.objects.filter(isoform_id=self.isoform_id)
+
+    def featuresJson(self):
+      features = self.features()
+      res = [x.__dict__ for x in features]
+      for r in range(len(res)):
+        res[r]['_state'] = None
+      return json.dumps(res, separators=(',',':'))
 
     def expression(self):
         expressionDat = Isoformdata.objects.filter(isoform_id=self.isoform_id)
@@ -584,5 +603,3 @@ class ClusterAssignment(models.Model):
     class Meta:
         managed = False
         db_table = 'clusterAssignment'
-
-        

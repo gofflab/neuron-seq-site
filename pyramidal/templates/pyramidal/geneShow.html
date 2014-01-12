@@ -1,0 +1,204 @@
+{% extends 'pyramidal/geneBase.html' %}
+
+	{% block header %}
+  <!-- #Sunburst imports -->
+  <link rel="stylesheet" href="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/css/ui-lightness/jquery-ui-1.10.0.custom.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}js/sunburst/stylesheets/examples.css">
+    <link href="http://www.brain-map.org/external_assets/stylesheets/portal.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="http://www.brain-map.org/external_assets/javascripts/portal.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var _pImagePath = "http://www.brain-map.org/external_assets/portal_only/images/";   // location of plugin image assets (must end with a "/")
+  </script>
+
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/js/jquery-1.9.0.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/js/jquery-ui-1.10.0.custom.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/javascripts/jquery.ie.cors.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/javascripts/modernizr.svg.js"></script>
+  <!--end of sunburst imports-->
+
+  {% endblock header %}
+
+	{% block navleft%}
+ 	<h5>{{ gene.gene_id }}</h5>
+ 	<h6>Isoforms</h6>
+		<ul>
+		{% for isoform in isoforms %}
+			<li><a href="{% url 'isoform_show' gene_id=gene.url_name isoform_id=isoform.isoform_id %}">{{isoform.isoform_id}}</a></li>
+		{% endfor %}
+		</ul>
+  <h6>Resources</h6>
+    <ul>
+      <li><a href="#accordion">Cortical Subtype Expression</a></li>
+      <li><a href="#accordion">Cortical Subtype Expression</a></li>
+      <li><a href="#accordion">Allen Brain Images</a></li>
+    </ul>
+	<h6>External Links</h6>
+		<ul>
+			<li><a href="http://developingmouse.brain-map.org/search/show?page_num=0&page_size=8&no_paging=false&exact_match=false&search_term={{ gene.gene_short_name }}&search_type=gene" target="_blank">Developing Mouse Brain - Allen</a></li>
+			<li><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}" target="_blank">UCSC Genome Browser</a></li>
+		</ul>
+
+	{% endblock navleft %}
+
+	{% block main %}
+	<!-- genePie -->
+
+	<h1>{{ gene.gene_short_name }}</h1>
+		<h3>Locus</h3>
+		<a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}" target="_blank">{{ gene.locus }}</a>
+  </br>
+  <div class="panel panel-default">
+  <div class="panel-heading"><h4>Expression Distribution</h4></div>
+    <div class="panel-body">
+       <div id="linechart"></div>
+       <div id="barchart"></div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading"><h4>Isoforms</h4></div>
+    <div class="panel-body">
+       {% for isoform in isoforms %}
+       <h5>{{ isoform.isoform_id }}</h5>
+       <div style="float:right; width: 100px; height: 50px" class="isoform-graph" id="isoform-{{ isoform.safe_name }}-graph"></div>
+       <div class="isoform" style="margin-right: 120px; height: 50px" id="isoform-{{ isoform.safe_name }}"></div>
+       {% endfor %}
+    </div>
+  </div>
+	<div class="panel panel-default">
+  <div class="panel-heading"><h4>Differential Analysis</h4></div>
+  <div class="panel-body">
+    <div id="hive" style="display: inline-block; width: 450px; height: 450px; vertical-align:middle"></div>
+    <div id="hive_info" style="display: inline-block; width: 350px; height: 350px; vertical-align:middle"></div>
+	</div>
+  </div>
+
+  <div class="panel panel-default">
+      <div class="panel-heading"><h4>Allen Brain Map - Expression</h4></div>
+      <div id="errorDialog" title="API Query Error"></div>
+      <div class="panel-body" id="content">
+
+        <div class="media" id="sunburst"></div>
+        <div class="media-body">
+
+          <table id="visProperties">
+          <tr>
+          <td>Structure:</td>
+          <td><div id="structureLabel"></div></td>
+          </tr>
+
+          <tr><td class="hrule" colspan=2></td></tr>
+
+          <tr>
+          <td>Expression Energy:</td>
+          <td><div id="expressionLabel"></div></td>
+          </tr>
+
+          <tr><td class="hrule" colspan=2></td></tr>
+
+          <tr>
+          <td>Scale By:</td>
+          <td>
+            <div id="scaleButtons"></div>
+          </td>
+          </tr>
+
+        </table>
+        </div>
+      </div>
+      <div class="list-group">
+          {% for sunburstId in sunburstIds %}
+            <a href="?id={{sunburstId}}" class="list-group-item">{{ sunburstId }}</a>
+          {% endfor %}
+      </div>
+  </div>
+
+  <!-- #Allen Brain Images -->
+  <div class="panel-group" id="accordion">
+  <h4>Allen Brain Images - Developing Mouse</h4>
+  {% for section in sectionData.msg %}
+    <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5>
+      <a data-toggle="collapse" data-parent="#accordian" href="#Allen{{section.id}}">
+        SectionDataSet {{ section.id }}: {% with section.genes|first as firstGene %}{{firstGene.acronym}}{% endwith %} {{section.specimen.donor.age.name}}
+        {% if section.plane_of_section_id == 1 %}
+          Coronal
+        {% elif section.plane_of_section_id == 2 %}
+          Sagittal
+        {% endif %}
+        </a>
+        </h5>
+        <a href="http://developingmouse.brain-map.org/experiment/show/{{section.id}}" target="_blank">(Link to Allen Brain Explorer)</a>
+    </div>
+    <div id="Allen{{section.id}}" class="panel-collapse collapse">
+      <div class="panel-body">
+        <ul>
+        {% for image in section.section_images %}
+        <div class="media">
+          <a class="pull-left" href="#">
+            <img src="http://api.brain-map.org/api/v2/section_image_download/{{ image.id }}?downsample=5">
+          </a>
+
+          <div class="media-body">
+            <h5 class="media-heading">Image Id:{{ image.id }}</h5>
+            Section Number: {{ image.section_number }}
+          </div>
+        </div>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+    </div>
+  {% endfor %}
+</div>
+
+<script src="http://d3js.org/d3.hive.v0.min.js"></script>
+
+  <script type="text/javascript" src="{{ STATIC_URL }}js/hive.js"></script>
+
+  <script type="text/javascript">
+    var gene_hive = {{ gene.diffDataHive|safe }};
+    hive.plot('#hive', '#hive_info', gene_hive);
+  </script>
+
+	<!-- D3.js scripts -->
+  <script type="text/javascript" src="{{ STATIC_URL }}js/gene.js"></script>
+
+  <script type="text/javascript">
+    var gene_data = {{ gene.expressionJson|safe }};
+
+    var gene_headers = [
+      ['E15','E16','E18','P1'],
+      ['corticothal', 'cpn', 'subcereb']
+    ];
+
+    gene_expression.lines('#linechart', gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+    gene_expression.bars('#barchart',   gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+
+    var isoforms = {
+     {% for isoform in isoforms %}
+     "{{ isoform.isoform_id }}": {{ isoform.featuresJson|safe }},
+     {% endfor %}
+    };
+
+    gene_expression.isoforms('.isoform', isoforms, { resizable: true } );
+
+    var isoform_data = {
+     {% for isoform in isoforms %}
+     "{{ isoform.isoform_id }}": {{ isoform.expressionJson|safe }},
+     {% endfor %}
+    };
+
+    {% for isoform in isoforms %}
+    gene_expression.lines("#isoform-{{ isoform.safe_name }}-graph", gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 100, height: 50, margin: {left:0, right:0, bottom:0, top:0} });
+    {% endfor %}
+  </script>
+  <!-- # Implement later for sunburst -->
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/import.js"></script>
+  <script type="text/javascript">
+    var sectionDataSetId = {{ sunburstIds|first }};
+  </script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/sunburst.js"></script>
+
+  {% endblock main %}

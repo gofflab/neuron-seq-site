@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block header }
+{% endblock header }
+
+{% block content %}
+<div class="row">
+	<div class="col-md-2">
+	<div class="well well-sm">
+	{% block navleft %}
+
+ 	<h5>Clusters</h5>
+  <h6>CPN Signature RNAs</h6>
+  <ul>
+    <li><a href="{% url 'cluster_show' cluster_id=0 %}">Cluster 0</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=3 %}">Cluster 3</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=5 %}">Cluster 5</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=7 %}">Cluster 7</a></li>
+  </ul>
+  <h6>SCPN Signature RNAs</h6>
+  <ul>
+    <li><a href="{% url 'cluster_show' cluster_id=15 %}">Cluster 15</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=8 %}">Cluster 8</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=6 %}">Cluster 6</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=18 %}">Cluster 18</a></li>
+  </ul>
+  <h6>CThPN Signature RNAs</h6>
+  <ul>
+    <li><a href="{% url 'cluster_show' cluster_id=2 %}">Cluster 2</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=12 %}">Cluster 12</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=9 %}">Cluster 9</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=1 %}">Cluster 1</a></li>
+  </ul>
+
+  <h5>Other Clusters</h5>
+
+  <ul>
+    <li><a href="{% url 'cluster_show' cluster_id=17 %}">Cluster 17</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=16 %}">Cluster 16</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=13 %}">Cluster 13</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=19 %}">Cluster 19</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=14 %}">Cluster 14</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=11 %}">Cluster 11</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=10 %}">Cluster 10</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=4 %}">Cluster 4</a></li>
+  </ul>
+
+	{% endblock navleft%}
+	</div>
+	</div>
+	<div class="col-md-10">
+	{% block main %}
+
+  <h1>Cluster {{cluster_id}}</h1>
+
+  <div class="panel panel-default">
+    <div class="panel-heading"><h2>Heatmap</h2></div>
+    <div class="panel-body">
+      <div id="heatmap"></div>
+    </div>
+  </div>
+
+  <script src="http://d3js.org/d3.hive.v0.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/cluster_{{cluster_id}}.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/gene.js"></script>
+  <script type="text/javascript">
+    var gene_headers = [
+      ['E15','E16','E18','P1'],
+      ['corticothal', 'cpn', 'subcereb']
+    ];
+
+    gene_expression.clusterHeatmap('#heatmap', gene_headers, cluster_{{cluster_id}}, { resizable: true } );
+  </script>
+	{% endblock main %}
+	</div>
+</div>
+{% endblock content %}
