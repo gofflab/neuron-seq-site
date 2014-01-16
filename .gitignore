@@ -1,4 +1,5 @@
-cuffData.db
+cuffData.db*
 ._DS_store
 ._DS_Store
 *.pyc
+
