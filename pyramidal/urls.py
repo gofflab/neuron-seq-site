@@ -7,7 +7,7 @@ urlpatterns = patterns('',
 	url(r'^$',views.index,name='index'),
 
 	#Geneset Views
-	url(r'^geneset/(?P<gene_list>[a-zA-Z0-9_\.\+]+)/$',views.genesDetail),
+	url(r'^geneset/(?P<gene_list>[a-zA-Z0-9_\.\+]+)/$',views.geneset,name='gene_set'),
 
 	#Isoform Views
 	url(r'^genes/(?P<gene_id>[\w.-]+)/isoforms/?$',views.geneIsoforms,name='isoform_index'),

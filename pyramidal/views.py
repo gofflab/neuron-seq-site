@@ -9,6 +9,8 @@ from pyramidal.models import Gene,Isoform,ClusterAssignment,Features
 
 from pyramidal.allen import AllenExplorer
 
+import json
+
 def index(request):
 	context = {}
 	return render(request,'pyramidal/index.html',context)
@@ -34,7 +36,7 @@ def geneIndex(request):
 	}
 	return render(request,'pyramidal/geneIndex.html',context)
 
-def genesDetail(request,gene_list):
+def geneset(request,gene_list):
 	"""Takes a '+'-separated list of genes as <gene_list>"""
 	gene_list_clean = gene_list.rstrip().split("+")
 	try:
@@ -51,7 +53,7 @@ def genesDetail(request,gene_list):
 		'diffData': json.dumps(diffData,separators=(',',':')),
 		'expression' :json.dumps(expression,separators=(',',':'))
 	}
-	return render(request,'pyramidal/genesDetail.html',context)
+	return render(request,'pyramidal/geneset.html',context)
 
 ##################
 # Gene & Isoform detail
@@ -68,8 +70,9 @@ def geneShow(request,gene_id):
     # Get Gene object
     gene = Gene.objects.get(gene_id=gene_id)
     isoforms = gene.isoforms()
-    allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
-    allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
+    AE = AllenExplorer()
+    allenExpIds = AE.experimentIds(gene.gene_short_name)
+    allenSectionData = AE.sectionData(gene.gene_short_name)
   except Gene.DoesNotExist:
     return Http404
   context = {
