@@ -278,10 +278,10 @@ window.gene_expression = {
       .enter().append('path')
       .style({
         fill: "none",
-        "stroke-width": attr.width/100,
+        "stroke-width": attr.width/400,
         stroke: function(d, i){return colors[i%3];}})
       .attr('d', line)
-      .attr("clip-path", "url(#clip-boundary)");
+      //.attr("clip-path", "url(#clip-boundary)");
 
     // Axis
     if ((attr.margin.left+attr.margin.right) > 10) {
@@ -359,7 +359,7 @@ window.gene_expression = {
     };
 
     var isoform_height = attr.height - attr.margin;
-    var isoform_rail_height = 0.3;
+    var isoform_rail_height = 0.1;
 
     var isoform_names = Object.keys(data);
 

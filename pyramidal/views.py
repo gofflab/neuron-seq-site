@@ -68,7 +68,7 @@ def geneShow(request,gene_id):
       return redirect('gene_show', gene_id = gene.gene_id)
 
     # Get Gene object
-    gene = Gene.objects.get(gene_id=gene_id)
+    # gene = Gene.objects.get(gene_id=gene_id)
     isoforms = gene.isoforms()
     AE = AllenExplorer()
     allenExpIds = AE.experimentIds(gene.gene_short_name)

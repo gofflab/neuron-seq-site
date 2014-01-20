@@ -23,7 +23,7 @@
 	{% block navleft%}
     <ul>
       {% for gene in genes %}
-        <li><a href="{% url 'gene_set' gene.gene_id %}">{{gene.gene_id}}</a></li>
+        <li><a href="{% url 'gene_show' gene.gene_id %}">{{gene.gene_id}}</a></li>
      	{% endfor %}
     </ul>
 	{% endblock navleft %}
