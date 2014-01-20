@@ -47,7 +47,7 @@ def geneset(request,gene_list):
 			expression.append(gene.expression())
 			diffData[gene.gene_id]=gene.diffData()
 	except Gene.DoesNotExist:
-		return Http404
+		raise Http404
 	context = {
 		'genes': genes,
 		'diffData': json.dumps(diffData,separators=(',',':')),
@@ -62,19 +62,19 @@ def geneset(request,gene_list):
 def geneShow(request,gene_id):
   try:
     # Get Gene object
-    gene_id = gene_id.replace("_", " ")
+    # gene_id = gene_id.replace("_", " ")
+    # Get Gene object
+    # gene = Gene.objects.get(gene_id=gene_id)
     gene = Gene.objects.get(gene_id__iexact=gene_id)
     if gene.gene_id != gene_id:
       return redirect('gene_show', gene_id = gene.gene_id)
 
-    # Get Gene object
-    # gene = Gene.objects.get(gene_id=gene_id)
     isoforms = gene.isoforms()
     AE = AllenExplorer()
     allenExpIds = AE.experimentIds(gene.gene_short_name)
     allenSectionData = AE.sectionData(gene.gene_short_name)
   except Gene.DoesNotExist:
-    return Http404
+    raise Http404
   context = {
       'gene': gene,
       'isoforms': isoforms,
@@ -93,7 +93,7 @@ def geneIsoforms(request, gene_id):
     allenExpIds = AllenExplorer.experimentIds(gene.gene_short_name)
     allenSectionData = AllenExplorer.sectionData(gene.gene_short_name)
   except Gene.DoesNotExist:
-    return Http404
+    raise Http404
   context = {
       'gene': gene,
       'sunburstIds': allenExpIds,
@@ -111,7 +111,7 @@ def isoformDetail(request,gene_id,isoform_id):
 		}
 		return render(request,'pyramidal/isoformDetail.html',context)
 	except Gene.DoesNotExist:
-		return Http404
+		raise Http404
 
 def clusterIndex(request):
   context = {
