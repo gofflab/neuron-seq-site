@@ -165,6 +165,19 @@ def get_query(query_string, search_fields):
 	          query = query & or_query
 	  return query
 
+def parseLocusQuery(query_string):
+	chrom, ranges = query_string.strip().split(":")
+	start,end = ranges.strip().split("-")
+	return [chrom,start,end]
+
+def findGenesFromLocus(chrom,start,end):
+	found_features = Features.objects.filter(seqnames__iexact=chrom
+		).filter(end__gte=start
+		).filter(start__lte=end)
+	gene_ids = [f.gene_id for f in found_features]
+	gene_ids = set(gene_ids)
+	found_genes = Gene.objects.filter(gene_id__in=gene_ids).order_by('gene_id')
+	return found_genes
 
 ##############
 # Search
@@ -175,9 +188,14 @@ def search(request):
   if ('q' in request.GET) and request.GET['q'].strip():
     query_string = request.GET['q']
 
-  entry_query = get_query(query_string, ['gene_id', 'gene_short_name',])
+  if query_string.find(":")!=-1:
+  	query_string = query_string.replace(",","")
+  	chrom,start,end = parseLocusQuery(query_string)
+  	found_genes = findGenesFromLocus(chrom,start,end)
+  else:
+  	entry_query = get_query(query_string, ['gene_id', 'gene_short_name',])
+  	found_genes = Gene.objects.filter(entry_query).order_by('gene_id')
 
-  found_genes = Gene.objects.filter(entry_query).order_by('gene_id')
   return render(request,'pyramidal/search_results.html',
         { 'query_string': query_string, 'found_genes': found_genes }
                )
