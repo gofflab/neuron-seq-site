@@ -18,6 +18,7 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/javascripts/modernizr.svg.js"></script>
   <!--end of sunburst imports-->
 
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.easyModal.js"></script>
   {% endblock header %}
 
 	{% block navleft%}
@@ -208,6 +209,22 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/gene.js"></script>
 
   <script type="text/javascript">
+    // Create the modal base
+    modal_base = $('<div class="modal"><div class="modal-content"></div></div>').css('display', 'none');
+
+    // Create a note modal
+    isoform_modal = modal_base.clone();
+    isoform_modal.attr("id", "isoform-modal");
+    isoform_modal.css("width", "880px");
+    isoform_modal.css("height", "490px");
+    isoform_modal.css("overflow", "hidden");
+    isoform_modal.css("background-color", "white");
+    $('body').append(isoform_modal);
+
+    isoform_modal.easyModal({
+      opacity: 0.5
+    });
+
     var gene_data = {{ gene.expressionJson|safe }};
 
     var gene_headers = [
@@ -250,16 +267,23 @@
     //Plot isoform transcript models
     {% for isoform in isoforms %}
     gene_expression.lines("#isoform-{{ isoform.safe_name }}-graph", gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 100, height: 50, margin: {left:0, right:0, bottom:0, top:0} });
+    $('#isoform-{{ isoform.safe_name }}-graph').css("cursor", "pointer").click(function(e) {
+      $('#isoform-modal').empty();
+      gene_expression.lines('#isoform-modal', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
+      isoform_modal.trigger('openModal');
+    });
     {% endfor %}
 
-    $('#graph-button-bar').click(function() {
+    $('#graph-button-bar').click(function(e) {
         $('#chart').empty();
         gene_expression.bars('#chart', gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+        e.preventDefault();
         });
 
-    $('#graph-button-line').click(function() {
+    $('#graph-button-line').click(function(e) {
         $('#chart').empty();
         gene_expression.lines('#chart', gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+        e.preventDefault();
         });
 
   </script>
