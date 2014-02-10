@@ -55,6 +55,22 @@
     </div>
   </div>
 
+   <div class="panel panel-default">
+    <div class="panel-heading"><h4>Subgene Features</h4></div>
+    <div class="panel-body">
+       <form name="condition">
+            <label for=timeSilder>Time point:</label> <input type="range" id="timeSlider" min="0" max="3" value="0" style="display:inline-block; vertical-align:middle" onchange="outputTimeUpdate(value)" />
+        <output for=timeSlider id="timeOutput">E15</output>
+            <label for=cellRadio>Cell Type:</label><br>
+            <input type="radio" name="cellTypeGroup" value="cpn" checked style="display:inline-block; vertical-align:middle" onchange="outputCellUpdate(value)" /> CPN<br>
+            <input type="radio" name="cellTypeGroup" value="subcereb" style="display:inline-block; vertical-align:middle" onchange="outputCellUpdate(value)" /> ScPN<br>
+            <input type="radio" name="cellTypeGroup" value="corticothal" style="display:inline-block; vertical-align:middle" onchange="outputCellUpdate(value)" /> CThPN<br>
+       <div id="isoformPie"></div>
+       <div id="TSSPie"></div>
+       <div id="CDSPie"></div>
+    </div>
+  </div>
+
   <div class="panel panel-default">
     <div class="panel-heading"><h4>Isoforms</h4></div>
     <div class="panel-body">
@@ -152,6 +168,21 @@
     </div>
   {% endfor %}
 </div>
+
+<script>
+  var timeScale = d3.scale.ordinal()
+                    .domain(d3.range(0,4))
+                    .range(["E15","E16","E18","P1"])
+  var timepoint = "E15";
+  document.getElementById('timeSlider').addEventListener('change', function() {
+        timepoint = timeScale(document.getElementById("timeSlider").value);
+        //redraw();
+  });
+  function outputTimeUpdate(output) {
+    document.querySelector('#timeOutput').value = timeScale(output);
+}
+
+</script>
 
 <script src="http://d3js.org/d3.hive.v0.min.js"></script>
 

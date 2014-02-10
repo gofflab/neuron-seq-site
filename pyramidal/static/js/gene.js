@@ -467,6 +467,65 @@ window.gene_expression = {
     });
   },
 
+  pie: function(selector, headers, data, attr){
+    var color = d3.scale.category20();
+    var timepoints = ['E15','E16','E18','P1'];
+    var celltypes = ['cpn','subcereb','corticothal']
+
+    if (!("width" in attr)) {
+        attr.width = 200;
+      }
+      if (!("height" in attr)) {
+        attr.height = 200;
+      }
+      if (!("radius" in attr)) {
+      attr.radius = Math.min(attr.width, attr.height) / 2;
+    }
+      if (!("margin" in attr)) {
+        attr.margin = {left: 50, right: 10, bottom: 80, top: 10};
+      }
+      if (!("resizable" in attr)) {
+        attr.resizable = false;
+      }
+
+      var chart_attr = {
+        width:  attr.width+attr.margin.left+attr.margin.right,
+        height: attr.height+attr.margin.top+attr.margin.bottom
+      }
+      
+      var pie = d3.layout.pie()
+        .value(function(d) { return d['E15_cpn']; })
+        .sort(null);
+
+    var arc = d3.svg.arc()
+        //.innerRadius(attr.radius - 50)
+        .innerRadius(0)
+        .outerRadius(attr.radius - 10);
+
+      var svg = d3.select(selector)
+        .append("svg:svg")
+        .attr("class", "chart")
+        .data([data])
+        .attr('preserveAspectRatio', 'xMidYMid')
+        .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
+        .attr(chart_attr);
+
+      var g = svg.selectAll(".arc")
+        .data(pie(data))
+        .enter().append()
+          .attr("class","arc")
+
+      g.append("path")
+        .attr("d",arc)
+        .attr("fill",function(d,i) { return color(i); });
+
+      g.append("text")
+        .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+        .attr("dy", ".35em")
+        .style("text-anchor", "middle")
+        .text(function(d) { return d.id; });
+
+  },
   clusterHeatmap: function(selector, headers, data, attr) {
     var colors = ["steelblue", "green", "crimson"];
 
