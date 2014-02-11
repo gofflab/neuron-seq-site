@@ -12,13 +12,12 @@
     var _pImagePath = "http://www.brain-map.org/external_assets/portal_only/images/";   // location of plugin image assets (must end with a "/")
   </script>
 
-  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/js/jquery-1.9.0.js"></script>
+  <!--  <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/js/jquery-1.9.0.js"></script>-->
   <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/js/jquery-ui-1.10.0.custom.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/javascripts/jquery.ie.cors.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/javascripts/modernizr.svg.js"></script>
   <!--end of sunburst imports-->
 
-  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.easyModal.js"></script>
   {% endblock header %}
 
 	{% block navleft%}
@@ -162,6 +161,7 @@
     <div id="Allen{{section.id}}" class="panel-collapse collapse">
       <div class="panel-body">
         <ul>
+          <!--
         {% for image in section.section_images %}
         <div class="media">
           <a class="pull-left" href="#">
@@ -174,6 +174,7 @@
           </div>
         </div>
         {% endfor %}
+        -->
         </ul>
       </div>
     </div>
@@ -210,15 +211,17 @@
 
   <script type="text/javascript">
     // Create the modal base
-    modal_base = $('<div class="modal"><div class="modal-content"></div></div>').css('display', 'none');
+  modal_base = $('<div class="modal panel panel-default"><div class="modal-content panel-heading"><div class="graph-buttons" style="float:right"><a href="#" id="modal-button-line">Line</a> | <a href="#" id="modal-button-bar">Bar</a></div><h4>Expression Distribution</h4></div><div class="chart panel-body"></div></div>').css('display', 'none');
 
     // Create a note modal
     isoform_modal = modal_base.clone();
     isoform_modal.attr("id", "isoform-modal");
     isoform_modal.css("width", "880px");
-    isoform_modal.css("height", "490px");
+    isoform_modal.css("height", "570px");
     isoform_modal.css("overflow", "hidden");
     isoform_modal.css("background-color", "white");
+    isoform_modal.find('.chart').css("width",  "880px")
+                                .css("height", "490px");
     $('body').append(isoform_modal);
 
     isoform_modal.easyModal({
@@ -266,10 +269,22 @@
 
     //Plot isoform transcript models
     {% for isoform in isoforms %}
-    gene_expression.lines("#isoform-{{ isoform.safe_name }}-graph", gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 100, height: 50, margin: {left:0, right:0, bottom:0, top:0} });
+    gene_expression.lines("#isoform-{{ isoform.safe_name }}-graph", gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 100, height: 50, margin: {left:1, right:0, bottom:1, top:0} });
     $('#isoform-{{ isoform.safe_name }}-graph').css("cursor", "pointer").click(function(e) {
-      $('#isoform-modal').empty();
-      gene_expression.lines('#isoform-modal', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
+      $('#isoform-modal .chart').empty();
+      gene_expression.lines('#isoform-modal .chart', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
+
+      $('#modal-button-bar').click(function(e) {
+          $('#isoform-modal .chart').empty();
+          gene_expression.bars('#isoform-modal .chart', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
+          e.preventDefault();
+          });
+
+      $('#modal-button-line').click(function(e) {
+          $('#isoform-modal .chart').empty();
+          gene_expression.lines('#isoform-modal .chart', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
+          e.preventDefault();
+          });
       isoform_modal.trigger('openModal');
     });
     {% endfor %}
@@ -286,6 +301,7 @@
         e.preventDefault();
         });
 
+    gene_set.renderAddButtonAfter("{{ gene.gene_id }}", 'h1');
   </script>
   <!-- # Implement later for sunburst -->
   <script type="text/javascript" src="{{ STATIC_URL }}js/sunburst/import.js"></script>
