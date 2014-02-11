@@ -1,0 +1,26 @@
+.gene_set_button {
+  border: 1px solid black;
+  border-radius: 11px;
+  color: white;
+  display: inline-block;
+  font-size: 10pt;
+  margin-left: 15px;
+  padding-top: 1px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  vertical-align: top;
+  cursor: pointer;
+}
+
+.gene_set_button:hover {
+  text-decoration: underline;
+}
+
+.remove_from_gene_set {
+  background-color: hsl(0, 50%, 50%);
+}
+
+.add_to_gene_set {
+  background-color: hsl(100, 50%, 50%);
+}
