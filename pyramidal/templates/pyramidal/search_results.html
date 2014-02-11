@@ -7,8 +7,7 @@
 
 {% block content %}
 <h3>Search Results</h3>
-<h5>for: <strong>{{ query_string }}</strong></h5>
-<h5>Results:</h5>
+<h5>Results for: <strong>{{ query_string }}</strong></h5>
 <table class="table table-hover">
 
 <tr>
@@ -20,7 +19,7 @@
 </tr>
 {% for gene in found_genes %}
 <tr>
-	<td><a href="{% url 'gene_show' gene_id=gene.url_name %}">{{ gene.gene_short_name }}</a></td>
+  <td id="gene-link-{{ gene.safe_name }}"><a href="{% url 'gene_show' gene_id=gene.url_name %}">{{ gene.gene_short_name }}</a></td>
 	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}&hubUrl=http://rinnlab.rc.fas.harvard.edu/hubs/Arlotta_neuronal_subtypes/hub.txt" target="_blank">{{ gene.locus }}</a></td>
 	<td>{{ gene.isoforms|length }}</td>
   {% if gene.isSignificant %}
@@ -55,6 +54,8 @@
       gene_headers,
       {{ gene.expressionJson|safe }},
       { width: 100, height: 50, margin: {left: 0, right: 0, top: 0, bottom: 0} });
+
+  gene_set.renderAddButtonAfter("{{ gene.gene_id }}", 'tr td#gene-link-{{ gene.safe_name }}');
   {% endfor %}
 </script>
 {% endblock content %}
