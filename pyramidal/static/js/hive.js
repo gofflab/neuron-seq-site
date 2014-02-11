@@ -148,10 +148,41 @@ window.hive = {
         .append("text")
         .attr("y", 6)
         .attr("dy", ".9em")
-        .attr("x",radius.range()[radius.range().length-1]/4)
-        .attr("dx","-1em")
-        .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
-        .text(function(d){return d})
+        .attr("x", function(d,i) {
+          if (i == 2) {
+            return -(radius.range()[radius.range().length-1] / 4);
+          }
+          else {
+            return radius.range()[radius.range().length-1] / 4;
+          }
+        })
+        .attr("dx", function(d,i) {
+          if (i == 2) {
+            return "0.8em";
+          }
+          else {
+            return "-0.8em";
+          }
+        })
+        .attr("text-anchor", function(d,i) {
+          if (i == 2) {
+            return "end";
+          }
+          else {
+            return "start";
+          }
+        })
+        .attr("transform", function(d,i) {
+          if (i == 2) {
+            return "rotate(" + (180 + degrees(angle(d))) + ")";
+          }
+          else {
+            return "rotate(" + degrees(angle(d)) + ")";
+          }
+        })
+        .text(function(d){
+          return d
+        })
         .style("stroke", function(d,i) { return colors[i]; })
         .attr("text-decoration","none");
 
