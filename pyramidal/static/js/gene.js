@@ -340,6 +340,45 @@ window.gene_expression = {
         .style("text-anchor", "end")
         .text(function(d) { return d; });
     }
+    else {
+      xAxis = d3.svg.axis()
+        .scale(x)
+        .ticks(headers[0].length)
+        .tickSize(0, 0, 0)
+        .tickFormat(function(tick) {
+          return headers[0][tick]
+        });
+
+      yAxis = d3.svg.axis()
+        .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [attr.height, 0] ))
+        .tickSize(0, 0, 0)
+        .orient('left');
+
+      chart.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0, ' + attr.height + ')')
+        .call(xAxis);
+
+      chart.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+        .append("text")
+        .style()
+        .style({
+          "text-anchor": "end"})
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em");
+
+      chart.selectAll('.axis .domain')
+        .style({
+          "stroke": "#44f"});
+
+      chart.selectAll('.tick .domain')
+        .style({
+          "stroke": "#44f"});
+
+    }
   },
 
   isoforms: function(selector, data, attr) {
