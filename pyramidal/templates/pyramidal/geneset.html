@@ -3,17 +3,7 @@
         GeneSet View
     {% endblock title %}
 	{% block header %}
-	<style>
-    .legendLabel{
-        font-family:sans-serif;
-        font-size:10pt;
-    }
-    .label{
-        font-family:sans-serif;
-        font-size:10pt;
-
-    }
-	</style>
+    <link rel="stylesheet" href="{{ STATIC_URL}}css/gene_set_viz.css">
   {% endblock header %}
 
 	{% block navleft%}
@@ -26,14 +16,12 @@
 
 	{% block main %}
     <div id="legend"></div>
-    <form name="pickTimepoint">
-            <label for=silder>Time point:</label> <input type="range" id="slider" min="0" max="3" value="3" style="display:inline-block; vertical-align:middle" onchange="outputUpdate(value)" />
+    <form name="pickTimepoint" id="timeinput">
+            <label for=silder>Time point:</label> <input type="range" id="slider" min="0" max="3" value="3" style="display:inline-block; vertical-align:middle" />
         <output for=slider id="timeOutput">P1</output>
-<script>
-    function outputUpdate(output) {
-document.querySelector('#timeOutput').value = timeScale(output);
-}
-</script>
+      <div id="viz-selector">
+      <a href="#" id="viz-button-tabular">Tabular</a> | <a href="#" id="viz-button-cluster">Cluster</a>
+      </div>
     </form>
     <div id="genelist"></div>
 
@@ -44,6 +32,19 @@ document.querySelector('#timeOutput').value = timeScale(output);
       var diffData = {{ diffData|safe }};
 
       // Draw
-      gene_set_viz.draw("#slider", "#genelist", expressionData, diffData);
+      gene_set_viz.legend('#legend');
+      gene_set_viz.tabular("#slider", "#genelist", expressionData, diffData);
+
+      $('#viz-button-tabular').click(function(e) {
+        $('#genelist').empty();
+        gene_set_viz.tabular("#slider", "#genelist", expressionData, diffData);
+        e.preventDefault();
+      });
+
+      $('#viz-button-cluster').click(function(e) {
+        $('#genelist').empty();
+        gene_set_viz.cluster("#slider", "#genelist", expressionData, diffData);
+        e.preventDefault();
+      });
     </script>
 	{% endblock main %}
