@@ -467,7 +467,7 @@ window.gene_expression = {
     });
   },
 
- pie: function(selector, data, attr){
+ pie: function(selector, data, id, attr){
     var color = d3.scale.category20();
     var timepoints = ['E15','E16','E18','P1'];
     var celltypes = ['cpn','subcereb','corticothal'];
@@ -524,19 +524,48 @@ window.gene_expression = {
         //.data(nest.get(celltime))
         .attr('preserveAspectRatio', 'xMidYMid')
         .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
-        .attr(chart_attr)
+        .attr(chart_attr);
+
+      var arcs = svg
         .append("g")
-          .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")");
+          .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")")
+          .selectAll(".arc")
+          .data(pie(nest.get(celltime)))  
+          .enter().append("path")
+            .attr("class","arc")
+            .attr("d",arc)
+            .attr("fill",function(d,i) { return color(i); })
+            .each(function(d) { this._current = d; });
 
-      var arcs = svg.selectAll(".arc")
-        .data(pie(nest.get(celltime)))  
-        .enter().append("path")
-          .attr("class","arc")
-          .attr("d",arc)
-          .attr("fill",function(d,i) { return color(i); })
-          .each(function(d) { this._current = d; });
+      //console.log(arcs)
 
-      console.log(arcs)
+      //Labels
+      var labs = svg.append("g")
+          .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")")
+          .selectAll(".pieLabel")
+          .data(pie(nest.get(celltime)))
+          .enter().append("text")
+                .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+                //.attr("dy", ".35em")
+                .attr("dy", function(d){
+                  if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
+                        return 5;
+                      } else {
+                        return -7;
+                      }
+                })
+                //.style("text-anchor", "middle")
+                .attr("text-anchor", function(d){
+                      if ( (d.startAngle+d.endAngle)/2 < Math.PI ){
+                        return "beginning";
+                      } else {
+                        return "end";
+                      }
+                })
+                .attr("fill",function(d,i) { return color(i); })
+                .attr("stroke","#000000")
+                .attr("stroke-width",".05em")
+                .text(function(d) { return d.data[id]; });
 
       d3.selectAll(".inputPieCell")
       .on("change", changeCell);
@@ -547,23 +576,44 @@ window.gene_expression = {
       function changeTime() {
         timepoint = timescale(this.value);
         celltime = timepoint + "_" + celltype;
-        change();
+        change(selector);
       }
 
       function changeCell() {
         celltype = this.value;
         celltime = timepoint + "_" + celltype;
-        change();
+        change(selector);
       }
 
-      function change() {
+      function change(selector) {
         //clearTimeout(timeout);
         pie.value(function(d) { return d.fpkm; })
-        arcs = arcs.data(pie(nest.get(celltime))); // compute the new angles
+        arcs = d3.select(selector)
+                    .selectAll(".arc")
+                    .data(pie(nest.get(celltime))); // compute the new angles
                     //.each(function(d,i) {d._current = oldData[i]._current;}); 
         arcs.transition()
           .duration(tweenDuration)
           .attrTween("d", arcTween); // redraw the arcs
+
+        labs = d3.select(selector)
+                    .selectAll(".pieLabel")
+                    .data(pie(nest.get(celltime))) // add new data
+                    .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+                    .attr("dy", function(d){
+                      if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
+                            return 5;
+                          } else {
+                            return -7;
+                          }
+                    })
+                    .attr("text-anchor", function(d){
+                          if ( (d.startAngle+d.endAngle)/2 < Math.PI ){
+                            return "beginning";
+                          } else {
+                            return "end";
+                          }
+                    });
       }
 
       // Store the displayed angles in _current.
@@ -579,13 +629,6 @@ window.gene_expression = {
           return arc(i(t));
         };
       }
-
-      // arcs.append("text")
-      //   .data(nest.get(celltime))
-      //   .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-      //   .attr("dy", ".35em")
-      //   .style("text-anchor", "middle")
-      //   .text(function(d) { return d.isoform_id; });
 
   },
   clusterHeatmap: function(selector, headers, data, attr) {

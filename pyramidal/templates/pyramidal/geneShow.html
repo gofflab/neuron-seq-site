@@ -35,7 +35,7 @@
 	<h6>External Links</h6>
 		<ul>
 			<li><a href="http://developingmouse.brain-map.org/search/show?page_num=0&page_size=8&no_paging=false&exact_match=false&search_term={{ gene.gene_short_name }}&search_type=gene" target="_blank">Developing Mouse Brain - Allen</a></li>
-			<li><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}" target="_blank">UCSC Genome Browser</a></li>
+			<li><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}&hubUrl=http://rinnlab.rc.fas.harvard.edu/hubs/Arlotta_neuronal_subtypes/hub.txt" target="_blank">UCSC Genome Browser</a></li>
 		</ul>
 
 	{% endblock navleft %}
@@ -45,7 +45,7 @@
 
 	<h1>{{ gene.gene_short_name }}</h1>
 		<h3>Locus</h3>
-		<a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}" target="_blank">{{ gene.locus }}</a>
+		<a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}&hubUrl=http://rinnlab.rc.fas.harvard.edu/hubs/Arlotta_neuronal_subtypes/hub.txt" target="_blank">{{ gene.locus }}</a>
   </br>
   <div class="panel panel-default">
   <div class="panel-heading"><h4>Expression Distribution</h4></div>
@@ -224,26 +224,20 @@
      {% endfor %}
     };
 
-    // //Isoform expression data
-    // var isoform_data = [
-    //  {% for isoform in isoforms %}
-    //     {{ isoform.expressionJson|safe }},
-    //  {% endfor %}
-    // ];
-
-    var isoform_fpkm = {{ gene.isoformFpkm|safe }};
-
-    gene_expression.pie('#isoformPie', isoform_fpkm, { width: 200, height: 200, resizable: false })
-
     //Promoter-level expression data
     var promoter_fpkm = {{ gene.promoterFpkm|safe }};
 
-    gene_expression.pie('#promoterPie', promoter_fpkm, { width: 200, height: 200, resizable: false })
+    gene_expression.pie('#promoterPie', promoter_fpkm, "tss_group_id", { width: 200, height: 200, resizable: false })
 
     //CDS-level expression data
     var cds_fpkm = {{ gene.cdsFpkm|safe }};
 
-    gene_expression.pie('#cdsPie', cds_fpkm, { width: 200, height: 200, resizable: false })
+    gene_expression.pie('#cdsPie', cds_fpkm, "cds_id", { width: 200, height: 200, resizable: false })
+
+    // //Isoform expression data
+    var isoform_fpkm = {{ gene.isoformFpkm|safe }};
+
+    gene_expression.pie('#isoformPie', isoform_fpkm, "isoform_id", { width: 200, height: 200, resizable: false })
 
     //Plot isoform transcript models
     {% for isoform in isoforms %}
