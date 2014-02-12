@@ -1,0 +1,44 @@
+/* Styling for the gene set visualizer page
+ *
+ */
+
+/* Labels used for the tabular gene set visualizer */
+.gene-set-label {
+  fill: #888;
+  font-family: sans-serif;
+  font-size: 10pt;
+}
+
+/* Labels used on the triangular legend */
+.gene-set-legend-label {
+  font-family: sans-serif;
+  font-size: 10pt;
+}
+
+/* Dot on the legend to show placement of hovered gene */
+.gene-set-legend-marker {
+  fill: none;
+  z-index: 10;
+  stroke: #333;
+  stroke-width: 3px;
+}
+
+#viz-selector {
+  text-align: center;
+}
+
+#legend {
+  width: 200px;
+  margin: 0 auto;
+}
+
+form#timeinput {
+  width: 200px;
+  margin: 0 auto;
+  padding-left: 10px;
+}
+
+#genelist {
+  max-width: 800px;
+  margin: 0 auto;
+}
