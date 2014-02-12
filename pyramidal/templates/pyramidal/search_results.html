@@ -9,15 +9,21 @@
 
 <tr>
 	<th><a href="?{% url_replace request 'order_by' 'gene_id'%}">Gene</a></th>
-	<th>Locus</th>
+	<th><a href="?{% url_replace request 'order_by' 'locus'%}">Locus</th>
 	<th>Number of isoforms</th>
+  <th>Significant</th>
 	<th>Expression</th>
 </tr>
 {% for gene in found_genes %}
 <tr>
 	<td><a href="{% url 'gene_show' gene_id=gene.url_name %}">{{ gene.gene_short_name }}</a></td>
-	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}" target="_blank">{{ gene.locus }}</a></td>
+	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}&hubUrl=http://rinnlab.rc.fas.harvard.edu/hubs/Arlotta_neuronal_subtypes/hub.txt" target="_blank">{{ gene.locus }}</a></td>
 	<td>{{ gene.isoforms|length }}</td>
+  {% if gene.isSignificant %}
+  <td><span class="glyphicon glyphicon-ok"></span></td>
+  {% else %}
+  <td>&nbsp;</td>
+  {% endif %}
   <td><div class="gene-expression" id="gene-{{ gene.safe_name }}"></div></td>
 </tr>
 <tr>

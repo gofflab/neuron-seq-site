@@ -436,6 +436,12 @@ class Gene(models.Model):
         CDS = Cds.objects.filter(gene_id=self.gene_id)
         return CDS
 
+    def isSignificant(self,qCutoff=0.0004):
+        if min([x['q_value'] for x in self.diffData()]) <= qCutoff:
+            return True
+        else:
+            return False
+
     def __repr__(self):
         return "Gene object: %s" % (self.gene_short_name)
 
