@@ -59,15 +59,17 @@
     <div class="panel-heading"><h4>Subgene Features</h4></div>
     <div class="panel-body">
        <form name="condition">
-            <label for=timeSilder>Time point:</label> <input type="range" id="timeSlider" min="0" max="3" value="0" style="display:inline-block; vertical-align:middle" onchange="outputTimeUpdate(value)" />
-        <output for=timeSlider id="timeOutput">E15</output>
-            <label for=cellRadio>Cell Type:</label><br>
-            <input type="radio" name="cellTypeGroup" value="cpn" checked style="display:inline-block; vertical-align:middle" onchange="outputCellUpdate(value)" /> CPN<br>
-            <input type="radio" name="cellTypeGroup" value="subcereb" style="display:inline-block; vertical-align:middle" onchange="outputCellUpdate(value)" /> ScPN<br>
-            <input type="radio" name="cellTypeGroup" value="corticothal" style="display:inline-block; vertical-align:middle" onchange="outputCellUpdate(value)" /> CThPN<br>
-       <div id="isoformPie"></div>
-       <div id="TSSPie"></div>
-       <div id="CDSPie"></div>
+              <label style="float:left;" for=timeSilder>Time point:&nbsp;</label>
+              <input class="inputPieTime" type="range" id="timeSlider" min="0" max="3" value="0" style="display:inline-block; float:left;" onchange="outputTimeUpdate(value)" />
+              &nbsp;<output style="float:left;" for=timeSlider id="timeOutput">E15</output><br clear="left">
+              <label for=cellRadio>Cell Type:</label> 
+              <input class="inputPieCell" type="radio" name="cellTypeGroup" value="cpn" checked style="display:inline-block; vertical-align:middle"/> CPN
+              <input class="inputPieCell" type="radio" name="cellTypeGroup" value="subcereb" style="display:inline-block; vertical-align:middle"/> ScPN
+              <input class="inputPieCell" type="radio" name="cellTypeGroup" value="corticothal" style="display:inline-block; vertical-align:middle"/> CThPN
+       </form>
+       <div style="float: left;" id="isoformPie"><h4 style="text-align:center">Isoforms</h4></div>
+       <div style="float: left;" id="promoterPie"><h4 style="text-align:center">Promoters</h4></div>
+       <div style="float: left;"id="cdsPie"><h4 style="text-align:center">CDS</h4></div>
     </div>
   </div>
 
@@ -174,10 +176,10 @@
                     .domain(d3.range(0,4))
                     .range(["E15","E16","E18","P1"])
   var timepoint = "E15";
-  document.getElementById('timeSlider').addEventListener('change', function() {
-        timepoint = timeScale(document.getElementById("timeSlider").value);
-        //redraw();
-  });
+  // document.getElementById('timeSlider').addEventListener('change', function() {
+  //       timepoint = timeScale(document.getElementById("timeSlider").value);
+  //       //redraw();
+  // });
   function outputTimeUpdate(output) {
     document.querySelector('#timeOutput').value = timeScale(output);
 }
@@ -215,12 +217,35 @@
 
     gene_expression.isoforms('.isoform', isoforms, { resizable: true } );
 
+    //Isoform expression data
     var isoform_data = {
      {% for isoform in isoforms %}
      "{{ isoform.isoform_id }}": {{ isoform.expressionJson|safe }},
      {% endfor %}
     };
 
+    // //Isoform expression data
+    // var isoform_data = [
+    //  {% for isoform in isoforms %}
+    //     {{ isoform.expressionJson|safe }},
+    //  {% endfor %}
+    // ];
+
+    var isoform_fpkm = {{ gene.isoformFpkm|safe }};
+
+    gene_expression.pie('#isoformPie', isoform_fpkm, { width: 200, height: 200, resizable: false })
+
+    //Promoter-level expression data
+    var promoter_fpkm = {{ gene.promoterFpkm|safe }};
+
+    gene_expression.pie('#promoterPie', promoter_fpkm, { width: 200, height: 200, resizable: false })
+
+    //CDS-level expression data
+    var cds_fpkm = {{ gene.cdsFpkm|safe }};
+
+    gene_expression.pie('#cdsPie', cds_fpkm, { width: 200, height: 200, resizable: false })
+
+    //Plot isoform transcript models
     {% for isoform in isoforms %}
     gene_expression.lines("#isoform-{{ isoform.safe_name }}-graph", gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 100, height: 50, margin: {left:0, right:0, bottom:0, top:0} });
     {% endfor %}

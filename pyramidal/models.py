@@ -28,8 +28,45 @@ class Cds(models.Model):
         db_table = 'CDS'
         verbose_name_plural = 'CDS'
 
+    def safe_name(self):
+      return self.cds_id.replace('.', '_').replace(' ', '_')
+
+    def fpkm(self):
+        fpkmDat = Cdsdata.objects.filter(cds_id=self.cds_id)
+        fpkmVals = [x.fpkm for x in fpkmDat]
+        sampleKeys = [x.sample_name for x in fpkmDat]
+        return dict(zip(sampleKeys,fpkmVals))
+
+    def features(self):
+      return Features.objects.filter(cds_id=self.cds_id)
+
+    def featuresJson(self):
+      features = self.features()
+      res = [x.__dict__ for x in features]
+      for r in range(len(res)):
+        res[r]['_state'] = None
+      return json.dumps(res, separators=(',',':'))
+
+    def expression(self):
+        expressionDat = Cdsdata.objects.filter(cds_id=self.cds_id)
+        samples = [x.sample_name for x in expressionDat]
+        dat = [x.__dict__ for x in expressionDat]
+        return dict(zip(samples,dat))
+
+    def expressionJson(self):
+        expressionDat = Cdsdata.objects.filter(cds_id=self.cds_id)
+        res = [x.__dict__ for x in expressionDat]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+        return json.dumps(res, separators=(',',':'))
+
+    def __repr__(self):
+        return "CDS object: %s" % (self.cds_id)
+
 class Cdscount(models.Model):
-    cds_id = models.CharField(db_column='CDS_id', max_length=45) # Field name made lowercase.
+    cds_id = models.CharField(db_column='CDS_id', max_length=45, primary_key=True) # Field name made lowercase.
     sample_name = models.CharField(max_length=45)
     count = models.TextField(blank=True) # This field type is a guess.
     variance = models.TextField(blank=True) # This field type is a guess.
@@ -41,7 +78,7 @@ class Cdscount(models.Model):
         db_table = 'CDSCount'
 
 class Cdsdata(models.Model):
-    cds_id = models.CharField(db_column='CDS_id', max_length=45) # Field name made lowercase.
+    cds_id = models.CharField(db_column='CDS_id', max_length=45, primary_key=True) # Field name made lowercase.
     sample_name = models.CharField(max_length=45)
     fpkm = models.TextField(blank=True) # This field type is a guess.
     conf_hi = models.TextField(blank=True) # This field type is a guess.
@@ -52,7 +89,7 @@ class Cdsdata(models.Model):
         db_table = 'CDSData'
 
 class Cdsdiffdata(models.Model):
-    gene_id = models.CharField(max_length=45)
+    gene_id = models.CharField(max_length=45, primary_key=True)
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
     status = models.CharField(max_length=45, blank=True)
@@ -68,7 +105,7 @@ class Cdsdiffdata(models.Model):
         db_table = 'CDSDiffData'
 
 class Cdsexpdiffdata(models.Model):
-    cds_id = models.CharField(db_column='CDS_id', max_length=45) # Field name made lowercase.
+    cds_id = models.CharField(db_column='CDS_id', max_length=45, primary_key=True) # Field name made lowercase.
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
     status = models.CharField(max_length=45, blank=True)
@@ -84,13 +121,13 @@ class Cdsexpdiffdata(models.Model):
         db_table = 'CDSExpDiffData'
 
 class Cdsfeatures(models.Model):
-    cds_id = models.CharField(db_column='CDS_id', max_length=45) # Field name made lowercase.
+    cds_id = models.CharField(db_column='CDS_id', max_length=45, primary_key=True) # Field name made lowercase.
     class Meta:
         managed = False
         db_table = 'CDSFeatures'
 
 class Cdsreplicatedata(models.Model):
-    cds_id = models.CharField(db_column='CDS_id', max_length=45) # Field name made lowercase.
+    cds_id = models.CharField(db_column='CDS_id', max_length=45, primary_key=True) # Field name made lowercase.
     sample_name = models.CharField(max_length=45)
     replicate = models.IntegerField(blank=True, null=True)
     rep_name = models.CharField(max_length=45)
@@ -118,8 +155,45 @@ class Tss(models.Model):
         db_table = 'TSS'
         verbose_name_plural = 'TSS'
 
+    def safe_name(self):
+      return self.tss_group_id.replace('.', '_').replace(' ', '_')
+
+    def fpkm(self):
+        fpkmDat = Tssdata.objects.filter(tss_group_id=self.tss_group_id)
+        fpkmVals = [x.fpkm for x in fpkmDat]
+        sampleKeys = [x.sample_name for x in fpkmDat]
+        return dict(zip(sampleKeys,fpkmVals))
+
+    def features(self):
+      return Features.objects.filter(tss_group_id=self.tss_group_id)
+
+    def featuresJson(self):
+      features = self.features()
+      res = [x.__dict__ for x in features]
+      for r in range(len(res)):
+        res[r]['_state'] = None
+      return json.dumps(res, separators=(',',':'))
+
+    def expression(self):
+        expressionDat = Tssdata.objects.filter(tss_group_id=self.tss_group_id)
+        samples = [x.sample_name for x in expressionDat]
+        dat = [x.__dict__ for x in expressionDat]
+        return dict(zip(samples,dat))
+
+    def expressionJson(self):
+        expressionDat = Tssdata.objects.filter(tss_group_id=self.tss_group_id)
+        res = [x.__dict__ for x in expressionDat]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+        return json.dumps(res, separators=(',',':'))
+
+    def __repr__(self):
+        return "TSS object: %s" % (self.tss_group_id)
+
 class Tsscount(models.Model):
-    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45) # Field name made lowercase.
+    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, primary_key=True) # Field name made lowercase.
     sample_name = models.CharField(max_length=45)
     count = models.TextField(blank=True) # This field type is a guess.
     variance = models.TextField(blank=True) # This field type is a guess.
@@ -131,7 +205,7 @@ class Tsscount(models.Model):
         db_table = 'TSSCount'
 
 class Tssdata(models.Model):
-    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45) # Field name made lowercase.
+    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, primary_key=True) # Field name made lowercase.
     sample_name = models.CharField(max_length=45)
     fpkm = models.TextField(blank=True) # This field type is a guess.
     conf_hi = models.TextField(blank=True) # This field type is a guess.
@@ -142,7 +216,7 @@ class Tssdata(models.Model):
         db_table = 'TSSData'
 
 class Tssexpdiffdata(models.Model):
-    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45) # Field name made lowercase.
+    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, primary_key=True) # Field name made lowercase.
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
     status = models.CharField(max_length=45, blank=True)
@@ -158,13 +232,13 @@ class Tssexpdiffdata(models.Model):
         db_table = 'TSSExpDiffData'
 
 class Tssfeatures(models.Model):
-    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45) # Field name made lowercase.
+    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, primary_key=True) # Field name made lowercase.
     class Meta:
         managed = False
         db_table = 'TSSFeatures'
 
 class Tssreplicatedata(models.Model):
-    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45) # Field name made lowercase.
+    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, primary_key=True) # Field name made lowercase.
     sample_name = models.CharField(max_length=45)
     replicate = models.CharField(max_length=45, blank=True)
     rep_name = models.CharField(max_length=45)
@@ -321,15 +395,52 @@ class Gene(models.Model):
         isoforms = Isoform.objects.filter(gene_id=self.gene_id)
         return isoforms
 
+    def isoformFpkm(self):
+        isoforms = self.isoforms()
+        isoform_ids = [x.isoform_id for x in isoforms]
+        isoformFpkm = Isoformdata.objects.filter(isoform__in=isoform_ids)
+        res = [x.__dict__ for x in isoformFpkm]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+        return json.dumps(res, separators=(',',':'))
+
+    def promoterFpkm(self):
+        promoters = self.promoters()
+        tss_ids = [x.tss_group_id for x in promoters]
+        promoterFpkm = Tssdata.objects.filter(tss_group_id__in=tss_ids)
+        res = [x.__dict__ for x in promoterFpkm]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+        return json.dumps(res, separators=(',',':'))
+
+    def cdsFpkm(self):
+        cds = self.CDS()
+        cds_ids = [x.cds_id for x in cds]
+        cdsFpkm = Cdsdata.objects.filter(cds_id__in=cds_ids)
+        res = [x.__dict__ for x in cdsFpkm]
+        for r in range(len(res)):
+            res[r]['_state'] = None
+            res[r]['timepoint'] = res[r]['sample_name'].rstrip().split("_")[0]
+            res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
+        return json.dumps(res, separators=(',',':'))
+
     def promoters(self):
         promoters = Tss.objects.filter(gene_id=self.gene_id)
         return promoters
+
+    def CDS(self):
+        CDS = Cds.objects.filter(gene_id=self.gene_id)
+        return CDS
 
     def __repr__(self):
         return "Gene object: %s" % (self.gene_short_name)
 
 class Genecount(models.Model):
-    gene_id = models.CharField(max_length=45)
+    gene_id = models.CharField(max_length=45, primary_key=True)
     sample_name = models.CharField(max_length=45)
     count = models.FloatField(blank=True)
     variance = models.FloatField(blank=True)
@@ -357,13 +468,13 @@ class Geneexpdiffdata(models.Model):
         db_table = 'geneExpDiffData'
 
 class Genefeatures(models.Model):
-    gene_id = models.CharField(max_length=45)
+    gene_id = models.CharField(max_length=45, primary_key=True)
     class Meta:
         managed = False
         db_table = 'geneFeatures'
 
 class Genereplicatedata(models.Model):
-    gene_id = models.CharField(max_length=45)
+    gene_id = models.CharField(max_length=45, primary_key=True)
     sample_name = models.CharField(max_length=45)
     replicate = models.IntegerField(blank=True, null=True)
     rep_name = models.CharField(max_length=45)
@@ -445,7 +556,7 @@ class Isoform(models.Model):
         return "Isoform object: %s" % (self.isoform_id)
 
 class Isoformcount(models.Model):
-    isoform_id = models.CharField(max_length=45)
+    isoform_id = models.CharField(max_length=45, primary_key=True)
     sample_name = models.CharField(max_length=45)
     count = models.TextField(blank=True) # This field type is a guess.
     variance = models.TextField(blank=True) # This field type is a guess.
@@ -468,7 +579,7 @@ class Isoformdata(models.Model):
         db_table = 'isoformData'
 
 class Isoformexpdiffdata(models.Model):
-    isoform_id = models.CharField(max_length=45)
+    isoform_id = models.CharField(max_length=45, primary_key=True)
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
     status = models.CharField(max_length=45, blank=True)
@@ -484,13 +595,13 @@ class Isoformexpdiffdata(models.Model):
         db_table = 'isoformExpDiffData'
 
 class Isoformfeatures(models.Model):
-    isoform_id = models.CharField(max_length=45)
+    isoform_id = models.CharField(max_length=45, primary_key=True)
     class Meta:
         managed = False
         db_table = 'isoformFeatures'
 
 class Isoformreplicatedata(models.Model):
-    isoform_id = models.CharField(max_length=45)
+    isoform_id = models.CharField(max_length=45, primary_key=True)
     sample_name = models.CharField(max_length=45)
     replicate = models.IntegerField(blank=True, null=True)
     rep_name = models.CharField(max_length=45)
@@ -520,7 +631,7 @@ class Phenodata(models.Model):
         verbose_name_plural = 'phenoData'
 
 class Promoterdiffdata(models.Model):
-    gene_id = models.CharField(max_length=45)
+    gene_id = models.CharField(max_length=45, primary_key=True)
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
     status = models.CharField(max_length=45, blank=True)
@@ -549,7 +660,7 @@ class Replicate(models.Model):
         db_table = 'replicates'
 
 class Runinfo(models.Model):
-    param = models.CharField(max_length=45, blank=True)
+    param = models.CharField(max_length=45, blank=True, primary_key=True)
     value = models.TextField(blank=True)
     class Meta:
         managed = False
@@ -564,7 +675,7 @@ class Sample(models.Model):
         verbose_name_plural = 'Samples'
 
 class Splicingdiffdata(models.Model):
-    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45) # Field name made lowercase.
+    tss_group_id = models.CharField(db_column='TSS_group_id', max_length=45, primary_key=True) # Field name made lowercase.
     gene_id = models.CharField(max_length=45)
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
@@ -581,7 +692,7 @@ class Splicingdiffdata(models.Model):
         db_table = 'splicingDiffData'
 
 class Varmodel(models.Model):
-    condition = models.CharField(max_length=45)
+    condition = models.CharField(max_length=45, primary_key=True)
     locus = models.CharField(max_length=45)
     compatible_count_mean = models.TextField(blank=True) # This field type is a guess.
     compatible_count_var = models.TextField(blank=True) # This field type is a guess.

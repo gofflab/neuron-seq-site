@@ -70,6 +70,8 @@ def geneShow(request,gene_id):
       return redirect('gene_show', gene_id = gene.gene_id)
 
     isoforms = gene.isoforms()
+    promoters = gene.promoters()
+    cds = gene.CDS()
     AE = AllenExplorer()
     allenExpIds = AE.experimentIds(gene.gene_short_name)
     allenSectionData = AE.sectionData(gene.gene_short_name)
@@ -78,6 +80,8 @@ def geneShow(request,gene_id):
   context = {
       'gene': gene,
       'isoforms': isoforms,
+      'promoters': promoters,
+      'cds': cds,
       'sunburstIds': allenExpIds,
       'sectionData': allenSectionData,
       }

@@ -467,22 +467,25 @@ window.gene_expression = {
     });
   },
 
-  pie: function(selector, headers, data, attr){
+ pie: function(selector, data, attr){
     var color = d3.scale.category20();
     var timepoints = ['E15','E16','E18','P1'];
-    var celltypes = ['cpn','subcereb','corticothal']
+    var celltypes = ['cpn','subcereb','corticothal'];
+    var tweenDuration = 500;
+    var pieData = [];    
+    var oldPieData = [];
 
     if (!("width" in attr)) {
-        attr.width = 200;
+        attr.width = 400;
       }
       if (!("height" in attr)) {
-        attr.height = 200;
+        attr.height = 400;
       }
       if (!("radius" in attr)) {
       attr.radius = Math.min(attr.width, attr.height) / 2;
     }
       if (!("margin" in attr)) {
-        attr.margin = {left: 50, right: 10, bottom: 80, top: 10};
+        attr.margin = {left: 20, right: 20, bottom: 20, top: 20};
       }
       if (!("resizable" in attr)) {
         attr.resizable = false;
@@ -493,37 +496,96 @@ window.gene_expression = {
         height: attr.height+attr.margin.top+attr.margin.bottom
       }
       
+      var nest = d3.nest()
+                      .key(function(d) { return d.sample_name; })
+                      .map(data,d3.map)
+
+      var timepoint = "E15";
+      var celltype = "cpn";
+
+      var timescale = d3.scale.ordinal()
+                        .domain(d3.range(0,4))
+                        .range(timepoints);
+
+      var celltime = timepoint + "_" + celltype;
+
       var pie = d3.layout.pie()
-        .value(function(d) { return d['E15_cpn']; })
+        .value(function(d) { return d.fpkm; })
         .sort(null);
 
-    var arc = d3.svg.arc()
-        //.innerRadius(attr.radius - 50)
-        .innerRadius(0)
+      var arc = d3.svg.arc()
+        .innerRadius(attr.radius - chart_attr.width/4)
+        //.innerRadius(0)
         .outerRadius(attr.radius - 10);
 
       var svg = d3.select(selector)
         .append("svg:svg")
         .attr("class", "chart")
-        .data([data])
+        //.data(nest.get(celltime))
         .attr('preserveAspectRatio', 'xMidYMid')
         .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
-        .attr(chart_attr);
+        .attr(chart_attr)
+        .append("g")
+          .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")");
 
-      var g = svg.selectAll(".arc")
-        .data(pie(data))
-        .enter().append()
+      var arcs = svg.selectAll(".arc")
+        .data(pie(nest.get(celltime)))  
+        .enter().append("path")
           .attr("class","arc")
+          .attr("d",arc)
+          .attr("fill",function(d,i) { return color(i); })
+          .each(function(d) { this._current = d; });
 
-      g.append("path")
-        .attr("d",arc)
-        .attr("fill",function(d,i) { return color(i); });
+      console.log(arcs)
 
-      g.append("text")
-        .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-        .attr("dy", ".35em")
-        .style("text-anchor", "middle")
-        .text(function(d) { return d.id; });
+      d3.selectAll(".inputPieCell")
+      .on("change", changeCell);
+
+      d3.selectAll(".inputPieTime")
+      .on("change", changeTime);
+
+      function changeTime() {
+        timepoint = timescale(this.value);
+        celltime = timepoint + "_" + celltype;
+        change();
+      }
+
+      function changeCell() {
+        celltype = this.value;
+        celltime = timepoint + "_" + celltype;
+        change();
+      }
+
+      function change() {
+        //clearTimeout(timeout);
+        pie.value(function(d) { return d.fpkm; })
+        arcs = arcs.data(pie(nest.get(celltime))); // compute the new angles
+                    //.each(function(d,i) {d._current = oldData[i]._current;}); 
+        arcs.transition()
+          .duration(tweenDuration)
+          .attrTween("d", arcTween); // redraw the arcs
+      }
+
+      // Store the displayed angles in _current.
+      // Then, interpolate from _current to the new angles.
+      // During the transition, _current is updated in-place by d3.interpolate.
+      function arcTween(a) {
+        //console.log(this._current);
+        //console.log(a);
+        var i = d3.interpolate(this._current, a);
+        this._current = i(0);
+        return function(t) {
+          //console.log(arc(i(t)));
+          return arc(i(t));
+        };
+      }
+
+      // arcs.append("text")
+      //   .data(nest.get(celltime))
+      //   .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+      //   .attr("dy", ".35em")
+      //   .style("text-anchor", "middle")
+      //   .text(function(d) { return d.isoform_id; });
 
   },
   clusterHeatmap: function(selector, headers, data, attr) {
