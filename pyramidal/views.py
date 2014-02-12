@@ -210,3 +210,27 @@ def search(request):
 def dev(request):
 	context = {}
 	return render(request,'pyramidal/testKegg.html',context)
+
+####################
+# Markers
+#####################
+def markers(request):
+	context = {}
+	return render(request,'base.html',context)
+
+####################
+# TFBS
+#####################
+def tfbs(request):
+	context = {}
+	return render(request,'base.html',context)
+
+####################
+# Supplement
+#####################
+def supplement(request):
+	context = {}
+	return render(request,'pyramidal/supplement.html',context)
+
+
+

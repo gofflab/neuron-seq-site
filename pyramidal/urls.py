@@ -28,4 +28,13 @@ urlpatterns = patterns('',
 
 	#Dev
 	url(r'^dev/$',views.dev),
+
+	#Markers
+	url(r'^markers/?$',views.markers,name = 'markers'),
+
+	#Supplement
+	url(r'^supp/?$',views.supplement,name = 'supplement'),
+
+	#TFBS
+	url(r'^tfbs/?$',views.tfbs,name = 'tfbs'),
 )

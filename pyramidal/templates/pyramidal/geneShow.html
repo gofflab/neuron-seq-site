@@ -1,5 +1,7 @@
 {% extends 'pyramidal/geneBase.html' %}
-
+  {% block title %}
+  Gene: {{ gene.gene_short_name }}
+  {% endblock title %}
 	{% block header %}
   <!-- #Sunburst imports -->
   <link rel="stylesheet" href="{{ STATIC_URL }}js/sunburst/jquery-ui-1.10.0/css/ui-lightness/jquery-ui-1.10.0.custom.css">

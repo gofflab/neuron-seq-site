@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load pyramidal_extras %}
 
+  {% block title %}
+  Search Results
+  {% endblock title %}
+
 {% block content %}
 <h3>Search Results</h3>
 <h5>for: <strong>{{ query_string }}</strong></h5>

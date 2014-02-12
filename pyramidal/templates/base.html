@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Cortical Projection Neuron Transcriptome</title>
+    <title>{% block title %}Cortical Projection Neuron Transcriptome{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <!-- Bootstrap -->
@@ -42,11 +42,14 @@
   </head>
   <body>
   	<nav class="navbar navbar-inverse" role="navigation">
-  		<a class="navbar-brand" href="#">Starch</a>
+  		<a class="navbar-brand" href="#">Cortical Transcriptome</a>
   		<ul class="nav navbar-nav">
       		<li><a href="{% url 'pyramidal.views.index' %}">Home</a></li>
-          <li><a href="{% url 'gene_index' %}">Gene List</a></li>
+          <li><a href="{% url 'gene_index' %}">All Genes</a></li>
           <li><a href="{% url 'cluster_index' %}">Clusters</a></li>
+          <li><a href="{% url 'tfbs' %}">TFBS</a></li>
+          <li><a href="{% url 'markers' %}">Marker Discovery</a></li>
+          <li><a href="{% url 'supplement' %}">Supplement</a></li>
       </ul>
       <form class="navbar-form navbar-right" role="search" action="/pyramidal/search/" method="get">
       <div class="form-group">
