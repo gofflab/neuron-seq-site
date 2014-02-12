@@ -20,12 +20,20 @@
 
 	{% block navleft%}
  	<h5>{{ gene.gene_id }}</h5>
- 	<h6>Isoforms</h6>
-		<ul>
-		{% for isoform in isoforms %}
-			<li><a href="{% url 'isoform_show' gene_id=gene.url_name isoform_id=isoform.isoform_id %}">{{isoform.isoform_id}}</a></li>
-		{% endfor %}
-		</ul>
+  <h6>Significant</h6>
+  {% if gene.isSignificant %}
+  <span style="color:#055510;" class="glyphicon glyphicon-ok"></span>
+  {% else %}
+  <span style="color:red;" class="glyphicon glyphicon-remove"></span>
+  {% endif %}
+ 	<!-- Individual Isoform pages
+    <h6>Isoforms</h6>
+  		<ul>
+  		{% for isoform in isoforms %}
+  			<li><a href="{% url 'isoform_show' gene_id=gene.url_name isoform_id=isoform.isoform_id %}">{{isoform.isoform_id}}</a></li>
+  		{% endfor %}
+  		</ul>
+  -->
   <h6>Resources</h6>
     <ul>
       <li><a href="#accordion">Cortical Subtype Expression</a></li>

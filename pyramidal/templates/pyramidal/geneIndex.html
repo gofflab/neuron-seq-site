@@ -10,6 +10,7 @@
 	<th><a href="?{% url_replace request 'order_by' 'gene_id'%}">Gene</a></th>
 	<th>Locus</th>
 	<th>Number of isoforms</th>
+  <th>Significant</th>
 	<th>Expression</th>
 </tr>
 {% for gene in genes %}
@@ -17,6 +18,11 @@
 	<td><a href="{% url 'gene_show' gene_id=gene.url_name %}">{{ gene.gene_short_name }}</a></td>
 	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}" target="_blank">{{ gene.locus }}</a></td>
 	<td>{{ gene.isoforms|length }}</td>
+  {% if gene.isSignificant %}
+      <td><span style="color:#055510;" class="glyphicon glyphicon-ok"></span></td>
+  {% else %}
+      <td><span style="color:red;" class="glyphicon glyphicon-remove"></span></td>
+  {% endif %}
   <td><div class="gene-expression" id="gene-{{ gene.safe_name }}"></div></td>
 </tr>
 {% endfor %}
