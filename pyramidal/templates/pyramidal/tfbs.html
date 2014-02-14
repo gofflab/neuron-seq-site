@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block header }
+{% endblock header }
+
+{% block content %}
+<h3>Transcription Factor Binding Site enrichment</h3>
+<!--<object type="image/svg+xml" data="{{ STATIC_URL }}/img/TFBS.svg">Your browser does not support SVG</object>-->
+<embed src="{{ STATIC_URL }}/img/TFBS.svg" type="image/svg+xml" />
+{% endblock content %}

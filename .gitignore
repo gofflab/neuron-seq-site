@@ -1,5 +1,6 @@
 cuffData.db*
 ._DS_store
 ._DS_Store
+.DS_Store
 *.pyc
 
