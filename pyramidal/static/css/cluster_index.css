@@ -1,0 +1,8 @@
+table.cluster-table {
+  margin: 0 auto;
+}
+
+table.cluster-table tr td {
+  text-align: center;
+  padding-right: 10px;
+}
