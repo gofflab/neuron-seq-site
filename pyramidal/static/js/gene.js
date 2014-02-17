@@ -398,7 +398,7 @@ window.gene_expression = {
     };
 
     var isoform_height = attr.height - attr.margin;
-    var isoform_rail_height = 0.1;
+    var isoform_rail_height = 0.2;
 
     var isoform_names = Object.keys(data);
 
@@ -453,6 +453,8 @@ window.gene_expression = {
         .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
         .attr(chart_attr);
 
+      var defs = svg.append('defs');
+
       var chart = svg.append("svg:g")
                      .attr('transform', 'translate(5, 5)');
 
@@ -472,11 +474,20 @@ window.gene_expression = {
 
       var x_min_local = Math.min.apply(null, starts);
       var x_max_local = Math.max.apply(null, ends);
+
+      defs.append("svg:clipPath")
+        .attr("id", "clip-boundary-rail-" + isoform)
+        .append("rect")
+          .attr('x', x(x_min_local))
+          .attr('y', (isoform_height-(isoform_height*isoform_rail_height))/2)
+          .attr('width', x(x_max_local) - x(x_min_local))
+          .attr('height', isoform_height * isoform_rail_height);
+
       rail.append( 'rect' )
           .attr( 'x', x(x_min_local))
-          .attr( 'y', (isoform_height-(isoform_height*isoform_rail_height))/2)
+          .attr( 'y', (isoform_height-(isoform_height*isoform_rail_height/4))/2)
           .attr( 'width', x(x_max_local) - x(x_min_local))
-          .attr( 'height', isoform_height * isoform_rail_height)
+          .attr( 'height', isoform_height * isoform_rail_height / 4)
           .style({
             stroke: "none",
             fill:   "lightGray"});
@@ -484,6 +495,16 @@ window.gene_expression = {
       // Bars
       var bars = chart.append('g')
                       .attr('class', 'bars');
+
+      var direction = "left-to-right";
+      if (dataset.length > 1) {
+        if (dataset[0].start < dataset[1].start) {
+          direction = "left-to-right";
+        }
+        else {
+          direction = "right-to-left";
+        }
+      }
 
       bars.selectAll( 'rect' )
         .data( dataset )
@@ -503,6 +524,81 @@ window.gene_expression = {
         .style({
           stroke: "none",
           fill:   "crimson"});
+
+      // Draw arrows
+      var rail_height = (isoform_height * isoform_rail_height);
+      var rail_top    = (isoform_height - rail_height) / 2;
+      var rail_bottom = (isoform_height + rail_height) / 2;
+      var rail_middle = isoform_height / 2;
+      rail.selectAll('.triangle')
+        .data(d3.range(0, attr.width - attr.margin, rail_height))
+        .enter().append( 'path' )
+          .attr('class', 'triangle')
+          .attr("d", function(x) {
+            var path = "";
+            if (direction == "left-to-right") {
+              path = path + "M " + x + " " + rail_top + " ";
+              path = path + "L " + (x + rail_height) + " " + rail_middle + " ";
+              path = path + "L " + x + " " + rail_bottom + " z";
+            }
+            else {
+              path = path + "M " + (x + rail_height) + " " + rail_top + " ";
+              path = path + "L " + x + " " + rail_middle + " ";
+              path = path + "L " + (x + rail_height) + " " + rail_bottom + " z";
+            }
+            return path;
+          })
+          .attr("clip-path", "url(#clip-boundary-rail-" + isoform + ")")
+          .style({
+            stroke: "none",
+            fill:   "#bbb"});
+
+      // Second Arrow Rail
+      var arrow_clip =
+        defs.append("svg:clipPath")
+          .attr("id", "clip-boundary-arrows-" + isoform);
+
+      // Clip only to the drawn rectangles within the expression
+      arrow_clip.selectAll( 'rect' )
+        .data( dataset )
+        .enter().append( 'rect' )
+        .attr( 'x', function(d) {
+          return x(d.start)
+        })
+        .attr( 'y', 0.5)
+        .attr( 'width', function(d) {
+          var width = x(d.end) - x(d.start);
+          if (width < 2) {
+            width = 2;
+          }
+          return width;
+        })
+        .attr( 'height', isoform_height);
+
+      var arrows = chart.append('g')
+                        .attr('class', 'arrow-rail');
+      arrows.selectAll('.triangle')
+        .data(d3.range(0, attr.width - attr.margin, rail_height))
+        .enter().append( 'path' )
+          .attr('class', 'triangle')
+          .attr("d", function(x) {
+            var path = "";
+            if (direction == "left-to-right") {
+              path = path + "M " + x + " " + rail_top + " ";
+              path = path + "L " + (x + rail_height) + " " + rail_middle + " ";
+              path = path + "L " + x + " " + rail_bottom + " z";
+            }
+            else {
+              path = path + "M " + (x + rail_height) + " " + rail_top + " ";
+              path = path + "L " + x + " " + rail_middle + " ";
+              path = path + "L " + (x + rail_height) + " " + rail_bottom + " z";
+            }
+            return path;
+          })
+          .attr("clip-path", "url(#clip-boundary-arrows-" + isoform + ")")
+          .style({
+            stroke: "none",
+            fill:   "#Fbb"});
     });
   },
 
