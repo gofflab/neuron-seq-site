@@ -1,23 +1,15 @@
 {% extends 'base.html' %}
 
-  {% block title %}
-  Cluster Index
-  {% endblock title %}
+{% block title %}
+Cluster Index
+{% endblock title %}
 
-{% block header }
-{% endblock header }
+{% block header %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/cluster_index.css">
+{% endblock header %}
 
 {% block content %}
 <div class="row">
-	<div class="col-md-2">
-	<div class="well well-sm">
-	{% block navleft %}
-
- 	<h5>Clusters</h5>
-
-	{% endblock navleft%}
-	</div>
-	</div>
 	<div class="col-md-10">
 	{% block main %}
 
@@ -28,24 +20,54 @@
   <div class="panel panel-default">
     <div class="panel-heading"><h3>CPN Signature RNAs</h3></div>
     <div class="panel-body">
-      <a href="{% url 'cluster_show' cluster_id=0 %}">Cluster 0</a>
-      <a href="{% url 'cluster_show' cluster_id=3 %}">Cluster 3</a>
-      <a href="{% url 'cluster_show' cluster_id=5 %}">Cluster 5</a>
-      <a href="{% url 'cluster_show' cluster_id=7 %}">Cluster 7</a>
+      <table class="cluster-table">
+        <tr>
+          <td>Cluster 0</td>
+          <td>Cluster 3</td>
+          <td>Cluster 5</td>
+          <td>Cluster 7</td>
+        </tr>
+        <tr>
+          <td><a href="{% url 'cluster_show' cluster_id=0 %}"><img src="{{ STATIC_URL }}images/cluster_0.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=3 %}"><img src="{{ STATIC_URL }}images/cluster_3.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=5 %}"><img src="{{ STATIC_URL }}images/cluster_5.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=7 %}"><img src="{{ STATIC_URL }}images/cluster_7.png"></a></td>
+        </tr>
+      </table>
     </div>
     <div class="panel-heading"><h3>SCPN Signature RNAs</h3></div>
     <div class="panel-body">
-      <a href="{% url 'cluster_show' cluster_id=15 %}">Cluster 15</a>
-      <a href="{% url 'cluster_show' cluster_id=8 %}">Cluster 8</a>
-      <a href="{% url 'cluster_show' cluster_id=6 %}">Cluster 6</a>
-      <a href="{% url 'cluster_show' cluster_id=18 %}">Cluster 18</a>
+      <table class="cluster-table">
+        <tr>
+          <td>Cluster 15</td>
+          <td>Cluster 8</td>
+          <td>Cluster 6</td>
+          <td>Cluster 18</td>
+        </tr>
+        <tr>
+          <td><a href="{% url 'cluster_show' cluster_id=15 %}"><img src="{{ STATIC_URL }}images/cluster_15.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=8 %}"><img src="{{ STATIC_URL }}images/cluster_8.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=6 %}"><img src="{{ STATIC_URL }}images/cluster_6.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=18 %}"><img src="{{ STATIC_URL }}images/cluster_18.png"></a></td>
+        </tr>
+      </table>
     </div>
     <div class="panel-heading"><h3>CThPN Signature RNAs</h3></div>
     <div class="panel-body">
-      <a href="{% url 'cluster_show' cluster_id=2 %}">Cluster 2</a>
-      <a href="{% url 'cluster_show' cluster_id=12 %}">Cluster 12</a>
-      <a href="{% url 'cluster_show' cluster_id=9 %}">Cluster 9</a>
-      <a href="{% url 'cluster_show' cluster_id=1 %}">Cluster 1</a>
+      <table class="cluster-table">
+        <tr>
+          <td>Cluster 2</td>
+          <td>Cluster 12</td>
+          <td>Cluster 9</td>
+          <td>Cluster 1</td>
+        </tr>
+        <tr>
+          <td><a href="{% url 'cluster_show' cluster_id=2 %}"><img src="{{ STATIC_URL }}images/cluster_2.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=12 %}"><img src="{{ STATIC_URL }}images/cluster_12.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=9 %}"><img src="{{ STATIC_URL }}images/cluster_9.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=1 %}"><img src="{{ STATIC_URL }}images/cluster_1.png"></a></td>
+        </tr>
+      </table>
     </div>
   </div>
 
@@ -53,14 +75,32 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <a href="{% url 'cluster_show' cluster_id=17 %}">Cluster 17</a>
-      <a href="{% url 'cluster_show' cluster_id=16 %}">Cluster 16</a>
-      <a href="{% url 'cluster_show' cluster_id=13 %}">Cluster 13</a>
-      <a href="{% url 'cluster_show' cluster_id=19 %}">Cluster 19</a>
-      <a href="{% url 'cluster_show' cluster_id=14 %}">Cluster 14</a>
-      <a href="{% url 'cluster_show' cluster_id=11 %}">Cluster 11</a>
-      <a href="{% url 'cluster_show' cluster_id=10 %}">Cluster 10</a>
-      <a href="{% url 'cluster_show' cluster_id=4 %}">Cluster 4</a>
+      <table class="cluster-table">
+        <tr>
+          <td>Cluster 17</td>
+          <td>Cluster 16</td>
+          <td>Cluster 13</td>
+          <td>Cluster 19</td>
+        </tr>
+        <tr>
+          <td><a href="{% url 'cluster_show' cluster_id=17 %}"><img src="{{ STATIC_URL }}images/cluster_17.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=16 %}"><img src="{{ STATIC_URL }}images/cluster_16.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=13 %}"><img src="{{ STATIC_URL }}images/cluster_13.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=19 %}"><img src="{{ STATIC_URL }}images/cluster_19.png"></a></td>
+        </tr>
+        <tr>
+          <td>Cluster 14</td>
+          <td>Cluster 11</td>
+          <td>Cluster 10</td>
+          <td>Cluster 4</td>
+        </tr>
+        <tr>
+          <td><a href="{% url 'cluster_show' cluster_id=14 %}"><img src="{{ STATIC_URL }}images/cluster_14.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=11 %}"><img src="{{ STATIC_URL }}images/cluster_11.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=10 %}"><img src="{{ STATIC_URL }}images/cluster_10.png"></a></td>
+          <td><a href="{% url 'cluster_show' cluster_id=4 %}"><img src="{{ STATIC_URL }}images/cluster_4.png"></a></td>
+        </tr>
+      </table>
     </div>
   </div>
 
