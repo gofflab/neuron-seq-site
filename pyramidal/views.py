@@ -90,6 +90,15 @@ def geneShow(request,gene_id):
       }
   return render(request,'pyramidal/geneShow.html',context)
 
+def geneHiveData(request,gene_id):
+  try:
+    # Get Isoform object
+    gene = Gene.objects.get(gene_id=gene_id)
+
+    return HttpResponse(gene.diffDataHive(), content_type="application/json")
+  except Isoform.DoesNotExist:
+    raise Http404
+
 def geneIsoforms(request, gene_id):
   try:
     # Get Gene object
@@ -113,12 +122,8 @@ def isoformHiveData(request,gene_id,isoform_id):
     # Get Isoform object
     isoform = Isoform.objects.get(isoform_id=isoform_id)
 
-    context = {
-      'isoform': isoform,
-    }
-
     return HttpResponse(isoform.diffDataHive(), content_type="application/json")
-  except Gene.DoesNotExist:
+  except Isoform.DoesNotExist:
     raise Http404
 
 def isoformDetail(request,gene_id,isoform_id):
