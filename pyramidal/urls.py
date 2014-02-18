@@ -7,11 +7,12 @@ urlpatterns = patterns('',
 	url(r'^$',views.index,name='index'),
 
 	#Geneset Views
-	url(r'^geneset/(?P<gene_list>[a-zA-Z0-9_\-\.\+]+)/$',views.geneset,name='gene_set'),
+	url(r'^geneset/(?P<gene_list>[a-zA-Z0-9_\-\.\+]+)/?$',views.geneset,name='gene_set'),
 
 	#Isoform Views
 	url(r'^genes/(?P<gene_id>[\w.-]+)/isoforms/?$',views.geneIsoforms,name='isoform_index'),
 	url(r'^genes/(?P<gene_id>[\w.-]+)/isoforms/(?P<isoform_id>[\w.]+)/?$',views.isoformDetail,name='isoform_show'),
+	url(r'^genes/(?P<gene_id>[\w.-]+)/isoforms/(?P<isoform_id>[\w.]+)/hivedata/?$',views.isoformHiveData,name='isoform_hive_data'),
 
 	#Gene detail view
 	url(r'^genes/(?P<gene_id>[\w.-]+)/?$',views.geneShow,name='gene_show'),
