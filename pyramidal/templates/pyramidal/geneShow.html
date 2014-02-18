@@ -235,7 +235,7 @@
       ['corticothal', 'cpn', 'subcereb']
     ];
 
-    gene_expression.lines('#chart', gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+    gene_expression.lines('#chart', gene_headers, { data: gene_data, width: 800, height: 400, resizable: true });
 
     var isoforms = {
      {% for isoform in isoforms %}
@@ -269,20 +269,20 @@
 
     //Plot isoform transcript models
     {% for isoform in isoforms %}
-    gene_expression.lines("#isoform-{{ isoform.safe_name }}-graph", gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 100, height: 50, margin: {left:1, right:0, bottom:1, top:0} });
+    gene_expression.lines("#isoform-{{ isoform.safe_name }}-graph", gene_headers, { data: isoform_data["{{ isoform.isoform_id }}"], width: 100, height: 50, margin: {left:1, right:0, bottom:1, top:0} });
     $('#isoform-{{ isoform.safe_name }}-graph').css("cursor", "pointer").click(function(e) {
       $('#isoform-modal .chart').empty();
-      gene_expression.lines('#isoform-modal .chart', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
+      gene_expression.lines('#isoform-modal .chart', gene_headers, { data: isoform_data["{{ isoform.isoform_id }}"], width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
 
       $('#modal-button-bar').click(function(e) {
           $('#isoform-modal .chart').empty();
-          gene_expression.bars('#isoform-modal .chart', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
+          gene_expression.bars('#isoform-modal .chart', gene_headers, { data: isoform_data["{{ isoform.isoform_id }}"], width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
           e.preventDefault();
           });
 
       $('#modal-button-line').click(function(e) {
           $('#isoform-modal .chart').empty();
-          gene_expression.lines('#isoform-modal .chart', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
+          gene_expression.lines('#isoform-modal .chart', gene_headers, { data: isoform_data["{{ isoform.isoform_id }}"], width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
           e.preventDefault();
           });
 
@@ -302,13 +302,13 @@
 
     $('#graph-button-bar').click(function(e) {
         $('#chart').empty();
-        gene_expression.bars('#chart', gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+        gene_expression.bars('#chart', gene_headers, { data: gene_data, width: 800, height: 400, resizable: true });
         e.preventDefault();
         });
 
     $('#graph-button-line').click(function(e) {
         $('#chart').empty();
-        gene_expression.lines('#chart', gene_headers, gene_data, { width: 800, height: 400, resizable: true });
+        gene_expression.lines('#chart', gene_headers, { data: gene_data, width: 800, height: 400, resizable: true });
         e.preventDefault();
         });
 
