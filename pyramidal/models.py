@@ -558,6 +558,28 @@ class Isoform(models.Model):
             res[r]['celltype'] = res[r]['sample_name'].rstrip().split("_")[1]
         return json.dumps(res, separators=(',',':'))
 
+    def diffDataHive(self):
+        diffDat = Isoformexpdiffdata.objects.filter(isoform_id=self.isoform_id)
+        temp = [x.__dict__ for x in diffDat]
+        res = []
+        for r in range(len(temp)):
+            temp[r]['_state'] = None
+            temp[r]['timepoint_1'] = temp[r]['sample_1'].rstrip().split("_")[0]
+            temp[r]['celltype_1'] = temp[r]['sample_1'].rstrip().split("_")[1]
+            temp[r]['timepoint_2'] = temp[r]['sample_2'].rstrip().split("_")[0]
+            temp[r]['celltype_2'] = temp[r]['sample_2'].rstrip().split("_")[1]
+        for r in range(len(temp)):
+            sourceKeys=[x for x in temp[0].keys() if x.endswith("_1")]
+            targetKeys=[x for x in temp[0].keys() if x.endswith("_2")]
+            hiveDict = {
+                'source': dict(zip([k.rstrip("_1") for k in sourceKeys],[temp[r][x] for x in sourceKeys])),
+                'target': dict(zip([k.rstrip("_2") for k in targetKeys],[temp[r][x] for x in targetKeys])),
+                'group': temp[r]['sample_1'],
+                'values': temp[r]
+            }
+            res.append(hiveDict)
+        return json.dumps(res, separators=(',',':'))
+
     def __repr__(self):
         return "Isoform object: %s" % (self.isoform_id)
 
@@ -585,7 +607,7 @@ class Isoformdata(models.Model):
         db_table = 'isoformData'
 
 class Isoformexpdiffdata(models.Model):
-    isoform_id = models.CharField(max_length=45, primary_key=True)
+    isoform = models.ForeignKey(Isoform,primary_key=True)
     sample_1 = models.CharField(max_length=45)
     sample_2 = models.CharField(max_length=45)
     status = models.CharField(max_length=45, blank=True)
