@@ -1,8 +1,30 @@
 window.hive = {
-  plot: function(selector, info_selector, data) {
-    var colors = ["steelblue", "green", "crimson"];
+  /* Hive plotter
+   *
+   * selector: css selector for the element to place the svg hive plot
+   * info_selector: css selector for where to place the table of info
+   * options: an object that may have one of the following:
+   *     url - where to pull JSON data for the plot from
+   *    data - an object that contains the data
+   *  colors - an array of 3 colors to use
+   */
+  plot: function(selector, info_selector, options) {
+    if (typeof options === "undefined") {
+      options = {};
+    }
 
-    colors = [colors[1], colors[0], colors[2]];
+    if (!("colors" in options)) {
+      options.colors = ["steelblue", "green", "crimson"];
+    }
+
+    if ("url" in options) {
+      $.getJSON(options.url, function(data) {
+         options.data = data;
+      });
+    }
+
+    var colors = [options.colors[1], options.colors[0], options.colors[2]];
+    var data = options.data;
 
     //New Hive plot
     var width  = 450;

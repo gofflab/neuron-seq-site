@@ -203,7 +203,7 @@
 
   <script type="text/javascript">
     var gene_hive = {{ gene.diffDataHive|safe }};
-    hive.plot('#hive', '#hive_info', gene_hive);
+    hive.plot('#hive', '#hive_info', { data: gene_hive } );
   </script>
 
 	<!-- D3.js scripts -->
@@ -211,7 +211,7 @@
 
   <script type="text/javascript">
     // Create the modal base
-  modal_base = $('<div class="modal panel panel-default"><div class="modal-content panel-heading"><div class="graph-buttons" style="float:right"><a href="#" id="modal-button-line">Line</a> | <a href="#" id="modal-button-bar">Bar</a></div><h4>Expression Distribution</h4></div><div class="chart panel-body"></div></div>').css('display', 'none');
+  modal_base = $('<div class="modal panel panel-default"><div class="modal-content panel-heading"><div class="graph-buttons" style="float:right"><a href="#" id="modal-button-line">Line</a> | <a href="#" id="modal-button-bar">Bar</a> | <a href="#" id="modal-button-hive">Hive</a></div><h4>Expression Distribution</h4></div><div class="chart panel-body"></div></div>').css('display', 'none');
 
     // Create a note modal
     isoform_modal = modal_base.clone();
@@ -285,6 +285,18 @@
           gene_expression.lines('#isoform-modal .chart', gene_headers, isoform_data["{{ isoform.isoform_id }}"], { width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
           e.preventDefault();
           });
+
+      $('#modal-button-hive').click(function(e) {
+          $('#isoform-modal .chart').empty().append(
+            '<div class="hive" style="display: inline-block; width: 450px; height: 450px; vertical-align:middle"></div>'
+          + '<div class="hive_info" style="display: inline-block; width: 350px; height: 350px; vertical-align:middle"></div>');
+          var gene_hive = {{ isoform.diffDataHive|safe }};
+          hive.plot('#isoform-modal .chart .hive',
+                    '#isoform-modal .chart .hive_info',
+                    { data: gene_hive });
+          e.preventDefault();
+          });
+
       isoform_modal.trigger('openModal');
     });
     {% endfor %}
