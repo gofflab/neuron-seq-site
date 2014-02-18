@@ -1,28 +1,60 @@
 window.gene_expression = {
-  bars: function(selector, headers, data, attr) {
-    var colors = ["steelblue", "green", "crimson"];
+  /* Gene expression bar graph
+   *
+   * selector    - css selector for the chart
+   * headers     - labels for the areas
+   * options     - options:
+   *   url       - the url to retrieve the JSON for this chart
+   *   data      - the data to use to fill the chart
+   *   colors    - an array of 3 colors to use for the chart
+   *   width     - width of the chart in pixels
+   *   height    - height of the chart in pixels
+   *   margin    - object with left/right/bottom/top properties defining the margins
+   *   resizable - when true, the chart will automatically resize to fit its container
+   */
+  bars: function(selector, headers, options) {
+    if (typeof options === "undefined") {
+      options = {};
+    }
 
-    if (!("width" in attr)) {
-      attr.width = 800;
+    if (!("colors" in options)) {
+      options.colors = ["steelblue", "green", "crimson"];
     }
-    if (!("height" in attr)) {
-      attr.height = 400;
+
+    if ("url" in options) {
+      $.getJSON(options.url, function(data) {
+        options.data = data;
+        delete options['url'];
+
+        window.gene_expression.bars(selector, headers, options);
+      });
+      return;
     }
-    if (!("margin" in attr)) {
-      attr.margin = {left: 50, right: 10, bottom: 80, top: 10};
+
+    var colors = options.colors;
+    var data = options.data;
+
+    if (!("width" in options)) {
+      options.width = 800;
     }
-    if (!("resizable" in attr)) {
-      attr.resizable = false;
+    if (!("height" in options)) {
+      options.height = 400;
+    }
+    if (!("margin" in options)) {
+      options.margin = {left: 50, right: 10, bottom: 80, top: 10};
+    }
+    if (!("resizable" in options)) {
+      options.resizable = false;
     }
 
     var chart_attr = {
-      width:  attr.width+attr.margin.left+attr.margin.right,
-      height: attr.height+attr.margin.top+attr.margin.bottom
+      width:  options.width+options.margin.left+options.margin.right,
+      height: options.height+options.margin.top+options.margin.bottom
     };
 
-    var rangeWidth = attr.width / 4;
+    var rangeWidth = options.width / 4;
     var barPadding = rangeWidth / 20;
-    var barWidth = (attr.width - (barPadding * 11)) / 18;
+    var barWidth = (options.width - (barPadding * 11)) / 18;
     var barSpan = barWidth + barPadding;
     var rangeSpan = barWidth * 3 + barPadding * 2;
 
@@ -35,9 +67,9 @@ window.gene_expression = {
       .attr(chart_attr);
 
     var chart = svg.append("svg:g")
-                   .attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
+                   .attr('transform', 'translate('+options.margin.left+', '+options.margin.top+')');
 
-    if (attr.resizable) {
+    if (options.resizable) {
       var aspect_ratio = chart_attr.width / chart_attr.height;
       var chart_dom = $(selector).find('svg');
       $(window).on("resize", function() {
@@ -49,15 +81,15 @@ window.gene_expression = {
 
     var x0 = d3.scale.ordinal()
                .domain(headers[0])
-               .rangeBands([0, attr.width]);
+               .rangeBands([0, options.width]);
 
     var x1 = d3.scale.ordinal()
                .domain(headers[1])
-               .rangeBands([0, attr.width]);
+               .rangeBands([0, options.width]);
 
     var y = d3.scale.linear()
               .domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] )
-              .rangeRound( [0, attr.height] );
+              .rangeRound( [0, options.height] );
 
     // Bars
     var bars = chart.append('g')
@@ -67,7 +99,7 @@ window.gene_expression = {
       .data( data )
       .enter().append( 'rect' )
       .attr( 'x', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5; } )
-      .attr( 'y', function( d ) { return attr.height - y( d.fpkm ) + .5 } )
+      .attr( 'y', function( d ) { return options.height - y( d.fpkm ) + .5 } )
       .attr( 'width', barWidth)
       .attr( 'height', function( d ) { return y( d.fpkm ) } )
       .style({
@@ -88,8 +120,8 @@ window.gene_expression = {
       .attr("class","errorbar")
       .attr( 'x1', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (barWidth / 2); } )
       .attr( 'x2', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (barWidth / 2); } )
-      .attr( 'y1', function( d ) { return attr.height - y( d.conf_lo ) + .5 } )
-      .attr( 'y2', function( d ) { return attr.height - y( d.conf_hi ) + .5 } )
+      .attr( 'y1', function( d ) { return options.height - y( d.conf_lo ) + .5 } )
+      .attr( 'y2', function( d ) { return options.height - y( d.conf_hi ) + .5 } )
       .style({
         "stroke": "black"});
 
@@ -99,8 +131,8 @@ window.gene_expression = {
       .attr("class","errorbar")
       .attr( 'x1', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (barWidth / 4); } )
       .attr( 'x2', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (3 * barWidth / 4); } )
-      .attr( 'y1', function( d ) { return attr.height - y( d.conf_hi ) + .5 } )
-      .attr( 'y2', function( d ) { return attr.height - y( d.conf_hi ) + .5 } )
+      .attr( 'y1', function( d ) { return options.height - y( d.conf_hi ) + .5 } )
+      .attr( 'y2', function( d ) { return options.height - y( d.conf_hi ) + .5 } )
       .style({
         "stroke": "black"});
 
@@ -110,8 +142,8 @@ window.gene_expression = {
       .attr("class","errorbar")
       .attr( 'x1', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (barWidth / 4); } )
       .attr( 'x2', function( d, i ) { return x0( d.timepoint ) + (rangeWidth/2) + (rangeSpan/2) - barWidth - (i%3) * barSpan - 0.5 + (3 * barWidth / 4); } )
-      .attr( 'y1', function( d ) { return attr.height - y( d.conf_lo ) + .5 } )
-      .attr( 'y2', function( d ) { return attr.height - y( d.conf_lo ) + .5 } )
+      .attr( 'y1', function( d ) { return options.height - y( d.conf_lo ) + .5 } )
+      .attr( 'y2', function( d ) { return options.height - y( d.conf_lo ) + .5 } )
       .style({
         "stroke": "black"});
 
@@ -124,13 +156,13 @@ window.gene_expression = {
       .tickValues(headers[0]);
 
     var yAxis = d3.svg.axis()
-      .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [attr.height, 0] ))
+      .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [options.height, 0] ))
       .tickSize(6, 3, 1)
       .orient('left');
 
     chart.append('g')
       .attr('class', 'x axis')
-      .attr('transform', 'translate(0, ' + attr.height + ')')
+      .attr('transform', 'translate(0, ' + options.height + ')')
       .call(xAxis)
 
     chart.selectAll('.axis line')
@@ -158,7 +190,7 @@ window.gene_expression = {
                       .data(headers[1])
                       .enter().append("g")
                       .attr("class", "legend")
-                      .attr("transform", function(d, i) { return "translate(" + (((attr.width / 3) * i) + attr.margin.left + (attr.width/3*0.4)) + "," + (attr.height+attr.margin.top+attr.margin.bottom-40) + ")"; });
+                      .attr("transform", function(d, i) { return "translate(" + (((options.width / 3) * i) + options.margin.left + (options.width/3*0.4)) + "," + (options.height+options.margin.top+options.margin.bottom-40) + ")"; });
 
     legend.append("rect")
       .attr("transform", "translate(10,-9)")
@@ -172,25 +204,57 @@ window.gene_expression = {
       .text(function(d) { return d; });
   },
 
-  lines: function(selector, headers, data, attr) {
-    var colors = ["steelblue", "green", "crimson"];
+  /* Gene expression line chart
+   *
+   * selector    - css selector for the chart
+   * headers     - labels for the areas
+   * options     - options:
+   *   url       - the url to retrieve the JSON for this chart
+   *   data      - the data to use to fill the chart
+   *   colors    - an array of 3 colors to use for the chart
+   *   width     - width of the chart in pixels
+   *   height    - height of the chart in pixels
+   *   margin    - object with left/right/bottom/top properties defining the margins
+   *   resizable - when true, the chart will automatically resize to fit its container
+   */
+  lines: function(selector, headers, options) {
+    if (typeof options === "undefined") {
+      options = {};
+    }
 
-    if (!("width" in attr)) {
-      attr.width = 800;
+    if (!("colors" in options)) {
+      options.colors = ["steelblue", "green", "crimson"];
     }
-    if (!("height" in attr)) {
-      attr.height = 400;
+
+    if ("url" in options) {
+      $.getJSON(options.url, function(data) {
+        options.data = data;
+        delete options['url'];
+
+        window.gene_expression.lines(selector, headers, options);
+      });
+      return;
     }
-    if (!("margin" in attr)) {
-      attr.margin = {left: 50, right: 10, bottom: 80, top: 10};
+
+    var colors = options.colors;
+    var data = options.data;
+
+    if (!("width" in options)) {
+      options.width = 800;
     }
-    if (!("resizable" in attr)) {
-      attr.resizable = false;
+    if (!("height" in options)) {
+      options.height = 400;
+    }
+    if (!("margin" in options)) {
+      options.margin = {left: 50, right: 10, bottom: 80, top: 10};
+    }
+    if (!("resizable" in options)) {
+      options.resizable = false;
     }
 
     var chart_attr = {
-      width:  attr.width+attr.margin.left+attr.margin.right,
-      height: attr.height+attr.margin.top+attr.margin.bottom
+      width:  options.width+options.margin.left+options.margin.right,
+      height: options.height+options.margin.top+options.margin.bottom
     };
 
     var svg = d3.select(selector)
@@ -202,9 +266,9 @@ window.gene_expression = {
       .attr(chart_attr);
 
     var chart = svg.append("svg:g")
-                   .attr('transform', 'translate('+attr.margin.left+', '+attr.margin.top+')');
+                   .attr('transform', 'translate('+options.margin.left+', '+options.margin.top+')');
 
-    if (attr.resizable) {
+    if (options.resizable) {
       var aspect_ratio = chart_attr.width / chart_attr.height;
       var chart_dom = $(selector).find('svg');
       $(window).on("resize", function() {
@@ -222,24 +286,24 @@ window.gene_expression = {
       .append("rect")
         .attr("x", 0)
         .attr("y", 0)
-        .attr("width", attr.width)
-        .attr("height", attr.height);
+        .attr("width", options.width)
+        .attr("height", options.height);
 
     var lines,
         xAxis, yAxis;
 
     var x = d3.scale.linear()
               .domain([0, headers[0].length-1])
-              .range([0, attr.width]);
+              .range([0, options.width]);
 
     var y = d3.scale.linear()
               .domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] )
-              .rangeRound( [0, attr.height] );
+              .rangeRound( [0, options.height] );
 
     // Data
     var line = d3.svg.line()
       .x(function(d) { return x(headers[0].indexOf(d.timepoint)) })
-      .y(function(d) { return attr.height - y(d.fpkm) + .5 });
+      .y(function(d) { return options.height - y(d.fpkm) + .5 });
 
     var data_lines = headers[1].map(function(elem) {
       return data.filter(function(datapoint) {
@@ -257,10 +321,10 @@ window.gene_expression = {
       .attr("points", function(d) {
         return [
           d.map(function(elem) {
-            return [x(headers[0].indexOf(elem.timepoint)) , attr.height - y(elem.conf_lo) + 0.5].join(",")
+            return [x(headers[0].indexOf(elem.timepoint)) , options.height - y(elem.conf_lo) + 0.5].join(",")
           }).join(" "),
           d.map(function(elem) {
-            return [x(headers[0].indexOf(elem.timepoint)) , attr.height - y(elem.conf_hi) + 0.5].join(",")
+            return [x(headers[0].indexOf(elem.timepoint)) , options.height - y(elem.conf_hi) + 0.5].join(",")
           }).reverse().join(" ")
         ].join(" ")
       })
@@ -278,13 +342,13 @@ window.gene_expression = {
       .enter().append('path')
       .style({
         fill: "none",
-        "stroke-width": attr.width/400,
+        "stroke-width": options.width/400,
         stroke: function(d, i){return colors[i%3];}})
       .attr('d', line)
-      //.attr("clip-path", "url(#clip-boundary)");
+      .attr("clip-path", "url(#clip-boundary)");
 
     // Axis
-    if ((attr.margin.left+attr.margin.right) > 10) {
+    if ((options.margin.left+options.margin.right) > 10) {
       xAxis = d3.svg.axis()
         .scale(x)
         .ticks(headers[0].length)
@@ -294,13 +358,13 @@ window.gene_expression = {
         });
 
       yAxis = d3.svg.axis()
-        .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [attr.height, 0] ))
+        .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [options.height, 0] ))
         .tickSize(6, 3, 1)
         .orient('left');
 
       chart.append('g')
         .attr('class', 'x axis')
-        .attr('transform', 'translate(0, ' + attr.height + ')')
+        .attr('transform', 'translate(0, ' + options.height + ')')
         .call(xAxis);
 
       chart.append('g')
@@ -327,7 +391,7 @@ window.gene_expression = {
                         .data(headers[1])
                         .enter().append("g")
                         .attr("class", "legend")
-                        .attr("transform", function(d, i) { return "translate(" + (((attr.width / 3) * i) + attr.margin.left + (attr.width/3*0.4)) + "," + (attr.height+attr.margin.top+attr.margin.bottom-40) + ")"; });
+                        .attr("transform", function(d, i) { return "translate(" + (((options.width / 3) * i) + options.margin.left + (options.width/3*0.4)) + "," + (options.height+options.margin.top+options.margin.bottom-40) + ")"; });
 
       legend.append("rect")
         .attr("transform", "translate(10,-9)")
@@ -350,13 +414,13 @@ window.gene_expression = {
         });
 
       yAxis = d3.svg.axis()
-        .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [attr.height, 0] ))
+        .scale(d3.scale.linear().domain( [0, d3.max( data, function( d ) { return d.conf_hi; } )] ).rangeRound( [options.height, 0] ))
         .tickSize(0, 0, 0)
         .orient('left');
 
       chart.append('g')
         .attr('class', 'x axis')
-        .attr('transform', 'translate(0, ' + attr.height + ')')
+        .attr('transform', 'translate(0, ' + options.height + ')')
         .call(xAxis);
 
       chart.append('g')
