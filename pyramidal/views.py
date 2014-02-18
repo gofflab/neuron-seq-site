@@ -78,6 +78,7 @@ def geneShow(request,gene_id):
     AE = AllenExplorer()
     allenExpIds = AE.experimentIds(gene.gene_short_name)
     allenSectionData = AE.sectionData(gene.gene_short_name)
+
   except Gene.DoesNotExist:
     raise Http404
   context = {
