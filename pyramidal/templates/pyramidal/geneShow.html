@@ -308,19 +308,24 @@
       $('.sunburst-panel').show();
     }
 
+    function add_allen_images(section_id, image_id, image_section) {
+      var panel = $('#allen-section-' + section_id + ' .panel-body');
+
+      panel.append("<div class='media'><a class='pull-left' href='#'>"
+                 + "<img src='http://api.brain-map.org/api/v2/section_image_download/" + image_id + "?downsample=5'>"
+                 + "</a>"
+                 + "<div class='media-body'>"
+                 + "<h5 class='media-heading'>Image Id:" + image_id + "</h5>"
+                 + "Section Number: " + image_section
+                 + "</div>"
+                 + "</div>");
+    }
+
     // Allen images (lazy loading)
     {% for section in sectionData.msg %}
-      $('#allen-panel-{{ section.id }} .panel-heading h5 a').on("click.lazy-image-load", function(e) {
-        var panel = $('#allen-section-{{ section.id }} .panel-body');
+      $('#allen-panel-{{ section.id }} .panel-heading h5 a').one("click.lazy-image-load", function(e) {
         {% for image in section.section_images %}
-          panel.append("<div class='media'><a class='pull-left' href='#'>"
-                     + "<img src='http://api.brain-map.org/api/v2/section_image_download/{{ image.id }}?downsample=5'>"
-                     + "</a>"
-                     + "<div class='media-body'>"
-                     + "<h5 class='media-heading'>Image Id:{{ image.id }}</h5>"
-                     + "Section Number: {{ image.section_number }}"
-                     + "</div>"
-                     + "</div>");
+        add_allen_images("{{ section.id }}", "{{ image.id }}", "{{ image.section_id }}");
         {% endfor %}
       });
     {% endfor %}
