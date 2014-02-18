@@ -19,8 +19,12 @@ window.hive = {
 
     if ("url" in options) {
       $.getJSON(options.url, function(data) {
-         options.data = data;
+        options.data = data;
+        delete options['url'];
+
+        window.hive.plot(selector, info_selector, options);
       });
+      return;
     }
 
     var colors = [options.colors[1], options.colors[0], options.colors[2]];
