@@ -108,17 +108,30 @@ def geneIsoforms(request, gene_id):
       }
   return render(request,'pyramidal/geneShow.html',context)
 
-def isoformDetail(request,gene_id,isoform_id):
-    try:
-        # Get Isoform object
-        isoform = Isoform.objects.get(isoform_id=isoform_id)
+def isoformHiveData(request,gene_id,isoform_id):
+  try:
+    # Get Isoform object
+    isoform = Isoform.objects.get(isoform_id=isoform_id)
 
-        context = {
-            'isoform': isoform,
-        }
-        return render(request,'pyramidal/isoformDetail.html',context)
-    except Gene.DoesNotExist:
-        raise Http404
+    context = {
+      'isoform': isoform,
+    }
+
+    return HttpResponse(isoform.diffDataHive(), content_type="application/json")
+  except Gene.DoesNotExist:
+    raise Http404
+
+def isoformDetail(request,gene_id,isoform_id):
+  try:
+    # Get Isoform object
+    isoform = Isoform.objects.get(isoform_id=isoform_id)
+
+    context = {
+      'isoform': isoform,
+    }
+    return render(request,'pyramidal/isoformDetail.html',context)
+  except Gene.DoesNotExist:
+    raise Http404
 
 def clusterIndex(request):
   context = {
