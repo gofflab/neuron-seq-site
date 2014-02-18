@@ -290,10 +290,9 @@
           $('#isoform-modal .chart').empty().append(
             '<div class="hive" style="display: inline-block; width: 450px; height: 450px; vertical-align:middle"></div>'
           + '<div class="hive_info" style="display: inline-block; width: 350px; height: 350px; vertical-align:middle"></div>');
-          var gene_hive = {{ isoform.diffDataHive|safe }};
           hive.plot('#isoform-modal .chart .hive',
                     '#isoform-modal .chart .hive_info',
-                    { data: gene_hive });
+                    { url: "{% url 'isoform_hive_data' gene_id=gene.url_name isoform_id=isoform.isoform_id%}" });
           e.preventDefault();
           });
 
