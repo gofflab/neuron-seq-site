@@ -277,11 +277,13 @@ window.gene_expression = {
       }).trigger("resize");
     }
 
+    var uuid = Math.random() + "-" + (new Date().getTime());
+
     var chart_graphic = chart.append("svg:g")
                              .attr("class", "plot");
 
     chart_graphic.append("svg:clipPath")
-      .attr("id", "clip-boundary")
+      .attr("id", "clip-boundary-" + uuid)
       .append("rect")
         .attr("x", 0)
         .attr("y", 0)
@@ -344,7 +346,7 @@ window.gene_expression = {
         "stroke-width": options.width/400,
         stroke: function(d, i){return colors[i%3];}})
       .attr('d', line)
-      .attr("clip-path", "url(#clip-boundary)");
+      .attr("clip-path", "url(#clip-boundary-" + uuid + ")");
 
     // Axis
     if ((options.margin.left+options.margin.right) > 10) {
