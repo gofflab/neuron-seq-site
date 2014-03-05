@@ -147,7 +147,6 @@ window.gene_expression = {
       .style({
         "stroke": "black"});
 
-
     // Axis
     var xAxis = d3.svg.axis()
       .scale(x0)
@@ -505,7 +504,12 @@ window.gene_expression = {
       });
 
       var dataset = isoform_data.map(function(elem) {
-        return {start: elem.start, end: elem.end, width: elem.width};
+        return {
+          start: elem.start,
+          end: elem.end,
+          width: elem.width,
+          direction: elem.strand == "+" ? "left-to-right" : "right-to-left"
+        };
       });
 
       var isoform_selector = selector + "#isoform-" + isoform.replace('.', '_');
@@ -562,12 +566,7 @@ window.gene_expression = {
 
       var direction = "left-to-right";
       if (dataset.length > 1) {
-        if (dataset[0].start < dataset[1].start) {
-          direction = "left-to-right";
-        }
-        else {
-          direction = "right-to-left";
-        }
+        direction = dataset[0].direction;
       }
 
       bars.selectAll( 'rect' )
@@ -668,167 +667,188 @@ window.gene_expression = {
 
  pie: function(selector, data, id, attr){
     var color = d3.scale.category20();
-    var timepoints = ['E15','E16','E18','P1'];
-    var celltypes = ['cpn','subcereb','corticothal'];
+
+    var timepoints    = ['E15','E16','E18','P1'];
+    var celltypes     = ['cpn','subcereb','corticothal'];
     var tweenDuration = 500;
-    var pieData = [];    
-    var oldPieData = [];
+    var pieData       = [];
+    var oldPieData    = [];
 
     if (!("width" in attr)) {
-        attr.width = 400;
-      }
-      if (!("height" in attr)) {
-        attr.height = 400;
-      }
-      if (!("radius" in attr)) {
+      attr.width = 400;
+    }
+    if (!("height" in attr)) {
+      attr.height = 400;
+    }
+    if (!("radius" in attr)) {
       attr.radius = Math.min(attr.width, attr.height) / 2;
     }
-      if (!("margin" in attr)) {
-        attr.margin = {left: 20, right: 20, bottom: 20, top: 20};
-      }
-      if (!("resizable" in attr)) {
-        attr.resizable = false;
-      }
+    if (!("margin" in attr)) {
+      attr.margin = {left: 50, right: 50, bottom: 50, top: 50};
+    }
+    if (!("resizable" in attr)) {
+      attr.resizable = false;
+    }
 
-      var chart_attr = {
-        width:  attr.width+attr.margin.left+attr.margin.right,
-        height: attr.height+attr.margin.top+attr.margin.bottom
-      }
-      
-      var nest = d3.nest()
-                      .key(function(d) { return d.sample_name; })
-                      .map(data,d3.map)
+    var chart_attr = {
+      width:  attr.width+attr.margin.left+attr.margin.right,
+      height: attr.height+attr.margin.top+attr.margin.bottom
+    }
 
-      var timepoint = "E15";
-      var celltype = "cpn";
+    var nest = d3.nest()
+                 .key(function(d) { return d.sample_name; })
+                 .map(data, d3.map)
 
-      var timescale = d3.scale.ordinal()
-                        .domain(d3.range(0,4))
-                        .range(timepoints);
+    var timepoint = "E15";
+    var celltype  = "cpn";
 
-      var celltime = timepoint + "_" + celltype;
+    var timescale = d3.scale.ordinal()
+                      .domain(d3.range(0,4))
+                      .range(timepoints);
 
-      var pie = d3.layout.pie()
-        .value(function(d) { return d.fpkm; })
-        .sort(null);
+    var celltime = timepoint + "_" + celltype;
 
-      var arc = d3.svg.arc()
-        .innerRadius(attr.radius - chart_attr.width/4)
-        //.innerRadius(0)
-        .outerRadius(attr.radius - 10);
+    var pie = d3.layout.pie()
+      .value(function(d) { return d.fpkm; })
+      .sort(null);
 
-      var svg = d3.select(selector)
-        .append("svg:svg")
-        .attr("class", "chart")
-        //.data(nest.get(celltime))
-        .attr('preserveAspectRatio', 'xMidYMid')
-        .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
-        .attr(chart_attr);
+    var arc = d3.svg.arc()
+      .innerRadius(attr.radius - chart_attr.width/4)
+      .outerRadius(attr.radius - 10);
 
-      var arcs = svg
-        .append("g")
-          .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")")
-          .selectAll(".arc")
-          .data(pie(nest.get(celltime)))  
-          .enter().append("path")
-            .attr("class","arc")
-            .attr("d",arc)
-            .attr("fill",function(d,i) { return color(i); })
-            .each(function(d) { this._current = d; });
+    var svg = d3.select(selector)
+      .append("svg:svg")
+      .attr("class", "chart")
+      .attr('preserveAspectRatio', 'xMidYMid')
+      .attr('viewBox', '0 0 '+chart_attr.width+' '+chart_attr.height)
+      .attr(chart_attr);
 
-      //console.log(arcs)
+    var arcs = svg
+      .append("g")
+        .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")")
+        .selectAll(".arc")
+        .data(pie(nest.get(celltime)))
+        .enter().append("path")
+          .attr("class", "arc")
+          .attr("d", arc)
+          .attr("fill", function(d,i) { return color(i); })
+          .each(function(d) { this._current = d; });
 
-      //Labels
-      var labs = svg.append("g")
-          .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")")
-          .selectAll(".pieLabel")
-          .data(pie(nest.get(celltime)))
-          .enter().append("text")
-                .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-                //.attr("dy", ".35em")
-                .attr("dy", function(d){
-                  if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
-                        return 5;
-                      } else {
-                        return -7;
-                      }
-                })
-                //.style("text-anchor", "middle")
-                .attr("text-anchor", function(d){
-                      if ( (d.startAngle+d.endAngle)/2 < Math.PI ){
-                        return "beginning";
-                      } else {
-                        return "end";
-                      }
-                })
-                .attr("fill",function(d,i) { return color(i); })
-                .attr("stroke","#000000")
-                .attr("stroke-width",".05em")
-                .text(function(d) { return d.data[id]; });
+    // Labels
+    function addLabels() {
+      svg.selectAll(".pieLabelBox").remove();
+      svg.selectAll(".pieLabel").remove();
+      var boxes = svg.append("g")
+        .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")")
+        .selectAll(".pieLabelBox")
+        .data(pie(nest.get(celltime)))
+        .enter().append("rect")
+          .attr('class', 'pieLabelBox');
 
-      d3.selectAll(".inputPieCell")
-      .on("change", changeCell);
+      var labels = svg.append("g")
+        .attr("transform", "translate(" + chart_attr.width / 2 + "," + chart_attr.height / 2 + ")")
+        .selectAll(".pieLabel")
+        .data(pie(nest.get(celltime)))
+        .enter().append("text")
+          .attr("class", "pieLabel")
+          .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+          .attr("text-anchor", function(d){
+            if ( (d.startAngle+d.endAngle)/2 < Math.PI ){
+              return "beginning";
+            } else {
+              return "end";
+            }
+          })
+          .attr("fill",function(d,i) { return color(i); })
+          .text(function(d) { return d.data[id]; })
+          .each(function(d,i) {
+            var center = arc.centroid(d);
 
-      d3.selectAll(".inputPieTime")
-      .on("change", changeTime);
+            var box = d3.select(boxes[0][i]);
 
-      function changeTime() {
-        timepoint = timescale(this.value);
-        celltime = timepoint + "_" + celltype;
-        change(selector);
-      }
+            // Determine placement within chart bounds
+            var x = center[0];
+            var y = center[1];
 
-      function changeCell() {
-        celltype = this.value;
-        celltime = timepoint + "_" + celltype;
-        change(selector);
-      }
+            var d = Math.sqrt(x*x + y*y);
 
-      function change(selector) {
-        //clearTimeout(timeout);
-        pie.value(function(d) { return d.fpkm; })
-        arcs = d3.select(selector)
-                    .selectAll(".arc")
-                    .data(pie(nest.get(celltime))); // compute the new angles
-                    //.each(function(d,i) {d._current = oldData[i]._current;}); 
-        arcs.transition()
+            var new_x = x/d * (attr.radius+10);
+            var new_y = y/d * (attr.radius+10);
+
+            var bbox = this.getBBox();
+
+            var dy = -7;
+            if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5) {
+              dy = 5;
+            }
+
+            // Force within the graph bounds
+            if (d3.select(this).attr('text-anchor') == 'end') {
+              if (new_x - 2 - bbox.width < -chart_attr.width/2) {
+                new_x = -chart_attr.width/2 + bbox.width + 2;
+              }
+
+              box.attr("transform", "translate(" + (new_x-bbox.width-2) + ", "
+                                                 + (new_y+dy-bbox.height) + ")")
+                 .attr("width", bbox.width+4)
+                 .attr("height", bbox.height + 4)
+                 .style("fill", "rgba(255, 255, 255, 0.5)");
+            }
+            else {
+              if (new_x + bbox.width > chart_attr.width/2) {
+                new_x = chart_attr.width/2 - bbox.width;
+              }
+            }
+
+            d3.select(this).attr("transform", "translate(" + new_x + "," + new_y + ")")
+                           .attr("dy" , dy);
+          });
+    }
+
+    addLabels();
+
+    $(".inputPieCell").on("change", function() {
+      celltype = this.value;
+      celltime = timepoint + "_" + celltype;
+      change(selector);
+    });
+
+    $(".inputPieTime").on("change", function() {
+      timepoint = timescale(this.value);
+      celltime  = timepoint + "_" + celltype;
+      change(selector);
+    });
+
+    function change(selector) {
+      //clearTimeout(timeout);
+      pie.value(function(d) { return d.fpkm; })
+      arcs = d3.select(selector)
+                  .selectAll(".arc")
+                  .data(pie(nest.get(celltime))); // compute the new angles
+
+
+      arcs.transition()
           .duration(tweenDuration)
           .attrTween("d", arcTween); // redraw the arcs
 
-        labs = d3.select(selector)
-                    .selectAll(".pieLabel")
-                    .data(pie(nest.get(celltime))) // add new data
-                    .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-                    .attr("dy", function(d){
-                      if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
-                            return 5;
-                          } else {
-                            return -7;
-                          }
-                    })
-                    .attr("text-anchor", function(d){
-                          if ( (d.startAngle+d.endAngle)/2 < Math.PI ){
-                            return "beginning";
-                          } else {
-                            return "end";
-                          }
-                    });
-      }
+      addLabels();
+    }
 
-      // Store the displayed angles in _current.
-      // Then, interpolate from _current to the new angles.
-      // During the transition, _current is updated in-place by d3.interpolate.
-      function arcTween(a) {
-        //console.log(this._current);
-        //console.log(a);
-        var i = d3.interpolate(this._current, a);
-        this._current = i(0);
-        return function(t) {
-          //console.log(arc(i(t)));
-          return arc(i(t));
-        };
-      }
+    // Store the displayed angles in _current.
+    // Then, interpolate from _current to the new angles.
+    // During the transition, _current is updated in-place by d3.interpolate.
+    function arcTween(a) {
+      //console.log(this._current);
+      //console.log(a);
+      var i = d3.interpolate(this._current, a);
+      this._current = i(0);
+      return function(t) {
+        //console.log(arc(i(t)));
+        return arc(i(t));
+      };
+    }
 
+    // Add legend (for labels that do not fit)
   },
   clusterHeatmap: function(selector, headers, data, attr) {
     var colors = ["steelblue", "green", "crimson"];
