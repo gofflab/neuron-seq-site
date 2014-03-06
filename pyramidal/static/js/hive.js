@@ -71,7 +71,7 @@ window.hive = {
     ];
 
     //Helper functions
-    var angle = d3.scale.ordinal()
+    var axis_angle = d3.scale.ordinal()
       .domain(celltypes)
       .rangePoints([0, 4* Math.PI/3]);
 
@@ -115,7 +115,7 @@ window.hive = {
       .data(celltypes)
       .enter().append("line")
       .attr("class", "hiveaxis")
-      .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
+      .attr("transform", function(d) { return "rotate(" + degrees(axis_angle(d)) + ")"; })
       .attr("x1", radius.range()[0])
       .attr("x2", radius.range()[1]);
 
@@ -128,7 +128,7 @@ window.hive = {
         .filter(function(d) { return d.values.q_value <= qFilter })
         .attr("class", "link")
         .attr("d", link()
-            .angle(function(d) { return angle(celltypes.indexOf(d.celltype)); })
+            .angle(function(d) { return axis_angle(d.celltype); })
             .radius(function(d) { return radius(d.timepoint); }))
         .style("stroke-width",function(d) {return linkSize(Math.abs(d.values.log2_fold_change))})
         .style("stroke","#999")
@@ -200,26 +200,28 @@ window.hive = {
         })
         .attr("transform", function(d,i) {
           if (i == 2) {
-            return "rotate(" + (180 + degrees(angle(d))) + ")";
+            return "rotate(" + (180 + degrees(axis_angle(d))) + ")";
           }
           else {
-            return "rotate(" + degrees(angle(d)) + ")";
+            return "rotate(" + degrees(axis_angle(d)) + ")";
           }
         })
         .text(function(d){
           return d
         })
-        .style("stroke", function(d,i) { return colors[i]; })
+        .style("font-size", "12pt")
+        .style("font-weight", "800")
+        .style("fill", function(d,i) { return colors[i]; })
         .attr("text-decoration","none");
 
     //Draw the nodes
     svg.append("g")
-      .attr("class","hivenodes")
+      .attr("class", "hivenodes")
       .selectAll(".hivenode")
       .data(nodes)
       .enter().append("circle")
       .style("fill", function(d,i) { return colors[Math.floor(i/4)]; })
-      .attr("transform", function(d) { return "rotate(" + degrees(angle(d.celltype)) + ")"; })
+      .attr("transform", function(d) { return "rotate(" + degrees(axis_angle(d.celltype)) + ")"; })
       .attr("cx", function(d) { return radius(d.timepoint) })
       .attr("r", 5);
 
@@ -230,7 +232,7 @@ window.hive = {
     function link() {
       var source = function(d) { return d.source; },
           target = function(d) { return d.target; },
-          angle = function(d) { return d.angle; },
+          angle  = function(d) { return d.angle; },
           startRadius = function(d) { return d.radius; },
           endRadius = startRadius,
           arcOffset = -Math.PI / 2;
@@ -264,6 +266,7 @@ window.hive = {
             a = +(typeof angle === "function" ? angle.call(thiz, node, i) : angle) + arcOffset,
             r0 = +(typeof startRadius === "function" ? startRadius.call(thiz, node, i) : startRadius),
             r1 = (startRadius === endRadius ? r0 : +(typeof endRadius === "function" ? endRadius.call(thiz, node, i) : endRadius));
+
         return {r0: r0, r1: r1, a: a};
       }
 
