@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 cuffData.db*
 ._DS_store
 ._DS_Store
 .DS_Store
 *.pyc
 
+=======
+.gitk*
+.idea/*
+.DS_Store
+>>>>>>> 33e75b07bfd769349525dc084d987c406fc03e24

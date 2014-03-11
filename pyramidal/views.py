@@ -217,32 +217,36 @@ def dev(request):
 ####################
 # Markers
 #####################
-def markers(request,expProfile,sigFlag,nGenes):
-    #Sample Order
-    sampleOrder=["E15_cpn","E15_subcereb","E15_corticothal","E16_cpn","E16_subcereb","E16_corticothal","E18_cpn","E18_subcereb","E18_corticothal","P1_cpn","P1_subcereb","P1_corticothal",]
+# Deprecated in favor of parcoords approach
+# def markers(request,expProfile,sigFlag,nGenes):
+#     #Sample Order
+#     sampleOrder=["E15_cpn","E15_subcereb","E15_corticothal","E16_cpn","E16_subcereb","E16_corticothal","E18_cpn","E18_subcereb","E18_corticothal","P1_cpn","P1_subcereb","P1_corticothal",]
 
-    #Clean expProfile
-    expProfile = makeProb(expProfile)
+#     #Clean expProfile
+#     expProfile = makeProb(expProfile)
 
-    #Find JS distance values for each gene
-    allGenes = Gene.objects.all()
-    JSD = {}
-    for gene in allGenes:
-        geneDict = gene.fpkm()
-        geneProfile = []
-        for sample in sampleOrder:
-            geneProfile.append(geneDict[sample])
-        try:
-            geneProfile = makeProb(geneProfile)
-        except ZeroDivisionError:
-            continue
-        #print >>sys.stderr, "%s:\n%s" % (gene.gene_id,"\t".join([str(x) for x in geneProfile]))
-        JSD[gene.gene_id] = sqrt(Jensen_Shannon_divergence(geneProfile,expProfile))
-    #return JSD
+#     #Find JS distance values for each gene
+#     allGenes = Gene.objects.all()
+#     JSD = {}
+#     for gene in allGenes:
+#         geneDict = gene.fpkm()
+#         geneProfile = []
+#         for sample in sampleOrder:
+#             geneProfile.append(geneDict[sample])
+#         try:
+#             geneProfile = makeProb(geneProfile)
+#         except ZeroDivisionError:
+#             continue
+#         #print >>sys.stderr, "%s:\n%s" % (gene.gene_id,"\t".join([str(x) for x in geneProfile]))
+#         JSD[gene.gene_id] = sqrt(Jensen_Shannon_divergence(geneProfile,expProfile))
+#     #return JSD
 
+#     context = {}
+#     return render(request,'base.html',context)
 
+def markers(request):
     context = {}
-    return render(request,'base.html',context)
+    return render(request,'pyramidal/markers.html',context)
 
 def KL_divergence(p, q):
         return sum(_p * log(_p / _q) for _p, _q in zip(p, q) if _p != 0)

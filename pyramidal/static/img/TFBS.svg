@@ -2310,7 +2310,9 @@
 	<text transform="matrix(0 -1 1 0 909.9756 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Tgif</text>
 	<text transform="matrix(0 -1 1 0 920.4131 90.9844)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Atf2</text>
 	<text transform="matrix(0 -1 1 0 930.8486 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Sp1</text>
-	<text transform="matrix(0 -1 1 0 941.291 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Pou2f1</text>
+	<a target="_blank" xlink:href="http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Pou2f1" >
+		<text transform="matrix(0 -1 1 0 941.291 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Pou2f1</text>
+	</a>
 	<text transform="matrix(0 -1 1 0 951.7266 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Arnt</text>
 	<text transform="matrix(0 -1 1 0 962.1602 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Zic2</text>
 	<text transform="matrix(0 -1 1 0 972.5996 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Gtf3a</text>
