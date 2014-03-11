@@ -44,3 +44,7 @@ h2, h3, h6 {
 .panel .panel-heading h3 {
   font-family: "Open Sans";
 }
+
+.panel table tr th {
+  font-family: "Open Sans";
+}
