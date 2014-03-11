@@ -12,7 +12,7 @@ window.cluster = {
       attr.height = 5*gene_ids.length + 20*10 - 5*10;
     }
     if (!("margin" in attr)) {
-      attr.margin = {left: 120, right: 10, bottom: 80, top: 10};
+      attr.margin = {left: 120, right: 10, bottom: 80, top: 80};
     }
     if (!("resizable" in attr)) {
       attr.resizable = false;
@@ -64,7 +64,6 @@ window.cluster = {
     var all_headers = [];
     headers[1].forEach(function(header) {
       headers[0].forEach(function(subheader) {
-        console.log(header+'_'+subheader);
         all_headers.push(header+'_'+subheader);
       });
     });
@@ -74,23 +73,6 @@ window.cluster = {
     var x0 = d3.scale.ordinal()
                .domain(all_headers)
                .rangeBands([0, attr.width]);
-
-    d3.range(all_headers.length).forEach(function(i) {
-      var type_index = i % 3;
-      var time_index = Math.floor(i / 3);
-
-      // cpn and corticothal are swapped in the cluster data
-      if (type_index == 0) {
-        type_index = 1;
-      }
-      else if (type_index == 1) {
-        type_index = 0;
-      }
-
-      console.log("i = " + i + "; header=" + headers[0][time_index] + "_" + headers[1][type_index]);
-      var ret = x0(headers[1][type_index] + "_" + headers[0][time_index]);
-      console.log(ret);
-    });
 
     var x1 = d3.scale.ordinal()
                .domain(headers[1])
@@ -106,9 +88,25 @@ window.cluster = {
       .ticks(12)
       .tickSize(6, 3, 1)
       .tickFormat(function(d,i) {
-        return headers[0][i % 4]
+        return headers[0][i % 4];
       })
       .orient('bottom');
+
+    var xAxis_top = d3.svg.axis()
+      .scale(x0)
+      .ticks(12)
+      .tickSize(6, 3, 1)
+      .tickFormat(function(d,i) {
+        return headers[0][i % 4];
+      })
+      .orient('top');
+
+    var xAxisLegend_top = d3.svg.axis()
+      .scale(x1)
+      .ticks(headers[1].length)
+      .tickSize(6, 3, 0)
+      .tickValues(headers[1])
+      .orient('top');
 
     var xAxisLegend = d3.svg.axis()
       .scale(x1)
@@ -132,6 +130,15 @@ window.cluster = {
       .attr('class', 'x legend')
       .attr("transform", "translate(0,"+(attr.height+30)+")")
       .call(xAxisLegend);
+
+    chart.append('g')
+      .attr('class', 'x axis')
+      .call(xAxis_top);
+
+    chart.append('g')
+      .attr('class', 'x legend')
+      .attr("transform", "translate(0,"+(-30)+")")
+      .call(xAxisLegend_top);
 
     chart.append('g')
       .attr('class', 'y axis');
