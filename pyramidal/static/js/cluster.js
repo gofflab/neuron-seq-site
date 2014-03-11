@@ -136,15 +136,6 @@ window.cluster = {
     chart.append('g')
       .attr('class', 'y axis');
 
-    chart.selectAll('.tick line')
-      .style({
-        "fill": "none",
-        "stroke": "none"});
-
-    chart.selectAll('.axis line')
-      .style({
-        "stroke": "none"});
-
     var rows = chart.selectAll( '.rows' )
       .data(gene_ids_subset)
       .enter().append('svg:g').attr("class", "rows")
@@ -190,8 +181,6 @@ window.cluster = {
                     .call(subYAxis);
 
       chart.selectAll('.tick text')
-        .style({
-          "cursor": "pointer"})
         .on("click", function(d) {
           document.location.href = "/pyramidal/genes/"+d
         });
@@ -200,7 +189,6 @@ window.cluster = {
       var sub_rows = d3.select('#row-'+i).selectAll('.sub-rows')
         .data(datas)
         .enter().append('svg:g')
-        .style("fill", "#fff")
         .attr("class", "sub-rows")
         .attr("id", function(d,j) { return "sub-row-"+i+"-"+j; });
 
@@ -211,6 +199,15 @@ window.cluster = {
           var type_index = i % 3;
           var time_index = Math.floor(i / 3);
 
+          // 0 - cpn
+          // 1 - corticothal
+          // 2 - subcereb
+
+          // We want:
+          // 0 - cpn
+          // 1 - subcereb
+          // 2 - corticothal
+
           // cpn and corticothal are swapped in the cluster data
           if (type_index == 0) {
             type_index = 1;
@@ -218,6 +215,11 @@ window.cluster = {
           else if (type_index == 1) {
             type_index = 0;
           }
+
+          // Subtract one
+          type_index--;
+
+          type_index = (type_index+3) % 3;
 
           return x0(headers[1][type_index] + "_" + headers[0][time_index]);
         })
@@ -227,7 +229,6 @@ window.cluster = {
         .attr('width', attr.width / 12)
         .attr('height', 20)
         .style({
-          stroke: "none",
           opacity: function(fpkm) {
             if (fpkm < 0) {
               return fpkm / fpkm_min;
@@ -260,6 +261,15 @@ window.cluster = {
         var type_index = i % 3;
         var time_index = Math.floor(i/3);
 
+        // 0 - cpn
+        // 1 - corticothal
+        // 2 - subcereb
+
+        // We want:
+        // 0 - cpn
+        // 1 - subcereb
+        // 2 - corticothal
+
         // cpn and corticothal are swapped in the cluster data
         if (type_index == 0) {
           type_index = 1;
@@ -268,13 +278,17 @@ window.cluster = {
           type_index = 0;
         }
 
+        // Subtract one
+        type_index--;
+
+        type_index = (type_index+3) % 3;
+
         return x0(headers[1][type_index] + "_" + headers[0][time_index]);
       })
       .attr('y', function(gene,i,j) { return y(gene_ids_subset[j]) })
       .attr('width', attr.width / 12)
       .attr('height', single_row_height)
       .style({
-        stroke: "none",
         opacity: function(fpkm) {
           if (fpkm < 0) {
             return fpkm / fpkm_min;

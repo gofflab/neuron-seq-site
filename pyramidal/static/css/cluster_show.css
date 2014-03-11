@@ -1,0 +1,31 @@
+.chart .tick line {
+  fill: none;
+  stroke: none;
+}
+
+.chart .axis line {
+  stroke: none;
+}
+
+.chart .tick text {
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif;
+  font-size: 10pt;
+}
+
+.chart .sub-rows g {
+  fill: #fff;
+}
+
+.chart .sub-rows rect {
+  stroke: none;
+}
+
+.chart .rows rect {
+  stroke: #eee;
+  stroke-width: 0.5px;
+}
+
+.chart g g.y.axis path {
+  stroke: #ddd;
+}
