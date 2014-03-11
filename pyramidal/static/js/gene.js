@@ -852,6 +852,7 @@ window.gene_expression = {
 
     // Add legend (for labels that do not fit)
   },
+
   clusterHeatmap: function(selector, headers, data, attr) {
     var colors = ["steelblue", "green", "crimson"];
 
@@ -917,6 +918,7 @@ window.gene_expression = {
     var all_headers = [];
     headers[1].forEach(function(header) {
       headers[0].forEach(function(subheader) {
+        console.log(header+'_'+subheader);
         all_headers.push(header+'_'+subheader);
       });
     });
@@ -926,6 +928,23 @@ window.gene_expression = {
     var x0 = d3.scale.ordinal()
                .domain(all_headers)
                .rangeBands([0, attr.width]);
+
+    d3.range(all_headers.length).forEach(function(i) {
+      var type_index = i % 3;
+      var time_index = Math.floor(i / 3);
+
+      // cpn and corticothal are swapped in the cluster data
+      if (type_index == 0) {
+        type_index = 1;
+      }
+      else if (type_index == 1) {
+        type_index = 0;
+      }
+
+      console.log("i = " + i + "; header=" + headers[0][time_index] + "_" + headers[1][type_index]);
+      var ret = x0(headers[1][type_index] + "_" + headers[0][time_index]);
+      console.log(ret);
+    });
 
     var x1 = d3.scale.ordinal()
                .domain(headers[1])
@@ -1044,7 +1063,7 @@ window.gene_expression = {
         .enter().append('rect')
         .attr('x', function(gene, i, j) {
           var type_index = i % 3;
-          var time_index = Math.floor(i/3);
+          var time_index = Math.floor(i / 3);
 
           // cpn and corticothal are swapped in the cluster data
           if (type_index == 0) {
@@ -1053,9 +1072,12 @@ window.gene_expression = {
           else if (type_index == 1) {
             type_index = 0;
           }
-        return x0(headers[0][time_index] + "_" + headers[1][type_index])
+
+          return x0(headers[1][type_index] + "_" + headers[0][time_index]);
         })
-        .attr('y', function(gene,j,k) { return y(gene_ids_subset[i]) + (k * 20) })
+        .attr('y', function(gene,j,k) {
+          return y(gene_ids_subset[i]) + (k * 20);
+        })
         .attr('width', attr.width / 12)
         .attr('height', 20)
         .style({
@@ -1099,7 +1121,8 @@ window.gene_expression = {
         else if (type_index == 1) {
           type_index = 0;
         }
-        return x0(headers[0][time_index] + "_" + headers[1][type_index])
+
+        return x0(headers[1][type_index] + "_" + headers[0][time_index]);
       })
       .attr('y', function(gene,i,j) { return y(gene_ids_subset[j]) })
       .attr('width', attr.width / 12)

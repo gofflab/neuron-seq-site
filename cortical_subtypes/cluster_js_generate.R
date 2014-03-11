@@ -1,12 +1,12 @@
+gene_ids <- read.table("clusters.txt", header=TRUE, fill=TRUE)
+
 library(cummeRbund)
 library(rjson)
 
 cuff <- readCufflinks()
 
-gene_ids <- read.table("clusters.txt", header=TRUE)
-
 # This function clusters the data the way csHeatmap does
-.ggclust<-function(object, rescaling='none', clustering='none', labCol=T, labRow=T, logMode=T, pseudocount=1.0,
+.myggclust<-function(object, rescaling='none', clustering='none', labCol=T, labRow=T, logMode=T, pseudocount=1.0,
 		border=FALSE, heatscale=c(low='lightyellow',mid='orange',high='darkred'), heatMidpoint=NULL,fullnames=T,replicates=FALSE,method='none',...) {
 	## the function can be be viewed as a two step process
 	## 1. using the rehape package and other funcs the data is clustered, scaled, and reshaped
@@ -65,11 +65,19 @@ gene_ids <- read.table("clusters.txt", header=TRUE)
 }
 
 for(i in 0:19) {
-  cluster <- gene_ids[gene_ids[2] == i]
+  cluster <- gene_ids[gene_ids[13] == i]
+  #write.table(cluster, "")
   genes   <- getGenes(cuff, cluster)
 
+  # Generate a pdf
+  #pdf(paste("cluster_",i,".pdf",sep=""),height=20,width=10)
+  #csHeatmap(genes, cluster = "row", rescaling = "row", method = dist, heatscale = c("steelblue", "white", "darkred"), heatMidpoint = 0)
+  #dev.off()
+
   # Replace your csHeatmap call with this function here. Obviously, some parameters will be ignored.
-  m <- .ggclust(genes, cluster = "row", rescaling = "row", method = dist, heatscale = c("steelblue", "white", "darkred"), heatMidpoint = 0)
+  m <- .myggclust(genes, cluster = "row", rescaling = "row", method = dist, heatscale = c("steelblue", "white", "darkred"), heatMidpoint = 0)
+
+  #write.table(m, paste("cluster_raw_",i,".txt",sep=""))
 
   # Generate a javascript file for this cluster
   sink(paste("../pyramidal/static/js/cluster_",i,".js",sep=""))
@@ -91,4 +99,5 @@ for(i in 0:19) {
   }
   cat("}")
   sink()
+  q
 }
