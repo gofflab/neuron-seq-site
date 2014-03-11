@@ -19,7 +19,7 @@ window.gene_set_viz = {
 
     sampleScale = d3.scale.ordinal()
       .domain(d3.range(0,3))
-      .range(['CPN','CthPN',"ScPN"])
+      .range(['CPN','CThPN','ScPN'])
 
     legendFillColor = d3.scale.ordinal()
       .domain(d3.range(0,3))
