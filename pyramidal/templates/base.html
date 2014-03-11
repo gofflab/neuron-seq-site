@@ -57,9 +57,8 @@
   </head>
   <body>
   	<nav class="navbar navbar-inverse" role="navigation">
-  		<a class="navbar-brand" href="#">Cortical Transcriptome</a>
+  		<a class="navbar-brand" href="{% url 'pyramidal.views.index' %}">Cortical Transcriptome</a>
   		<ul class="nav navbar-nav">
-      		<li><a href="{% url 'pyramidal.views.index' %}">Home</a></li>
           <li><a href="{% url 'gene_index' %}">All Genes</a></li>
           <li><a href="{% url 'cluster_index' %}">Clusters</a></li>
           <li><a href="{% url 'tfbs' %}">TFBS</a></li>
