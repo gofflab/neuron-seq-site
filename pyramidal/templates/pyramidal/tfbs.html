@@ -6,5 +6,35 @@
 {% block content %}
 <h3>Transcription Factor Binding Site enrichment</h3>
 <!--<object type="image/svg+xml" data="{{ STATIC_URL }}/img/TFBS.svg">Your browser does not support SVG</object>-->
-<embed src="{{ STATIC_URL }}/img/TFBS.svg" type="image/svg+xml" />
+<div id="tfbs"></div>
+<script type="text/javascript">
+d3.xml("{{ STATIC_URL }}img/TFBS.svg", "image/svg+xml", function(xml) {
+  document.getElementById('tfbs').appendChild(xml.documentElement);
+
+  // Remove existing links, if they exist
+  $('#tfbs svg a').each(function(e) {
+    var textNode = this.children[0];
+    var parentNode = this.parentNode;
+
+    console.log(this);
+
+    textNode.remove();
+    parentNode.appendChild(textNode);
+
+    this.remove();
+  });
+
+  // Add link capability
+  d3.selectAll('#tfbs svg text')
+    .style({
+      "cursor": "pointer"})
+    .on("click", function(d) {
+      var geneId = $.trim(this.textContent)
+                    .replace(/^[*]/, '')
+                    .replace(/[\/].*/, '');
+      document.location.href = "/pyramidal/genes/" + geneId;
+    });
+});
+
+</script>
 {% endblock content %}
