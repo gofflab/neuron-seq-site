@@ -29,3 +29,15 @@
 .chart g g.y.axis path {
   stroke: #ddd;
 }
+
+.chart g.x.axis text {
+  font-family: "Open Sans", sans-serif;
+  font-size: 10pt;
+  font-weight: 300;
+}
+
+.chart g.x.legend text {
+  font-family: "Open Sans", sans-serif;
+  font-size: 12pt;
+  font-weight: 600;
+}

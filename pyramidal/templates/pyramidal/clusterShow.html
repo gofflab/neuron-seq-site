@@ -14,20 +14,20 @@ Cluster: {{cluster_id}}
 	{% block navleft %}
 
  	<h5>Clusters</h5>
-  <h6>CPN Signature RNAs</h6>
+  <h6>Callosal Projection Neurons (CPN)<br/>Signature RNAs</h6>
   <ul>
     <li><a href="{% url 'cluster_show' cluster_id=5  %}">Cluster 5</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=0  %}">Cluster 0</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=15 %}">Cluster 15</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=10 %}">Cluster 10</a></li>
   </ul>
-  <h6>SCPN Signature RNAs</h6>
+  <h6>Subcerebral Projection Neurons (ScPN)<br/>Signature RNAs</h6>
   <ul>
     <li><a href="{% url 'cluster_show' cluster_id=16 %}">Cluster 16</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=18 %}">Cluster 18</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=7  %}">Cluster 7</a></li>
   </ul>
-  <h6>CThPN Signature RNAs</h6>
+  <h6>Corticothalamic Projection Neurons (CThPN)<br/>Signature RNAs</h6>
   <ul>
     <li><a href="{% url 'cluster_show' cluster_id=2 %}">Cluster 2</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=9 %}">Cluster 9</a></li>
@@ -71,7 +71,7 @@ Cluster: {{cluster_id}}
   <script type="text/javascript">
     var gene_headers = [
       ['E15','E16','E18','P1'],
-      ['cpn', 'subcereb', 'corticothal']
+      ['CPN', 'ScPN', 'CThPN']
     ];
 
     cluster.heatmap('#heatmap', gene_headers, cluster_{{cluster_id}}, { resizable: true } );
