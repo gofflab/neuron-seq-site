@@ -187,7 +187,7 @@ window.cluster = {
       yAxisSelection.attr("transform", "translate(0,"+y(gene_ids_subset[i])+")")
                     .call(subYAxis);
 
-      chart.selectAll('.tick text')
+      chart.selectAll('.y.axis .tick text')
         .on("click", function(d) {
           document.location.href = "/pyramidal/genes/"+d
         });
