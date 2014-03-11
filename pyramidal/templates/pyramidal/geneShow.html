@@ -64,7 +64,12 @@
 
 	<h1>{{ gene.gene_short_name }}</h1>
   <div class="panel panel-default">
-    <div class="panel-heading"><div class="graph-buttons" style="float:right"><a href="#" id="graph-button-line">Line</a> | <a href="#" id="graph-button-bar">Bar</a></div><h4>Expression Distribution</h4></div>
+    <div class="panel-heading"><div class="graph-buttons" style="float:right">
+        <a href="#" id="graph-button-line"><img src="{{ STATIC_URL}}img/gene-graph-lines-on.svg" style="width: 32px" title="Line graph" alt="Line graph"></a>
+        <a href="#" id="graph-button-bar"><img src="{{ STATIC_URL }}img/gene-graph-bars.svg" style="width: 32px" title="Bar graph" alt="Bar graph"></a>
+      </div>
+      <h4>Expression Distribution</h4>
+    </div>
     <div class="panel-body">
        <div id="chart"></div>
     </div>
@@ -204,7 +209,7 @@
 
   <script type="text/javascript">
     // Create the modal base
-  modal_base = $('<div class="modal panel panel-default"><div class="modal-content panel-heading"><div class="graph-buttons" style="float:right"><a href="#" id="modal-button-line">Line</a> | <a href="#" id="modal-button-bar">Bar</a> | <a href="#" id="modal-button-hive">Hive</a></div><h4>Expression Distribution</h4></div><div class="chart panel-body"></div></div>').css('display', 'none');
+  modal_base = $('<div class="modal panel panel-default"><div class="modal-content panel-heading"><div class="graph-buttons" style="float:right"><a href="#" id="modal-button-line"><img src="{{ STATIC_URL}}img/gene-graph-lines-on.svg" style="width: 32px" title="Line graph" alt="Line graph"></a><a href="#" id="modal-button-bar"><img src="{{ STATIC_URL }}img/gene-graph-bars.svg" style="width:32px" title="Bar graph" alt="Bar graph"></a><a href="#" id="modal-button-hive"><img src="{{ STATIC_URL }}img/gene-graph-hive.svg" style="width:32px" title="Hive plot" alt="Hive plot"></a></div><h4>Expression Distribution</h4></div><div class="chart panel-body"></div></div>').css('display', 'none');
 
     // Create a note modal
     isoform_modal = modal_base.clone();
@@ -265,16 +270,26 @@
     gene_expression.lines("#isoform-{{ isoform.safe_name }}-graph", gene_headers, { data: isoform_data["{{ isoform.isoform_id }}"], width: 100, height: 50, margin: {left:1, right:0, bottom:1, top:0} });
     $('#isoform-{{ isoform.safe_name }}-graph').css("cursor", "pointer").click(function(e) {
       $('#isoform-modal .chart').empty();
+      $('#modal-button-bar  img').attr('src', "{{ STATIC_URL }}img/gene-graph-bars.svg");
+      $('#modal-button-hive img').attr('src', "{{ STATIC_URL }}img/gene-graph-hive.svg");
+      $('#modal-button-line img').attr('src', "{{ STATIC_URL }}img/gene-graph-lines-on.svg");
+
       gene_expression.lines('#isoform-modal .chart', gene_headers, { data: isoform_data["{{ isoform.isoform_id }}"], width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
 
       $('#modal-button-bar').click(function(e) {
           $('#isoform-modal .chart').empty();
+          $('#modal-button-bar  img').attr('src', "{{ STATIC_URL }}img/gene-graph-bars-on.svg");
+          $('#modal-button-line img').attr('src', "{{ STATIC_URL }}img/gene-graph-lines.svg");
+          $('#modal-button-hive img').attr('src', "{{ STATIC_URL }}img/gene-graph-hive.svg");
           gene_expression.bars('#isoform-modal .chart', gene_headers, { data: isoform_data["{{ isoform.isoform_id }}"], width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
           e.preventDefault();
           });
 
       $('#modal-button-line').click(function(e) {
           $('#isoform-modal .chart').empty();
+          $('#modal-button-bar  img').attr('src', "{{ STATIC_URL }}img/gene-graph-bars.svg");
+          $('#modal-button-line img').attr('src', "{{ STATIC_URL }}img/gene-graph-lines-on.svg");
+          $('#modal-button-hive img').attr('src', "{{ STATIC_URL }}img/gene-graph-hive.svg");
           gene_expression.lines('#isoform-modal .chart', gene_headers, { data: isoform_data["{{ isoform.isoform_id }}"], width: 800, height: 400, resizable: true, margin: {left:50, right:30, bottom:80, top:10} });
           e.preventDefault();
           });
@@ -283,6 +298,9 @@
           $('#isoform-modal .chart').empty().append(
             '<div class="hive" style="display: inline-block; width: 450px; height: 450px; vertical-align:middle"></div>'
           + '<div class="hive_info" style="display: inline-block; width: 350px; height: 350px; vertical-align:middle"></div>');
+          $('#modal-button-bar  img').attr('src', "{{ STATIC_URL }}img/gene-graph-bars.svg");
+          $('#modal-button-line img').attr('src', "{{ STATIC_URL }}img/gene-graph-lines.svg");
+          $('#modal-button-hive img').attr('src', "{{ STATIC_URL }}img/gene-graph-hive-on.svg");
           hive.plot('#isoform-modal .chart .hive',
                     '#isoform-modal .chart .hive_info',
                     { url: "{% url 'isoform_hive_data' gene_id=gene.url_name isoform_id=isoform.isoform_id%}" });
@@ -295,12 +313,16 @@
 
     $('#graph-button-bar').click(function(e) {
         $('#chart').empty();
+        $('#graph-button-line img').attr('src', "{{ STATIC_URL }}img/gene-graph-lines.svg");
+        $('#graph-button-bar  img').attr('src', "{{ STATIC_URL }}img/gene-graph-bars-on.svg");
         gene_expression.bars('#chart', gene_headers, { data: gene_data, width: 800, height: 400, resizable: true });
         e.preventDefault();
         });
 
     $('#graph-button-line').click(function(e) {
         $('#chart').empty();
+        $('#graph-button-bar  img').attr('src', "{{ STATIC_URL }}img/gene-graph-bars.svg");
+        $('#graph-button-line img').attr('src', "{{ STATIC_URL }}img/gene-graph-lines-on.svg");
         gene_expression.lines('#chart', gene_headers, { data: gene_data, width: 800, height: 400, resizable: true });
         e.preventDefault();
         });
