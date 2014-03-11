@@ -6,14 +6,35 @@ Cluster Index
 
 {% block header %}
   <link rel="stylesheet" href="{{ STATIC_URL }}css/cluster_index.css">
+  <style>
+    .cluster-pie {
+      display: inline-block;
+      width:  32px;
+      height: 32px;
+      float: right;
+      margin-right: 11px;
+    }
+
+    table.cluster-table tr th {
+      text-align: left;
+      padding-left: 20px;
+      line-height: 2.3em;
+    }
+
+    .cluster-pie .arc.filled {
+      fill: #fff;
+    }
+
+    .cluster-pie .arc.empty {
+      fill: #333;
+    }
+  </style>
 {% endblock header %}
 
 {% block content %}
 <div class="row">
 	<div class="col-md-10">
 	{% block main %}
-
-	<h1>Clusters</h1>
 
   <h2>Gene Expression Clusters</h2>
 
@@ -22,10 +43,10 @@ Cluster Index
     <div class="panel-body" style="background-color: hsl(120, 80%, 84%);">
       <table class="cluster-table">
         <tr>
-          <td>Cluster 5</td>
-          <td>Cluster 0</td>
-          <td>Cluster 15</td>
-          <td>Cluster 10</td>
+          <th>Cluster 5<div class="cluster-pie" id="cluster-5-pie"></div></td>
+          <th>Cluster 0<div class="cluster-pie" id="cluster-0-pie"></div></td>
+          <th>Cluster 15<div class="cluster-pie" id="cluster-15-pie"></div></td>
+          <th>Cluster 10<div class="cluster-pie" id="cluster-10-pie"></div></td>
         </tr>
         <tr>
           <td><a href="{% url 'cluster_show' cluster_id=5  %}"><img src="{{ STATIC_URL }}images/cluster_5.png"></a></td>
@@ -39,9 +60,9 @@ Cluster Index
     <div class="panel-body" style="background-color: hsl(0, 80%, 84%);">
       <table class="cluster-table">
         <tr>
-          <td>Cluster 16</td>
-          <td>Cluster 18</td>
-          <td>Cluster 7</td>
+          <th>Cluster 16<div class="cluster-pie" id="cluster-16-pie"></div></td>
+          <th>Cluster 18<div class="cluster-pie" id="cluster-18-pie"></div></td>
+          <th>Cluster 7<div class="cluster-pie" id="cluster-7-pie"></div></td>
         </tr>
         <tr>
           <td><a href="{% url 'cluster_show' cluster_id=16 %}"><img src="{{ STATIC_URL }}images/cluster_16.png"></a></td>
@@ -54,9 +75,9 @@ Cluster Index
     <div class="panel-body" style="background-color: hsl(210, 80%, 84%);">
       <table class="cluster-table">
         <tr>
-          <td>Cluster 2</td>
-          <td>Cluster 9</td>
-          <td>Cluster 6</td>
+          <th>Cluster 2<div class="cluster-pie" id="cluster-2-pie"></div></td>
+          <th>Cluster 9<div class="cluster-pie" id="cluster-9-pie"></div></td>
+          <th>Cluster 6<div class="cluster-pie" id="cluster-6-pie"></div></td>
         </tr>
         <tr>
           <td><a href="{% url 'cluster_show' cluster_id=2 %}"><img src="{{ STATIC_URL }}images/cluster_2.png"></a></td>
@@ -69,10 +90,10 @@ Cluster Index
     <div class="panel-body" style="background-color: hsl(30, 80%, 84%);">
       <table class="cluster-table">
         <tr>
-          <td>Cluster 3</td>
-          <td>Cluster 4</td>
-          <td>Cluster 11</td>
-          <td>Cluster 12</td>
+          <th>Cluster 3<div class="cluster-pie" id="cluster-3-pie"></div></td>
+          <th>Cluster 4<div class="cluster-pie" id="cluster-4-pie"></div></td>
+          <th>Cluster 11<div class="cluster-pie" id="cluster-11-pie"></div></td>
+          <th>Cluster 12<div class="cluster-pie" id="cluster-12-pie"></div></td>
         </tr>
         <tr>
           <td><a href="{% url 'cluster_show' cluster_id=3  %}"><img src="{{ STATIC_URL }}images/cluster_3.png"></a></td>
@@ -86,9 +107,9 @@ Cluster Index
     <div class="panel-body" style="background-color: hsl(210, 0%, 84%);">
       <table class="cluster-table">
         <tr>
-          <td>Cluster 17</td>
-          <td>Cluster 1</td>
-          <td>Cluster 14</td>
+          <th>Cluster 17<div class="cluster-pie" id="cluster-17-pie"></div></td>
+          <th>Cluster 1<div class="cluster-pie" id="cluster-1-pie"></div></td>
+          <th>Cluster 14<div class="cluster-pie" id="cluster-14-pie"></div></td>
         </tr>
         <tr>
           <td><a href="{% url 'cluster_show' cluster_id=17 %}"><img src="{{ STATIC_URL }}images/cluster_17.png"></a></td>
@@ -96,9 +117,9 @@ Cluster Index
           <td><a href="{% url 'cluster_show' cluster_id=14 %}"><img src="{{ STATIC_URL }}images/cluster_14.png"></a></td>
         </tr>
         <tr>
-          <td>Cluster 8</td>
-          <td>Cluster 13</td>
-          <td>Cluster 19</td>
+          <th>Cluster 8<div class="cluster-pie" id="cluster-8-pie"></div></td>
+          <th>Cluster 13<div class="cluster-pie" id="cluster-13-pie"></div></td>
+          <th>Cluster 19<div class="cluster-pie" id="cluster-19-pie"></div></td>
         </tr>
         <tr>
           <td><a href="{% url 'cluster_show' cluster_id=8  %}"><img src="{{ STATIC_URL }}images/cluster_8.png"></a></td>
@@ -112,4 +133,51 @@ Cluster Index
 	{% endblock main %}
 	</div>
 </div>
+<script type="text/javascript">
+var cluster_pies = [
+  0.125,  // 0
+  0.025,  // 1
+  0.35,   // 2
+  0.115,  // 3
+  0.167,  // 4
+  0.25,   // 5
+  0.25,   // 6
+  0.22,   // 7
+  0.035,  // 8
+  0.132,  // 9
+  0.125,  // 10
+  0.1,    // 11
+  0.07,   // 12
+  0.07,   // 13
+  0.05,   // 14
+  0.0625, // 15
+  0.2,    // 16
+  0.115,  // 17
+  0.01,   // 18
+  0.06,   // 19
+];
+
+$('.cluster-pie').each(function(e) {
+  var index = parseInt(this.id.replace(/^cluster-/, '').replace(/-pie$/, ''));
+  var svg = d3.select('#' + this.id).append('svg:svg')
+    .attr('width', '32px')
+    .attr('height', '32px');
+
+  var chart = svg.append('svg:g')
+    .attr("transform", "translate(" + 16 + "," + 16 + ")");
+
+  var pie = d3.layout.pie()
+    .sort(null);
+
+  var arc = d3.svg.arc()
+    .innerRadius(0)
+    .outerRadius(14);
+
+  chart.selectAll(".arc")
+    .data(pie([cluster_pies[index], 1-cluster_pies[index]]))
+    .enter().append("path")
+      .attr("class", function(d,i) { return "arc " + (i == 0 ? "filled" : "empty"); })
+      .attr("d", arc);
+});
+</script>
 {% endblock content %}
