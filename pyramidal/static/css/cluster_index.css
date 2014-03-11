@@ -6,3 +6,25 @@ table.cluster-table tr td {
   text-align: center;
   padding-right: 10px;
 }
+
+.cluster-pie {
+  display: inline-block;
+  width:  32px;
+  height: 32px;
+  float: right;
+  margin-right: 11px;
+}
+
+table.cluster-table tr th {
+  text-align: left;
+  padding-left: 20px;
+  line-height: 2.3em;
+}
+
+.cluster-pie .arc.filled {
+  fill: #fff;
+}
+
+.cluster-pie .arc.empty {
+  fill: #333;
+}
