@@ -22,6 +22,12 @@
 
 	{% block navleft%}
  	<h5>{{ gene.gene_id }}</h5>
+  <h6>Locus</h6>
+  <ul>
+    <li>
+      <a style="word-wrap: break-word" href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}&hubUrl=http://rinnlab.rc.fas.harvard.edu/hubs/Arlotta_neuronal_subtypes/hub.txt" target="_blank">{{ gene.locus }}</a>
+    </li>
+  </ul>
   <h6>Significant</h6>
   {% if gene.isSignificant %}
   <span style="color:#055510;" class="glyphicon glyphicon-ok"></span>
@@ -56,9 +62,6 @@
 	<!-- genePie -->
 
 	<h1>{{ gene.gene_short_name }}</h1>
-		<h3>Locus</h3>
-		<a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{ gene.locus }}&hubUrl=http://rinnlab.rc.fas.harvard.edu/hubs/Arlotta_neuronal_subtypes/hub.txt" target="_blank">{{ gene.locus }}</a>
-  </br>
   <div class="panel panel-default">
     <div class="panel-heading"><div class="graph-buttons" style="float:right"><a href="#" id="graph-button-line">Line</a> | <a href="#" id="graph-button-bar">Bar</a></div><h4>Expression Distribution</h4></div>
     <div class="panel-body">
