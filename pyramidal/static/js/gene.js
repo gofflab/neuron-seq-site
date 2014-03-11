@@ -699,7 +699,20 @@ window.gene_expression = {
 
     var nest = d3.nest()
                  .key(function(d) { return d.sample_name; })
-                 .map(data, d3.map)
+                 .map(data, d3.map);
+
+    // Mock a 'nest' model when there is no data so it displays an empty pie
+    // chart with a "No Data" label
+    if (data.length == 0) {
+      data = [{"fpkm": 1}];
+      data[0][id] = "No Data";
+
+      nest = {
+        get: function(d) {
+          return data;
+        },
+      };
+    }
 
     var timepoint = "E15";
     var celltype  = "cpn";

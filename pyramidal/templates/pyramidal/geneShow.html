@@ -245,17 +245,17 @@
      {% endfor %}
     };
 
-    //Promoter-level expression data
+    // Promoter-level expression data
     var promoter_fpkm = {{ gene.promoterFpkm|safe }};
 
     gene_expression.pie('#promoterPie', promoter_fpkm, "tss_group_id", { width: 200, height: 200, resizable: false })
 
-    //CDS-level expression data
+    // CDS-level expression data
     var cds_fpkm = {{ gene.cdsFpkm|safe }};
 
     gene_expression.pie('#cdsPie', cds_fpkm, "cds_id", { width: 200, height: 200, resizable: false })
 
-    // //Isoform expression data
+    // Isoform expression data
     var isoform_fpkm = {{ gene.isoformFpkm|safe }};
 
     gene_expression.pie('#isoformPie', isoform_fpkm, "isoform_id", { width: 200, height: 200, resizable: false })
