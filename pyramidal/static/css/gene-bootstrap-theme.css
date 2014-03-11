@@ -1,0 +1,46 @@
+.navbar {
+  background-image: none;
+  background-color: black;
+  border-radius: 0;
+}
+
+.navbar .navbar-brand {
+  color: hsl(280, 50%, 80%);
+  font-family: "Carrois Gothic SC", serif;
+  font-size: 16pt;
+}
+
+.navbar ul li {
+  color: hsl(280, 50%, 95%);
+  font-weight: 400;
+  font-family: "Open Sans", sans-serif;
+  font-size: 10pt;
+}
+
+h1, h4, h5 {
+  font-family: "Open Sans";
+  font-weight: 600;
+}
+
+h2, h3, h6 {
+  font-family: "Open Sans";
+}
+
+.well ul {
+  padding-left: 20px;
+}
+
+.well ul li {
+  font-family: "Open Sans";
+  font-size: 10pt;
+  list-style-type: none;
+  list-style-position: outside;
+}
+
+.well span.glyphicon {
+  padding-left: 20px;
+}
+
+.panel .panel-heading h3 {
+  font-family: "Open Sans";
+}
