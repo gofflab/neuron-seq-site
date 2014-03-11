@@ -46,9 +46,10 @@
     <ul>
       <li><a href="#accordion">Cortical Subtype Expression</a></li>
       <li><a href="#accordion">Cortical Subtype Expression</a></li>
-      {% if sectionData.msg.length > 0 %}
+      {% ifequal sectionData.msg|length 0 %}
+      {% else %}
       <li><a href="#accordion">Allen Brain Images</a></li>
-      {% endif %}
+      {% endifequal %}
     </ul>
 	<h6>External Links</h6>
 		<ul>
@@ -147,9 +148,10 @@
 
   <!-- #Allen Brain Images -->
   <div class="panel-group" id="accordion">
-  {% if sectionData.msg.length > 0 %}
+  {% ifequal sectionData.msg|length 0 %}
+  {% else %}
   <h4>Allen Brain Images - Developing Mouse</h4>
-  {% endif %}
+  {% endifequal %}
   {% for section in sectionData.msg %}
     <div class="panel panel-default" id="allen-panel-{{section.id}}">
     <div class="panel-heading">
