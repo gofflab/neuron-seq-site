@@ -11,6 +11,8 @@
  * gene_set.remove("Fezf2");   // Removes the given gene
  * gene_set.genes();           // => ["Foo"]
  * gene_set.count();           // => 1
+ * gene_set.removeAll();      // Removes all the genes
+ * gene_set.count();           // => 0
  *
  */
 
@@ -45,6 +47,10 @@ window.gene_set = {
       genes.splice(index, 1);
       $.cookie("geneSet", genes, { path: '/' });
     }
+  },
+
+  removeAll: function() {
+    $.cookie("geneSet", [], { path: '/' });
   },
 
   renderAddButtonAfter: function(gene_id, selector) {
@@ -90,6 +96,19 @@ window.gene_set = {
 
     dropdown.find('#gene_set_dropdown_view_link a')
             .attr('href', "/pyramidal/geneset/"+genes.join('+'));
+
+    dropdown.find('#gene_set_dropdown_remove_all_link a').click(function(e) {
+      gene_set.removeAll();
+
+      var gene_set_button = $('.gene_set_button');
+      if (!(gene_set_button == undefined)) {
+        if (gene_set_button.hasClass("remove_from_gene_set")) {
+          gene_set_button.trigger("click");
+        }
+      }
+
+      e.preventDefault();
+    });
 
     dropdown.find('.disabled').remove();
     dropdown.find('.gene_set_dropdown_item').remove();
