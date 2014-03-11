@@ -16,45 +16,46 @@
  	<h5>Clusters</h5>
   <h6>CPN Signature RNAs</h6>
   <ul>
-    <li><a href="{% url 'cluster_show' cluster_id=0 %}">Cluster 0</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=3 %}">Cluster 3</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=5 %}">Cluster 5</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=7 %}">Cluster 7</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=5  %}">Cluster 5</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=0  %}">Cluster 0</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=15 %}">Cluster 15</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=10 %}">Cluster 10</a></li>
   </ul>
   <h6>SCPN Signature RNAs</h6>
   <ul>
-    <li><a href="{% url 'cluster_show' cluster_id=15 %}">Cluster 15</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=8 %}">Cluster 8</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=6 %}">Cluster 6</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=16 %}">Cluster 16</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=18 %}">Cluster 18</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=7  %}">Cluster 7</a></li>
   </ul>
   <h6>CThPN Signature RNAs</h6>
   <ul>
     <li><a href="{% url 'cluster_show' cluster_id=2 %}">Cluster 2</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=12 %}">Cluster 12</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=9 %}">Cluster 9</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=1 %}">Cluster 1</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=6 %}">Cluster 6</a></li>
   </ul>
-
-  <h5>Other Clusters</h5>
-
+  <h6>Mixed Cell-type</h6>
+  <ul>
+    <li><a href="{% url 'cluster_show' cluster_id=3  %}">Cluster 3</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=4  %}">Cluster 4</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=11 %}">Cluster 11</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=12 %}">Cluster 12</a></li>
+  </ul>
+  <h6>Cell-type Independent</h6>
   <ul>
     <li><a href="{% url 'cluster_show' cluster_id=17 %}">Cluster 17</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=16 %}">Cluster 16</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=1  %}">Cluster 1</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=14 %}">Cluster 14</a></li>
+    <li><a href="{% url 'cluster_show' cluster_id=8  %}">Cluster 8</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=13 %}">Cluster 13</a></li>
     <li><a href="{% url 'cluster_show' cluster_id=19 %}">Cluster 19</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=14 %}">Cluster 14</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=11 %}">Cluster 11</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=10 %}">Cluster 10</a></li>
-    <li><a href="{% url 'cluster_show' cluster_id=4 %}">Cluster 4</a></li>
   </ul>
-
 	{% endblock navleft%}
+
 	</div>
 	</div>
 	<div class="col-md-10">
-	{% block main %}
 
+	{% block main %}
   <h1>Cluster {{cluster_id}}</h1>
 
   <div class="panel panel-default">
