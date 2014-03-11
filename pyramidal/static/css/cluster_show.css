@@ -7,7 +7,7 @@
   stroke: none;
 }
 
-.chart .tick text {
+.chart .y.axis .tick text {
   cursor: pointer;
   font-family: "Open Sans", sans-serif;
   font-size: 10pt;
