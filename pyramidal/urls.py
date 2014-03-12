@@ -24,6 +24,10 @@ urlpatterns = patterns('',
 	url(r'^genes?/(?P<gene_id>[\w.-]+)/hivedata/?$',views.geneHiveData,name='gene_hive_data'),
 	url(r'^genes?/(?P<gene_id>[\w.-]+)/expression/?$',views.geneExpression,name='gene_expression'),
 
+        #Gene Data
+	url(r'^genes?/(?P<gene_id>[\w.-]+)/hivedata/?$',views.geneHiveData,name='gene_hive_data'),
+	url(r'^genes?/(?P<gene_id>[\w.-]+)/expression/?$',views.geneExpression,name='gene_expression'),
+
 	#All Genes
 	url(r'^genes/?$',views.geneIndex,name='gene_index'),
 

@@ -25,7 +25,8 @@ d3.xml("{{ STATIC_URL }}img/TFBS.svg", "image/svg+xml", function(xml) {
   });
 
   // Add link capability
-  d3.selectAll('#tfbs svg text')
+
+  d3.selectAll('#tfbs svg > g > text')
     .style({
       "cursor": "pointer"})
     .on("click", function(d) {
