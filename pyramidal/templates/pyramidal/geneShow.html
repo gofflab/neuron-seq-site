@@ -44,8 +44,12 @@
   -->
   <h6>Resources</h6>
     <ul>
-      <li><a href="#accordion">Cortical Subtype Expression</a></li>
-      <li><a href="#accordion">Cortical Subtype Expression</a></li>
+      <li><a href="#expression">Expression</a></li>
+      <li><a href="#subgene">Subgene Features</a></li>
+      <li><a href="#isoforms">Isoforms</a></li>
+      <li><a href="#diffex">Differential</a></li>
+      <li><a href="#allen">Allen ISH</a></li>
+
       {% ifequal sectionData.msg|length 0 %}
       {% else %}
       <li><a href="#accordion">Allen Brain Images</a></li>
@@ -68,7 +72,7 @@
         <a href="#" id="graph-button-line"><img src="{{ STATIC_URL}}img/gene-graph-lines-on.svg" style="width: 32px" title="Line graph" alt="Line graph"></a>
         <a href="#" id="graph-button-bar"><img src="{{ STATIC_URL }}img/gene-graph-bars.svg" style="width: 32px" title="Bar graph" alt="Bar graph"></a>
       </div>
-      <h4>Expression Distribution</h4>
+      <h4 id="expression">Cortical Neuron Subtype Expression</h4>
     </div>
     <div class="panel-body">
        <div id="chart"></div>
@@ -94,7 +98,8 @@
   </div>
 
   <div class="panel panel-default">
-    <div class="panel-heading"><h4>Isoforms</h4></div>
+    <div class="panel-heading">
+    <h4 id="isoforms">Isoforms</h4></div>
     <div class="panel-body">
        {% for isoform in isoforms %}
        <h5>{{ isoform.isoform_id }}</h5>
@@ -104,7 +109,7 @@
     </div>
   </div>
 	<div class="panel panel-default">
-  <div class="panel-heading"><h4>Differential Analysis</h4></div>
+  <div class="panel-heading"><h4 id="diffex">Differential Analysis</h4></div>
   <div class="panel-body">
     <div id="hive" style="display: inline-block; width: 450px; height: 450px; vertical-align:middle"></div>
     <div id="hive_info" style="display: inline-block; width: 350px; height: 350px; vertical-align:middle"></div>
@@ -112,7 +117,7 @@
   </div>
 
   <div class="panel panel-default sunburst-panel" style="display:none">
-      <div class="panel-heading"><h4>Allen Brain Map - Expression</h4></div>
+      <div class="panel-heading"><h4 id="allen">Allen Brain Map - Expression</h4></div>
       <div id="errorDialog" title="API Query Error"></div>
       <div class="panel-body" id="content">
 

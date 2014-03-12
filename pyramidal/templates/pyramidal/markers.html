@@ -65,8 +65,8 @@ body, html {
 var parcoords = d3.parcoords()("#example")
     .alpha(0.4)
     .mode("queue") // progressive rendering
-    //.height(d3.max([document.body.clientHeight-326, 220]))
-    .height(450)
+    .height(d3.max([document.body.clientHeight-420, 400]))
+    //.height(450)
     .margin({
       top: 40,
       left: 0,
@@ -98,24 +98,38 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
   var column_keys = d3.keys(data[0]);
 
   function linkFormatter(row, cell, value, columnDef, dataContext) {
-    return "<a href='http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/" + value + "'>" + value + "</a>";
+    return "<a href='/pyramidal/gene/" + value + "'>" + value + "</a>";
+  }
+
+    function clusterLinkFormatter(row, cell, value, columnDef, dataContext) {
+    return "<a href='/pyramidal/clusters/" + value + "'>" + value + "</a>";
   }
 
   var columns = column_keys.map(function(key,i) {
-    if (key != "id"){
+    if (key == "id"){
       return {
         id: key,
         name: key,
         field: key,
-        sortable: true
+        sortable: true,
+        formatter: linkFormatter,
+        minWidth: 100
+      }
+    } else if (key == "cluster") {
+      return {
+        id: key,
+        name: key,
+        field: key,
+        sortable: true,
+        formatter: clusterLinkFormatter,
+        maxWidth:50
       }
     } else {
       return {
         id: key,
         name: key,
         field: key,
-        sortable: true,
-        formatter: linkFormatter
+        sortable: true
       }
     }
   });

@@ -1,9 +1,9 @@
 .slick-pager {
   width: 50%;
   height: 26px;
-  border: 1px solid gray;
+  /*border: 0px solid gray;*/
   border-top: 0;
-  background: url('../images/header-columns-bg.gif') repeat-x center bottom;
+  /*background: url('../images/header-columns-bg.gif') repeat-x center bottom;*/
   vertical-align: middle;
 }
 
