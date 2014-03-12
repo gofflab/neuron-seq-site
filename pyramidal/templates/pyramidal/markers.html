@@ -102,12 +102,27 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
 
   // setting up grid
   var column_keys = d3.keys(data[0]);
+
+  function linkFormatter(row, cell, value, columnDef, dataContext) {
+    return "<a href='http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/" + value + "'>" + value + "</a>";
+  }
+
   var columns = column_keys.map(function(key,i) {
-    return {
-      id: key,
-      name: key,
-      field: key,
-      sortable: true
+    if (key != "id"){
+      return {
+        id: key,
+        name: key,
+        field: key,
+        sortable: true
+      }
+    } else {
+      return {
+        id: key,
+        name: key,
+        field: key,
+        sortable: true,
+        formatter: linkFormatter
+      }
     }
   });
 
