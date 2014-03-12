@@ -1,5 +1,9 @@
 # The Developing Cortical Projection Neuron Transcriptome Resource
 
+## License
+
+Refer to MIT-LICENSE.txt
+
 ## Development: Setting up an Environment
 
 ### pyenv
