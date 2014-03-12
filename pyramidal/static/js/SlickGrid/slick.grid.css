@@ -28,10 +28,10 @@ classes should alter those!
   line-height: 16px;
   margin: 0;
   padding: 4px;
-  /*border-right: 1px solid silver;
+  border-right: 1px solid silver;
   border-left: 1px  solid silver;
   border-top: 1px solid silver;
-  border-bottom: 1px solid silver;*/
+  border-bottom: 1px solid silver;
   border: 1px solid silver;
   float: left;
   font-weight: bold;

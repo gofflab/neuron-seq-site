@@ -5,6 +5,7 @@
 
 <link rel="stylesheet" href="{{ STATIC_URL }}js/SlickGrid/slick.grid.css" type="text/css"/>
 <link rel="stylesheet" href="{{ STATIC_URL }}js/SlickGrid/controls/slick.pager.css" type="text/css"/>
+<link rel="stylesheet" href="{{ STATIC_URL }}js/SlickGrid/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css"/>
 
 <script src="{{ STATIC_URL }}js/SlickGrid/lib/jquery-1.7.min.js"></script>
 <script src="{{ STATIC_URL }}js/SlickGrid/lib/jquery.event.drag-2.2.js"></script>
@@ -26,19 +27,25 @@ body, html {
 }
 #grid, #pager {
   position: fixed;
-  width: 100%;
+  /*width: 70%;*/
 }
 #grid {
-  bottom: 0;
+  bottom: 20px;
   height: 300px;
 }
 #pager {
-  bottom: 306px;
+  bottom: 326px;
   height: 20px;
+  width: 60%;
 }
 .slick-row:hover {
   font-weight: bold;
   color: #069;
+}
+
+.slick-header{
+  border:0px;
+  background: #FFFFFF;
 }
 </style>
 
@@ -65,7 +72,7 @@ body, html {
 var parcoords = d3.parcoords()("#example")
     .alpha(0.4)
     .mode("queue") // progressive rendering
-    .height(d3.max([document.body.clientHeight-420, 400]))
+    .height(d3.max([document.body.clientHeight-500, 200]))
     //.height(450)
     .margin({
       top: 40,
@@ -122,7 +129,7 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
         field: key,
         sortable: true,
         formatter: clusterLinkFormatter,
-        maxWidth:50
+        //maxWidth:50
       }
     } else {
       return {
@@ -137,7 +144,7 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
   var options = {
     enableCellNavigation: true,
     enableColumnReorder: false,
-    multiColumnSort: false
+    multiColumnSort: false,
   };
 
   var dataView = new Slick.Data.DataView();
