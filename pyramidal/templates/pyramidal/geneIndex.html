@@ -49,8 +49,8 @@
     {% for gene in genes %}
     gene_expression.lines('.gene-expression#gene-{{ gene.safe_name }}',
         gene_headers,
-        {{ gene.expressionJson|safe }},
-        { width: 100, height: 50, margin: {left: 0, right: 0, top: 0, bottom: 0} });
+        { data: {{ gene.expressionJson|safe }},
+          width: 100, height: 50, margin: {left: 0, right: 0, top: 0, bottom: 0} });
     {% endfor %}
   </script>
 {% endblock content %}

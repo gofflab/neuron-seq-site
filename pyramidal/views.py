@@ -78,6 +78,7 @@ def geneShow(request,gene_id):
     AE = AllenExplorer()
     allenExpIds = AE.experimentIds(gene.gene_short_name)
     allenSectionData = AE.sectionData(gene.gene_short_name)
+
   except Gene.DoesNotExist:
     raise Http404
   context = {
@@ -89,6 +90,24 @@ def geneShow(request,gene_id):
       'sectionData': allenSectionData,
       }
   return render(request,'pyramidal/geneShow.html',context)
+
+def geneHiveData(request,gene_id):
+  try:
+    # Get Gene object
+    gene = Gene.objects.get(gene_id=gene_id)
+
+    return HttpResponse(gene.diffDataHive(), content_type="application/json")
+  except Gene.DoesNotExist:
+    raise Http404
+
+def geneExpression(request,gene_id):
+  try:
+    # Get Gene object
+    gene = Gene.objects.get(gene_id=gene_id)
+
+    return HttpResponse(gene.expressionJson(), content_type="application/json")
+  except Gene.DoesNotExist:
+    raise Http404
 
 def geneIsoforms(request, gene_id):
   try:
@@ -108,17 +127,35 @@ def geneIsoforms(request, gene_id):
       }
   return render(request,'pyramidal/geneShow.html',context)
 
-def isoformDetail(request,gene_id,isoform_id):
-    try:
-        # Get Isoform object
-        isoform = Isoform.objects.get(isoform_id=isoform_id)
+def isoformExpression(request,gene_id,isoform_id):
+  try:
+    # Get Gene object
+    isoform = Isoform.objects.get(isoform_id=isoform_id)
 
-        context = {
-            'isoform': isoform,
-        }
-        return render(request,'pyramidal/isoformDetail.html',context)
-    except Gene.DoesNotExist:
-        raise Http404
+    return HttpResponse(isoform.expressionJson(), content_type="application/json")
+  except Isoform.DoesNotExist:
+    raise Http404
+
+def isoformHiveData(request,gene_id,isoform_id):
+  try:
+    # Get Isoform object
+    isoform = Isoform.objects.get(isoform_id=isoform_id)
+
+    return HttpResponse(isoform.diffDataHive(), content_type="application/json")
+  except Isoform.DoesNotExist:
+    raise Http404
+
+def isoformDetail(request,gene_id,isoform_id):
+  try:
+    # Get Isoform object
+    isoform = Isoform.objects.get(isoform_id=isoform_id)
+
+    context = {
+      'isoform': isoform,
+    }
+    return render(request,'pyramidal/isoformDetail.html',context)
+  except Gene.DoesNotExist:
+    raise Http404
 
 def clusterIndex(request):
   context = {
