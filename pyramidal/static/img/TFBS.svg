@@ -2219,10 +2219,10 @@
 		<text transform="matrix(0 -1 1 0 262.8652 90.9868)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Meis1</text>
 	</a>
 	<a target="_blank" xlink:href="http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Pou3f2" >
-		<text transform="matrix(0 -1 1 0 273.3027 90.9868)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">*Pou3f2</text>
+		<text transform="matrix(0 -1 1 0 273.3027 90.9868)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Pou3f2</text>
 	</a>
 	<a target="_blank" xlink:href="http://rinnlab.rc.fas.harvard.edu/pyramidal/geneset/Stat1+Stat2" >
-		<text transform="matrix(0 -1 1 0 283.7402 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">*Stat1/2</text>
+		<text transform="matrix(0 -1 1 0 283.7402 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Stat1/2</text>
 	</a>
 	<a target="_blank" xlink:href="http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Foxa2" >
 		<text transform="matrix(0 -1 1 0 294.1719 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Foxa2</text>
@@ -2246,7 +2246,7 @@
 	<a target="_blank" xlink:href="http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Gata6" >
 		<text transform="matrix(0 -1 1 0 367.2402 90.9883)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Gata6</text>
 	</a>
-	<text transform="matrix(0 -1 1 0 377.6777 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">*NF-Y</text>
+	<text transform="matrix(0 -1 1 0 377.6777 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">NF-Y</text>
 	<a target="_blank" xlink:href="http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Yy1" >
 		<text transform="matrix(0 -1 1 0 388.1094 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Yy1</text>
 	</a>
@@ -2259,7 +2259,7 @@
 	<a target="_blank" xlink:href="http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Cdc5l" >
 		<text transform="matrix(0 -1 1 0 419.4209 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Cdc5l</text>
 	</a>
-	<text transform="matrix(0 -1 1 0 429.8545 90.9883)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">*Stat3</text>
+	<text transform="matrix(0 -1 1 0 429.8545 90.9883)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Stat3</text>
 	<text transform="matrix(0 -1 1 0 440.2949 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Tcf3</text>
 	<text transform="matrix(0 -1 1 0 450.7363 90.9863)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Mif</text>
 	<text transform="matrix(0 -1 1 0 461.1787 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Tbp</text>
@@ -2276,19 +2276,19 @@
 	<text transform="matrix(0 -1 1 0 575.9873 90.9883)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Gata1</text>
 	<text transform="matrix(0 -1 1 0 586.4219 90.9863)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Pbx1</text>
 	<text transform="matrix(0 -1 1 0 596.8555 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Stat3</text>
-	<text transform="matrix(0 -1 1 0 607.2949 90.9868)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">*En1</text>
+	<text transform="matrix(0 -1 1 0 607.2949 90.9868)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">En1</text>
 	<text transform="matrix(0 -1 1 0 617.7314 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Mef2a</text>
 	<text transform="matrix(0 -1 1 0 628.1719 90.9868)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Vsx2</text>
 	<text transform="matrix(0 -1 1 0 638.6084 90.9863)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Sox5</text>
 	<text transform="matrix(0 -1 1 0 649.043 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Myb</text>
-	<text transform="matrix(0 -1 1 0 659.4834 90.9844)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">*Nfya</text>
+	<text transform="matrix(0 -1 1 0 659.4834 90.9844)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Nfya</text>
 	<text transform="matrix(0 -1 1 0 669.915 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Rfx1</text>
 	<a target="_blank" xlink:href="http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Pou2f1" >
 		<text transform="matrix(0 -1 1 0 680.3545 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Pou2f1</text>
 	</a>
 	<text transform="matrix(0 -1 1 0 690.792 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Rel</text>
-	<text transform="matrix(0 -1 1 0 701.2285 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">*Zbtb6</text>
-	<text transform="matrix(0 -1 1 0 711.6621 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">*Nfyc</text>
+	<text transform="matrix(0 -1 1 0 701.2285 90.9927)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Zbtb6</text>
+	<text transform="matrix(0 -1 1 0 711.6621 90.9907)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Nfyc</text>
 	<text transform="matrix(0 -1 1 0 722.1045 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Atf2</text>
 	<text transform="matrix(0 -1 1 0 732.5459 90.9888)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Atf2</text>
 	<text transform="matrix(0 -1 1 0 742.9834 90.9863)" fill="#010101" font-family="'Helvetica'" font-size="12.9096">Pax4</text>
