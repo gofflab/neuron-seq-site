@@ -315,5 +315,12 @@ def supplement(request):
     context = {}
     return render(request,'pyramidal/supplement.html',context)
 
+####################
+# Supplement
+#####################
+def help(request):
+    context = {}
+    return render(request,'pyramidal/help.html',context)
+
 
 

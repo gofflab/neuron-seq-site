@@ -60,16 +60,18 @@ body, html {
 
 {% block content %}
 <h3>Marker Discovery Tool</h3>
+<p>Expression values are log<sub>10</sub> FPKM+1. Select regions of any axis to filter genes. Axes can be re-ordered</p>
+
 <!--<object type="image/svg+xml" data="{{ STATIC_URL }}/img/TFBS.svg">Your browser does not support SVG</object>-->
 
 
 <!-- SlickGrid -->
 
-<div id="example" class="parcoords" style="height:240px;"></div>
+<div id="markerParcoords" class="parcoords" style="height:240px;"></div>
 <div id="grid"></div>
 <div id="pager"></div>
 <script id="brushing">
-var parcoords = d3.parcoords()("#example")
+var parcoords = d3.parcoords()("#markerParcoords")
     .alpha(0.4)
     .mode("queue") // progressive rendering
     .height(d3.max([document.body.clientHeight-500, 200]))

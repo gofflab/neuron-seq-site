@@ -49,4 +49,7 @@ urlpatterns = patterns('',
 
 	#TFBS
 	url(r'^tfbs/?$',views.tfbs,name = 'tfbs'),
+
+	#help
+	url(r'^help/?$',views.help,name = 'help'),
 )

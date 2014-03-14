@@ -4,11 +4,70 @@
 {% endblock header }
 
 {% block content %}
-<h2>The Developing Cortical Projection Neuron Transcriptome Resource</h2>
-<p>
-  Welcome
-</p>
-<div style="text-align: center">
-  <img src="{{ STATIC_URL }}img/method.svg" style="width: 800px; margin: 0 auto;">
-</div>
+
+<img src="{{ STATIC_URL }}img/decon_logo.png" style="margin: 0 auto; float:left">
+
+<h2>The Developing Cortical Neuron Transcriptome Resource</h2>
+
+<p>Neuronal development requires a complex choreography of transcriptional decisions to obtain a specific cellular identity. Yet the low accessibility of individual neuronal classes has made direct measurements of gene expression difficult. We present a systems approach that combines purification methods and considers multiple molecular layers of transcriptome dynamics. Using these scalable methods we mapped and analyzed the transcriptome, at high-resolution, of three classes of pyramidal neurons from neocortex. We identified numerous novel features ranging from spatial and temporal usage of alternative mRNA isoforms and promoters to a host of novel mRNA genes implicated in fate specification. Notably, we observed that long non-coding RNAs impart critical developmental patterning information. An interactive online database enables integrated, multidimensional data mining. The combined platform for scalable neuronal subpopulation isolation with high-resolution transcriptome assembly and analysis provides a powerful resource and insights into the transcriptional regulation underlying neuronal diversity.</p>
+
+<p>This resource provides an exploratory interface to deep transcriptional profiling data of three clinically relevant subclasses of cortical projection neurons: Callosal (<a style="text-decoration:none;font-weight:bold;color:rgb(0, 133, 0)">CPN</a>), Subcerebral (<a style="text-decoration:none;font-weight:bold;color:rgb(173, 0, 0)">ScPN</a>), and Corticothalamic/Subplate neurons (<a style="text-decoration:none;font-weight:bold;color:rgb(0, 0, 173)">CthPN</a>). We have conducted isoform-deconvolution based differential RNA-Sequencing on sorted populations of each neuronal subclass at specified timepoints during corticogenesis.
+
+<h3>Quick Tips</h3>
+<img src="{{ STATIC_URL }}/img/search.png" style="float:right;"/>
+<h4>Search for genes by name or locus</h4>
+
+<p>You can find genes of interest by entering either an official MGI gene symbol or a genomic locus (mm9) into the search bar located at the top right of the window.</p>
+
+<h4>Jump directly to your gene of interest</h4>
+<p>Individual gene pages can be accessed through the search utility, or by constructing a URL with the official MGI gene symbol (case-sensitive) as follows:</p>
+
+<blockquote><h5>Base URL:</h5>
+<code>http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/</code>
+
+<h5>Gene of Interest:</h5>
+<code>Tle4</code>
+
+<h5>Direct Link (Base + Gene)</h5>
+<code><a href="http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Tle4">http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/Tle4</a></blockquote></code>
+
+<h4>Gene sets</h4>
+<p>You can quickly explore both the expression levels and relative cell type specificity of multiple genes at once through a similar URL construction method. Simply create a string of MGI gene symbols separated by a "+" as follows:</p>
+
+<blockquote><h5>Geneset Base URL:</h5>
+<code>http://rinnlab.rc.fas.harvard.edu/pyramidal/geneset/</code>
+
+<h5>Gene set of Interest:</h5>
+<code>Vsx2+Epha1+Epha2+Epha3+Epha4+Epha5+Epha6+Epha7+Epha8+Epha10</code>
+
+<h5>Direct Link (Base + Gene)</h5>
+<code><a href="http://rinnlab.rc.fas.harvard.edu/pyramidal/geneset/Vsx2+Epha1+Epha2+Epha3+Epha4+Epha5+Epha6+Epha7+Epha8+Epha10">http://rinnlab.rc.fas.harvard.edu/pyramidal/geneset/Vsx2+Epha1+Epha2+Epha3+Epha4+Epha5+Epha6+Epha7+Epha8+Epha10</a></blockquote></code>
+
+<img src="{{ STATIC_URL }}/img/gene_set_menu.png" style="float:right;padding-left:10px;"/>
+<p>Alternatively, you can build a gene set as you explore DeCoN. Clicking on the green <a class="gene_set_button add_to_gene_set" style="text-decoration:none;margin-left:0px;">gene set</a> button will add your gene to a temporary gene set which can be viewed by clicking on the GeneSet menu in the top right of your screen and selecting 'View'. To remove a gene click the red <a class="gene_set_button remove_from_gene_set" style="text-decoration:none;margin-left:0px;">added</a> button or select that gene from the drop down gene set menu.</p> 
+
+<h4>Marker Discovery</h4>
+<p>The <a href="/pyramidal/markers/">Marker discovery tool</a> allows you to quickly mine through >8000 significantly regulated genes to identify those genes that best match your expression profile of interest. Here you can filter by gene type (lncRNA vs Protein coding gene) or pre-assigned cluster id (see Manuscript) to quickly subset the broad list of dynamically regulated genes to find those most applicable to your research. Individual filters can also be applied to expression estimates for each cell type at each time point, to precisely refine a list of genes with expression profiles of interest.
+
+<h4>Data Access (API)</h4>
+<p>Where applicable, we provide a REST-like interface for retrieval of gene-specific supporting data. Future versions will expand on this API to make it a bit more flexible. For now, data are provided in JSON format.</p>
+
+<blockquote>
+<h5>Gene-level Expression Data</h5>
+
+<code>/pyramidal/gene/&lt;gene_name&gt;/expression/</code>
+
+<h5>Isoform-level Expression Data</h5>
+
+<code>/pyramidal/gene/&lt;gene_name&gt;/isoform/&lt;isoform_id&gt;/expression/</code>
+
+<h5>Gene-level Differential Analysis Data</h5>
+
+<code>/pyramidal/gene/&lt;gene_name&gt;/hivedata/</code>
+
+<h5>Isoform-level Differential Analysis Data</h5>
+
+<code>/pyramidal/gene/&lt;gene_name&gt;/isoform/&lt;isoform_id&gt;/hivedata/</code>
+
+</blockquote>
 {% endblock content %}

@@ -5,9 +5,11 @@
 }
 
 .navbar .navbar-brand {
-  color: hsl(280, 50%, 80%);
-  font-family: "Carrois Gothic SC", serif;
+  color: hsl(235, 100%, 75%);
+  /*font-family: "Carrois Gothic SC", serif;*/
+  font-family: "Helvetica Neue", sans-serif;
   font-size: 16pt;
+  padding:5px;
 }
 
 .navbar ul li {
@@ -24,6 +26,10 @@ h1, h4, h5 {
 
 h2, h3, h6 {
   font-family: "Open Sans";
+}
+
+h1, h2, h3 {
+  text-shadow: -1px 2px 3px #d1d1d1;
 }
 
 .well ul {
@@ -48,3 +54,19 @@ h2, h3, h6 {
 .panel table tr th {
   font-family: "Open Sans";
 }
+
+p {
+  font-family: "Helvetica Neue", "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+  font-size:1.1em;
+  color:gray;
+  text-align:justify;
+}
+
+p + p {
+  text-indent: 2.5em;
+}
+
+div .block {
+  text-indent:50px;
+}
+
