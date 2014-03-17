@@ -66,7 +66,8 @@ body, html {
 
 
 <!-- SlickGrid -->
-
+<span class="glyphicon glyphicon-search"></span>
+<input type=text id="txtSearch" style="width:100px;"> <em style="color:gray;">Esc to clear</em>
 <div id="markerParcoords" class="parcoords" style="height:240px;"></div>
 <div id="grid"></div>
 <div id="pager"></div>
@@ -149,6 +150,7 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
     multiColumnSort: false,
   };
 
+  var searchString = "";
   var dataView = new Slick.Data.DataView();
   var grid = new Slick.Grid("#grid", dataView, columns, options);
   var pager = new Slick.Controls.Pager(dataView, grid, $("#pager"));
@@ -187,19 +189,31 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
 
   // highlight row in chart
   grid.onMouseEnter.subscribe(function(e,args) {
-    var i = grid.getCellFromEvent(e).row;
+    var gridi = grid.getCellFromEvent(e).row;
+    var item = dataView.getItem(gridi);
+    var i = dataView.getIdxById(item.id);
+    //console.log(i);
     var d = parcoords.brushed() || data;
     parcoords.highlight([d[i]]);
   });
-  grid.onMouseLeave.subscribe(function(e,args) {
+  // grid.onMouseLeave.subscribe(function(e,args) {
+  //   parcoords.unhighlight();
+  // });
+     grid.onActiveCellChanged.subscribe(function(x) {
+       parcoords.unhighlight();
+     });
+  
+  //Click parcoords to unhighligh rows.
+  $('#markerParcoords').on("click",function(x){
     parcoords.unhighlight();
-  });
+  })
 
   // fill grid with data
   gridUpdate(data);
 
   // update grid on brush
   parcoords.on("brush", function(d) {
+    parcoords.unhighlight();
     gridUpdate(d);
   });
 
@@ -207,7 +221,40 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
     dataView.beginUpdate();
     dataView.setItems(data);
     dataView.endUpdate();
+    dataView.setFilterArgs({
+      searchString: searchString,
+    });
+    dataView.setFilter(myFilter);
   };
+
+  function myFilter(item, args) {
+  if (args.searchString != "" && item["id"].toLowerCase().indexOf(args.searchString) == -1) {
+    return false;
+  }
+
+  return true;
+}
+
+// wire up the search textbox to apply the filter to the model
+  $("#txtSearch").keyup(function (e) {
+    Slick.GlobalEditorLock.cancelCurrentEdit();
+    parcoords.unhighlight();
+    
+    // clear on Esc
+    if (e.which == 27) {
+      this.value = "";
+    }
+
+    searchString = this.value.toLowerCase();
+    updateFilter();
+  });
+
+  function updateFilter() {
+    dataView.setFilterArgs({
+      searchString: searchString
+    });
+    dataView.refresh();
+  }
 
 });
 </script>

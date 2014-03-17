@@ -9,9 +9,21 @@
 
 <h2>The Developing Cortical Neuron Transcriptome Resource</h2>
 
-<p>Neuronal development requires a complex choreography of transcriptional decisions to obtain a specific cellular identity. Yet the low accessibility of individual neuronal classes has made direct measurements of gene expression difficult. We present a systems approach that combines purification methods and considers multiple molecular layers of transcriptome dynamics. Using these scalable methods we mapped and analyzed the transcriptome, at high-resolution, of three classes of pyramidal neurons from neocortex. We identified numerous novel features ranging from spatial and temporal usage of alternative mRNA isoforms and promoters to a host of novel mRNA genes implicated in fate specification. Notably, we observed that long non-coding RNAs impart critical developmental patterning information. An interactive online database enables integrated, multidimensional data mining. The combined platform for scalable neuronal subpopulation isolation with high-resolution transcriptome assembly and analysis provides a powerful resource and insights into the transcriptional regulation underlying neuronal diversity.</p>
+<p>Neuronal development requires a complex choreography of transcriptional decisions to obtain a specific cellular identity. Yet the poor accessibility of individual neuronal classes has made direct measurements of gene expression difficult. We have combined nuclear-antigen targeting FACS sorting with high-resolution massively parallel RNA sequencing to provide the first resource of deep-transcriptomic data in individual sorted neuron populations. We provide here, an interactive space to explore the numerous aspects of these data including spatial and temporal usage of alternative mRNA isoforms and promoters, to a host of mRNA and long noncoding RNA (lncRNA) genes newly implicated in neuronal cell fate specification. This database enables integrated, multidimensional data mining and provides a powerful resource to generate insights into the transcriptional regulation underlying neuronal diversity in the developing cortex.</p>
 
-<p>This resource provides an exploratory interface to deep transcriptional profiling data of three clinically relevant subclasses of cortical projection neurons: Callosal (<a style="text-decoration:none;font-weight:bold;color:rgb(0, 133, 0)">CPN</a>), Subcerebral (<a style="text-decoration:none;font-weight:bold;color:rgb(173, 0, 0)">ScPN</a>), and Corticothalamic/Subplate neurons (<a style="text-decoration:none;font-weight:bold;color:rgb(0, 0, 173)">CthPN</a>). We have conducted isoform-deconvolution based differential RNA-Sequencing on sorted populations of each neuronal subclass at specified timepoints during corticogenesis.
+<p><a style="font-size:1.1em;color:#1111aa;text-decoration:none;font-weight:bold;">DeCoN</a> provides an exploratory interface to deep transcriptional profiling data of three clinically relevant subclasses of mouse cortical projection neurons: </p>
+<ul style="font-weight:bold">
+	<li>Callosal (<a style="text-decoration:none;font-weight:bold;color:rgb(0, 133, 0)">CPN</a>)</li>
+	<li>Subcerebral (<a style="text-decoration:none;font-weight:bold;color:rgb(173, 0, 0)">ScPN</a>)</li>
+	<li>Corticothalamic/Subplate neurons (<a style="text-decoration:none;font-weight:bold;color:rgb(0, 0, 173)">CthPN</a>)</li>
+</ul>
+<p>We have conducted isoform-deconvolution based differential RNA-Sequencing on sorted populations of each neuronal subclass at specified timepoints during corticogenesis:</p>
+<ul style="font-weight:bold">
+	<li>E15.5</li>
+	<li>E16.5</li>
+	<li>E18.5</li>
+	<li>P1</li>
+</ul>
 
 <h3>Quick Tips</h3>
 <img src="{{ STATIC_URL }}/img/search.png" style="float:right;"/>
@@ -44,7 +56,7 @@
 <code><a href="http://rinnlab.rc.fas.harvard.edu/pyramidal/geneset/Vsx2+Epha1+Epha2+Epha3+Epha4+Epha5+Epha6+Epha7+Epha8+Epha10">http://rinnlab.rc.fas.harvard.edu/pyramidal/geneset/Vsx2+Epha1+Epha2+Epha3+Epha4+Epha5+Epha6+Epha7+Epha8+Epha10</a></blockquote></code>
 
 <img src="{{ STATIC_URL }}/img/gene_set_menu.png" style="float:right;padding-left:10px;"/>
-<p>Alternatively, you can build a gene set as you explore DeCoN. Clicking on the green <a class="gene_set_button add_to_gene_set" style="text-decoration:none;margin-left:0px;">gene set</a> button will add your gene to a temporary gene set which can be viewed by clicking on the GeneSet menu in the top right of your screen and selecting 'View'. To remove a gene click the red <a class="gene_set_button remove_from_gene_set" style="text-decoration:none;margin-left:0px;">added</a> button or select that gene from the drop down gene set menu.</p> 
+<p>Alternatively, you can build a gene set as you explore <a style="font-size:1.1em;color:#1111aa;text-decoration:none;font-weight:bold;">DeCoN</a>. Clicking on the green <a class="gene_set_button add_to_gene_set" style="text-decoration:none;margin-left:0px;">gene set</a> button will add your gene to a temporary gene set which can be viewed by clicking on the GeneSet menu in the top right of your screen and selecting 'View'. To remove a gene click the red <a class="gene_set_button remove_from_gene_set" style="text-decoration:none;margin-left:0px;">added</a> button or select that gene from the drop down gene set menu.</p> 
 
 <h4>Marker Discovery</h4>
 <p>The <a href="/pyramidal/markers/">Marker discovery tool</a> allows you to quickly mine through >8000 significantly regulated genes to identify those genes that best match your expression profile of interest. Here you can filter by gene type (lncRNA vs Protein coding gene) or pre-assigned cluster id (see Manuscript) to quickly subset the broad list of dynamically regulated genes to find those most applicable to your research. Individual filters can also be applied to expression estimates for each cell type at each time point, to precisely refine a list of genes with expression profiles of interest.

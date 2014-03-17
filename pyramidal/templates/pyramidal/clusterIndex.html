@@ -14,10 +14,12 @@ Cluster Index
 	{% block main %}
 
   <h2>Gene Expression Clusters</h2>
+  <p>Significant gene expression profiles are distilled into 20 distinct patterns of gene expression using nearest-neighbor agglomerative graph clustering on cosine similarities. Mean expression profiles allow manual separation in to cell type specific, mixed, and cell-type indepentent clusters. Pie-charts indicate the fraction of genes that are protein coding (black) or lncRNAs (white).</p>
+  <p>Click on any cluster to view a heatmap of significantly regulated genes within that cluster.</p>
 
   <div class="panel panel-default">
     <div class="panel-heading"><h3>Callosal Projection Neurons (CPN) Signature RNAs</h3></div>
-    <div class="panel-body" style="background-color: hsl(120, 80%, 84%);">
+    <div class="panel-body" style="background-color: hsl(120, 50%, 84%);">
       <table class="cluster-table">
         <tr>
           <th>Cluster 5<div class="cluster-pie" id="cluster-5-pie"></div></td>
@@ -34,7 +36,7 @@ Cluster Index
       </table>
     </div>
     <div class="panel-heading"><h3>Subcerebral Projection Neurons (ScPN) Signature RNAs</h3></div>
-    <div class="panel-body" style="background-color: hsl(0, 80%, 84%);">
+    <div class="panel-body" style="background-color: hsl(0, 50%, 84%);">
       <table class="cluster-table">
         <tr>
           <th>Cluster 16<div class="cluster-pie" id="cluster-16-pie"></div></td>
@@ -49,7 +51,7 @@ Cluster Index
       </table>
     </div>
     <div class="panel-heading"><h3>Corticothalamic Projection Neurons (CThPN) Signature RNAs</h3></div>
-    <div class="panel-body" style="background-color: hsl(210, 80%, 84%);">
+    <div class="panel-body" style="background-color: hsl(210, 50%, 84%);">
       <table class="cluster-table">
         <tr>
           <th>Cluster 2<div class="cluster-pie" id="cluster-2-pie"></div></td>
@@ -64,7 +66,7 @@ Cluster Index
       </table>
     </div>
     <div class="panel-heading"><h3>Mixed Cell-type</h3></div>
-    <div class="panel-body" style="background-color: hsl(30, 80%, 84%);">
+    <div class="panel-body" style="background-color: hsl(30, 50%, 84%);">
       <table class="cluster-table">
         <tr>
           <th>Cluster 3<div class="cluster-pie" id="cluster-3-pie"></div></td>

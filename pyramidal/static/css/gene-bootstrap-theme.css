@@ -9,7 +9,7 @@
   /*font-family: "Carrois Gothic SC", serif;*/
   font-family: "Helvetica Neue", sans-serif;
   font-size: 16pt;
-  padding:0px;
+  padding:5px;
 }
 
 .navbar ul li {
@@ -62,9 +62,9 @@ p {
   text-align:justify;
 }
 
-p + p {
+/*p + p {
   text-indent: 2.5em;
-}
+}*/
 
 div .block {
   text-indent:50px;
