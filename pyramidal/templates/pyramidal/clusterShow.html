@@ -14,6 +14,9 @@ Cluster: {{cluster_id}}
 	{% block navleft %}
 
  	<h5>Clusters</h5>
+  <ul>
+    <li><a href="/pyramidal/clusters">All Clusters</a></li>
+  </ul>
   <h6>Callosal Projection Neurons (CPN)<br/>Signature RNAs</h6>
   <ul>
     <li><a href="{% url 'cluster_show' cluster_id=5  %}">Cluster 5</a></li>
@@ -56,10 +59,10 @@ Cluster: {{cluster_id}}
 	<div class="col-md-10">
 
 	{% block main %}
-  <h1>Cluster {{cluster_id}}</h1>
+  <h2>Cluster {{cluster_id}}</h2>
 
   <div class="panel panel-default">
-    <div class="panel-heading"><h2>Heatmap</h2></div>
+    <div class="panel-heading"><h4>Heatmap</h4></div>
     <div class="panel-body">
       <div id="heatmap"></div>
     </div>

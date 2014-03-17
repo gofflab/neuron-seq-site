@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
+{% load pyramidal_extras %}
+
+  {% block title %}
+  Marker Discovery
+  {% endblock title %}
 
 {% block header %}
-<title>Marker Discovery</title>
-
 <link rel="stylesheet" href="{{ STATIC_URL }}js/SlickGrid/slick.grid.css" type="text/css"/>
 <link rel="stylesheet" href="{{ STATIC_URL }}js/SlickGrid/controls/slick.pager.css" type="text/css"/>
 <link rel="stylesheet" href="{{ STATIC_URL }}js/SlickGrid/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css"/>
 
-<script src="{{ STATIC_URL }}js/SlickGrid/lib/jquery-1.7.min.js"></script>
+{# <script src="{{ STATIC_URL }}js/SlickGrid/lib/jquery-1.7.min.js"></script> #}
+{# <script src="{{ STATIC_URL }}js/jquery.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.cookie.js"></script> #}
 <script src="{{ STATIC_URL }}js/SlickGrid/lib/jquery.event.drag-2.2.js"></script>
 <script src="{{ STATIC_URL }}js/SlickGrid/slick.core.js"></script>
 <script src="{{ STATIC_URL }}js/SlickGrid/slick.grid.js"></script>
@@ -115,6 +120,14 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
     return "<a href='/pyramidal/clusters/" + value + "'>" + value + "</a>";
   }
 
+  function addGeneFormatter(row, cell, value, columnDef, dataContext) {
+    return "<div id='gene-set-" + value + "'></div>";
+  }
+
+  function addGeneAsyncPostRender(cellNode, row, dataContext, colDef) {
+    gene_set.renderAddButtonAfter(dataContext.id,"#gene-set-"+dataContext.id)
+  }
+
   var columns = column_keys.map(function(key,i) {
     if (key == "id"){
       return {
@@ -123,7 +136,7 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
         field: key,
         sortable: true,
         formatter: linkFormatter,
-        minWidth: 100
+        minWidth: 120
       }
     } else if (key == "cluster") {
       return {
@@ -132,7 +145,7 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
         field: key,
         sortable: true,
         formatter: clusterLinkFormatter,
-        //maxWidth:50
+        maxWidth:70
       }
     } else {
       return {
@@ -144,10 +157,22 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
     }
   });
 
+//Add column for gene set tracking/adding
+columns.push({
+        id: "geneset",
+        name: "Add/Remove",
+        field: "id",
+        sortable: false,
+        minWidth: 90,
+        formatter: addGeneFormatter,
+        asyncPostRender: addGeneAsyncPostRender,
+      })
+
   var options = {
     enableCellNavigation: true,
     enableColumnReorder: false,
     multiColumnSort: false,
+    enableAsyncPostRender: true,
   };
 
   var searchString = "";
@@ -196,17 +221,17 @@ d3.csv('{{ STATIC_URL }}/data/sigGenes.log.csv', function(data) {
     var d = parcoords.brushed() || data;
     parcoords.highlight([d[i]]);
   });
-  // grid.onMouseLeave.subscribe(function(e,args) {
-  //   parcoords.unhighlight();
-  // });
-     grid.onActiveCellChanged.subscribe(function(x) {
-       parcoords.unhighlight();
-     });
+  grid.onMouseLeave.subscribe(function(e,args) {
+    parcoords.unhighlight();
+  });
+     // grid.onActiveCellChanged.subscribe(function(x) {
+     //   parcoords.unhighlight();
+     // });
   
   //Click parcoords to unhighligh rows.
-  $('#markerParcoords').on("click",function(x){
-    parcoords.unhighlight();
-  })
+  // $('#markerParcoords').on("click",function(x){
+  //   parcoords.unhighlight();
+  // })
 
   // fill grid with data
   gridUpdate(data);
