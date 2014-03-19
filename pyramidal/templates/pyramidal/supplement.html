@@ -6,24 +6,99 @@ Supplemental Files
 
 
 {% block navleft%}
- 	<h5>Supplemental Figures<h5>
+ 	<h5>Supplemental Figures</h5>
  	<ul>
- 	<li>Figure S1</li>
- 	<li>Figure S2</li>
- 	<li>Figure S3</li>
+ 	<li><a href="#Figure_S1">Figure S1</a></li>
+ 	<li><a href="#Figure_S2">Figure S2</a></li>
+ 	<li><a href="#Figure_S3">Figure S3</a></li>
+ 	<li><a href="#Figure_S4">Figure S4</a></li>
  	</ul>
- 	<h5>Supplemental Files<h5>
+ 	<h5>Supplemental Files</h5>
  	<ul>
- 	<li>File S1</li>
- 	<li>File S2</li>
- 	<li>File S3</li>
+ 	<li><a href="#File_S1">File S1</a></li>
+ 	<li><a href="#File_S2">File S2</a></li>
+ 	<li><a href="#File_S3">File S3</a></li>
+ 	<li><a href="#File_S4">File S4</a></li>
+ 	</ul>
+
  	</ul>
 {% endblock navleft %}
 
 {% block main %}
 <h2>Supplemental Figures</h2>
+<h4 id="Figure_S1">File S1:</h4>
+	<p><a href="{{ STATIC_URL }}/img/supplement/Figure_S1.svg" >Download</p>
+	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S1.png" width="350px" /></a>
 
+<h4 id="Figure_S2">File S2:</h4>
+	<p><a href="{{ STATIC_URL }}/img/supplement/Figure_S2.svg">Download</p>
+	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S2.png" width="350px" /></a>
 
+<h4 id="Figure_S3">File S3:</h4>
+	<p><a href="{{ STATIC_URL }}/img/supplement/Figure_S3.svg">Download</p>
+	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S3.png" width="350px" /></a>
+
+<h4 id="Figure_S4">File S4:</h4>
+	<p><a href="{{ STATIC_URL }}/img/supplement/Figure_S4.svg">Download</p>
+	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S4.png" width="350px" /></a>
 
 <h2>Supplemental Files</h2>
+<h4 id="File_S1">File S1: RNA-Seq read alignment summary</h4>
+	<blockquote>
+	<p>Format: .xlsx</p>
+	
+	<a href="{{ STATIC_URL }}/data/supplement/RNA-Seq sample summary.xlsx" target="_blank">Download</a>
+	</blockquote>
+	
+
+<h4 id="File_S2">File S2: Significant gene expression matrix</h4>
+	<blockquote>
+	<p>Format:</p>
+	<pre>
+	gene_id,E15_cpn,E15_corticothal,E15_subcereb,E16_cpn,...,cluster,gene_id,gene_type
+	0610007C21Rik,36.2885,29.6983,33.4049,39.3774,...,8,0610007C21Rik,Protein coding
+	0610007P08Rik,6.41238,7.04634,7.64108,6.97155,...,19,0610007P08Rik,Protein coding
+	0610007P14Rik,20.8943,13.6725,14.8445,23.5194,...,14,0610007P14Rik,Protein coding
+	0610009O20Rik,21.4159,19.6082,17.1081,23.9373,...,15,0610009O20Rik,Protein coding
+	0610010O12Rik,2.50215,3.83398,3.20653,2.3651,...,17,0610010O12Rik,Protein coding
+	...</pre>
+	<a href="{{ STATIC_URL }}/data/supplement/sigGenes.csv" target="_blank">Download</a>
+	</blockquote>
+	
+<h4 id="File_S3">File S3: Significant regulatory event list</h4>
+	<blockquote>
+	<p>Format:</p>
+	<pre>
+	gene_id,sigGene,sigSplicing,sigPromoter,sigCDS
+	0610007C21Rik,1,0,0,0
+	0610007P08Rik,1,0,0,0
+	0610007P14Rik,1,0,0,0
+	0610009O20Rik,1,0,0,0
+	0610010O12Rik,1,0,0,0
+	...</pre>
+	<p>1 = significant event; 0 = no significant event</p>
+	<a href="{{ STATIC_URL }}/data/supplement/sigEvents.csv" target="_blank">Download</a>
+	</blockquote>
+	
+<h4 id="File_S4">File S4: Significant lncRNAs with human syntenic positional equivalents</h4>
+	<blockquote>
+	<p>Format:</p>
+	<pre>
+	gene_id,hyperlink
+	XLOC_000003,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000003
+	XLOC_000023,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000023
+	XLOC_000024,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000024
+	XLOC_000025,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000025
+	XLOC_000033,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000033
+	...</pre>
+	<a href="{{ STATIC_URL }}/data/supplement/sigLincs.csv" target="_blank">Download</a>
+ 	</blockquote>
+ 	<h4>File S4: Assembled reference transcriptome .gtf</h4>
+ 	<blockquote>
+ 	<p>Format: .gtf (compressed)</p>
+ 	<a href="{{ STATIC_URL }}/data/supplement/mm9_reference_transcriptome_UCSC_and_lncRNAs.gtf.gz" target="_blank">Download</a>
+ 	</blockquote>
+
+
+
 {% endblock main %}

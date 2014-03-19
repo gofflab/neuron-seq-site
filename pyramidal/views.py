@@ -65,7 +65,7 @@ def geneset(request,gene_list):
 def geneShow(request,gene_id):
   try:
     # Get Gene object
-    # gene_id = gene_id.replace("_", " ")
+    gene_id = gene_id.replace("."," ").replace("_", " ")
     # Get Gene object
     # gene = Gene.objects.get(gene_id=gene_id)
     gene = Gene.objects.get(gene_id__iexact=gene_id)
