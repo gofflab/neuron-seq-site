@@ -65,7 +65,7 @@ def geneset(request,gene_list):
 def geneShow(request,gene_id):
   try:
     # Get Gene object
-    gene_id = gene_id.replace("."," ").replace("_", " ")
+    #gene_id = gene_id.replace("."," ").replace("_", " ")
     # Get Gene object
     # gene = Gene.objects.get(gene_id=gene_id)
     gene = Gene.objects.get(gene_id__iexact=gene_id)
@@ -316,11 +316,33 @@ def supplement(request):
     return render(request,'pyramidal/supplement.html',context)
 
 ####################
-# Supplement
+# Help
 #####################
 def help(request):
     context = {}
     return render(request,'pyramidal/help.html',context)
+
+####################
+# Devel
+#####################
+def devel(request,gene_list):
+    """Takes a '+'-separated list of genes as <gene_list>"""
+    gene_list_clean = gene_list.rstrip().split("+")
+    try:
+        genes = Gene.objects.filter(gene_id__in=gene_list_clean)
+        expression = []
+        diffData = {}
+        for gene in genes:
+            expression.append(gene.expression())
+            diffData[gene.gene_id]=gene.diffData()
+    except Gene.DoesNotExist:
+        raise Http404
+    context = {
+        'genes': genes,
+        'diffData': json.dumps(diffData,separators=(',',':')),
+        'expression' :json.dumps(expression,separators=(',',':'))
+    }
+    return render(request,'base.html',context)
 
 
 
