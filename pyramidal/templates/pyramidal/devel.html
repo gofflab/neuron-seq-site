@@ -1,0 +1,53 @@
+{% extends 'pyramidal/geneBase.html' %}
+
+{% block title %}
+Help
+{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/gene_set_scatter.css">
+{% endblock header %}
+
+
+{% block navleft%}
+<h5>X-axis:</h5>
+<select id="xAxisInput" class="form-control">
+  {% for sample in samples %}
+  	<option>{{ sample }}</option>
+  {% endfor %}
+</select>
+
+<h5>Y-axis:</h5>
+<select id="yAxisInput" class="form-control">
+  {% for sample in samples %}
+  	<option>{{ sample }}</option>
+  {% endfor %}
+</select>
+{% endblock navleft %}
+
+{% block main %}
+
+<div id="genesetscatter"></div>
+<script type="text/javascript" src="{{ STATIC_URL }}js/polybrush.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/gene_set_scatter.js"></script>
+<script>
+  // Data
+  var expressionData = {{ expressionData|safe }};
+
+  // Draw
+  //gene_set_scatter.legend('#legend');
+  gene_set_scatter.scatter("#genesetscatter", "#xAxisInput", "#yAxisInput", expressionData);
+
+  // $('#viz-button-tabular').click(function(e) {
+  //   $('#genelist').empty();
+  //   gene_set_viz.tabular("#slider", "#genelist", expressionData, diffData);
+  //   e.preventDefault();
+  // });
+
+  // $('#viz-button-cluster').click(function(e) {
+  //   $('#genelist').empty();
+  //   gene_set_viz.cluster("#slider", "#genelist", expressionData, diffData);
+  //   e.preventDefault();
+  // });
+</script>
+{% endblock main %}

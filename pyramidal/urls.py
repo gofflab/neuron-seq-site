@@ -54,5 +54,5 @@ urlpatterns = patterns('',
 	url(r'^help/?$',views.help,name = 'help'),
 
 	#Devel
-	url(r'^devel/(?P<gene_list>[a-zA-Z0-9_\-\.\+]+)/?$',views.devel,name='devel'),
+	url(r'^devel/?$',views.devel,name='devel'),
 )

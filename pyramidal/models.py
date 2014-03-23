@@ -328,6 +328,15 @@ class Gene(models.Model):
     	sampleKeys = [x.sample_name for x in fpkmDat]
     	return dict(zip(sampleKeys,fpkmVals))
 
+    def expressionDict(self):
+        expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
+        samples = [x.sample_name for x in expressionDat]
+        res = {}
+        res['gene_id'] = self.gene_id
+        for i in expressionDat:
+            res[i.sample_name]=i.fpkm
+        return res
+
     def expression(self):
       expressionDat = Genedata.objects.filter(gene_id=self.gene_id)
       samples = [x.sample_name for x in expressionDat]

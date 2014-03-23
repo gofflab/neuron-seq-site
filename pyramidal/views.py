@@ -325,24 +325,27 @@ def help(request):
 ####################
 # Devel
 #####################
-def devel(request,gene_list):
-    """Takes a '+'-separated list of genes as <gene_list>"""
-    gene_list_clean = gene_list.rstrip().split("+")
+def devel(request):
     try:
-        genes = Gene.objects.filter(gene_id__in=gene_list_clean)
-        expression = []
-        diffData = {}
-        for gene in genes:
-            expression.append(gene.expression())
-            diffData[gene.gene_id]=gene.diffData()
+        genes = Gene.objects.all()
     except Gene.DoesNotExist:
         raise Http404
+    expressionData = []
+    for gene in genes:
+      expressionData.append(gene.expressionDict())
+    #Get Sample names
+    samples = expressionData[0].keys()
+    samples.remove('gene_id')
+    #samples = json.dumps(samples,separators=(',',':'))
+    
+    #Make JSON
+    expressionData = json.dumps(expressionData,separators=(',',':'))
     context = {
-        'genes': genes,
-        'diffData': json.dumps(diffData,separators=(',',':')),
-        'expression' :json.dumps(expression,separators=(',',':'))
+        #'genes': genes,
+        'samples': samples,
+        'expressionData': expressionData,
     }
-    return render(request,'base.html',context)
+    return render(request,'pyramidal/devel.html',context)
 
 
 
