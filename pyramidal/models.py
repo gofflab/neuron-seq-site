@@ -11,6 +11,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from django.db import connections
+
 import json
 
 class Cds(models.Model):
@@ -751,3 +753,36 @@ class ClusterAssignment(models.Model):
     class Meta:
         managed = False
         db_table = 'clusterAssignment'
+
+#######################
+# Helper Functions
+#######################
+
+def dictfetchall(cursor):
+    "Returns all rows from a cursor as a dict"
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]
+
+def FpkmMat():
+    cursor = connections['cuffData'].cursor()
+
+    samples = Sample.objects.all()
+    samples = [sample.sample_name for sample in samples]
+
+    #Write query
+    FPKMMatQuery = "SELECT x.gene_id, x.gene_short_name, "
+    for sample in samples:
+      FPKMMatQuery += "sum(case when xd.sample_name ='%s' then fpkm end) as %s, " % (sample,sample)
+    FPKMMatQuery = FPKMMatQuery[:-2]
+    
+    FPKMMatQuery += " FROM genes x LEFT JOIN geneData xd ON x.gene_id = xd.gene_id GROUP BY x.gene_id"
+
+    #Retreve records
+    cursor.execute(FPKMMatQuery)
+
+    res = dictfetchall(cursor)
+
+    return res

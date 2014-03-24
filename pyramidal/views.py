@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from pyramidal.models import Gene,Isoform,ClusterAssignment,Features
+from pyramidal.models import Gene,Isoform,ClusterAssignment,Features,Sample,FpkmMat
 
 from pyramidal.allen import AllenExplorer
 
@@ -326,19 +326,12 @@ def help(request):
 # Devel
 #####################
 def devel(request):
-    try:
-        genes = Gene.objects.all()
-    except Gene.DoesNotExist:
-        raise Http404
-    expressionData = []
-    for gene in genes:
-      expressionData.append(gene.expressionDict())
-    #Get Sample names
-    samples = expressionData[0].keys()
-    samples.remove('gene_id')
-    #samples = json.dumps(samples,separators=(',',':'))
-    
+
+    samples = Sample.objects.all()
+    samples = [sample.sample_name for sample in samples]
+
     #Make JSON
+    expressionData = FpkmMat()
     expressionData = json.dumps(expressionData,separators=(',',':'))
     context = {
         #'genes': genes,

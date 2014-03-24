@@ -33,7 +33,7 @@ d3.xml("{{ STATIC_URL }}img/TFBS.svg", "image/svg+xml", function(xml) {
       var geneId = $.trim(this.textContent)
                     .replace(/^[*]/, '')
                     .replace(/[\/].*/, '');
-      document.location.href = "/pyramidal/genes/" + geneId;
+      window.open("/pyramidal/genes/" + geneId);
     });
 });
 

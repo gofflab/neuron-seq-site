@@ -1,7 +1,7 @@
 {% extends 'pyramidal/geneBase.html' %}
 
 {% block title %}
-Help
+Scatter plot (All genes)
 {% endblock title %}
 
 {% block header %}
@@ -49,5 +49,15 @@ Help
   //   gene_set_viz.cluster("#slider", "#genelist", expressionData, diffData);
   //   e.preventDefault();
   // });
+
+  d3.selectAll('#genesetscatter svg > g > circle')
+    .style({
+      "cursor": "pointer"})
+    .on("click", function(d) {
+      var geneId = $(this).children('title').text();
+      //console.log(geneId)
+      //document.location.href = "/pyramidal/genes/" + geneId;
+      window.open("/pyramidal/genes/" + geneId);
+    });
 </script>
 {% endblock main %}
