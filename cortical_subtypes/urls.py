@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'cortical_subtypes.views.home', name='home'),
+    url(r'^$', include('pyramidal.urls')),
     url(r'^pyramidal/', include('pyramidal.urls')),
     #url(r'^$',include('pyramidal.urls')),
 
