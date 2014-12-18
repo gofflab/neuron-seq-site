@@ -20,7 +20,7 @@
 {% for gene in found_genes %}
 <tr>
   <td id="gene-link-{{ gene.safe_name }}"><a href="{% url 'gene_show' gene_id=gene.url_name %}">{{ gene.gene_short_name }}</a></td>
-	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}&hubUrl=http://rinnlab.rc.fas.harvard.edu/hubs/Arlotta_neuronal_subtypes/hub.txt" target="_blank">{{ gene.locus }}</a></td>
+	<td><a href="http://genome.ucsc.edu/cgi-bin/hgTracks?org=mouse&db=mm9&position={{gene.locus}}&hubUrl=http://decon.fas.harvard.edu/hubs/Arlotta_neuronal_subtypes/hub.txt" target="_blank">{{ gene.locus }}</a></td>
 	<td>{{ gene.isoforms|length }}</td>
   {% if gene.isSignificant %}
       <td><span style="color:#055510;" class="glyphicon glyphicon-ok"></span></td>

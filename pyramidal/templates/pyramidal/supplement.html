@@ -11,7 +11,7 @@ Supplemental Files
  	<li><a href="#Figure_S1">Figure S1</a></li>
  	<li><a href="#Figure_S2">Figure S2</a></li>
  	<li><a href="#Figure_S3">Figure S3</a></li>
- 	<li><a href="#Figure_S4">Figure S4</a></li>
+ 	<!--<li><a href="#Figure_S4">Figure S4</a></li>-->
  	</ul>
  	<h5>Supplemental Files</h5>
  	<ul>
@@ -27,7 +27,7 @@ Supplemental Files
 {% block main %}
 <h2>Supplemental Figures</h2>
 <h4 id="Figure_S1">File S1:</h4>
-	<p><a href="{{ STATIC_URL }}/img/supplement/Figure_S1.svg" >Download</p>
+	<p><a href="{{ STATIC_URL }}/img/supplement/FigureS1.svg" >Download</p>
 	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S1.png" width="350px" /></a>
 
 <h4 id="Figure_S2">File S2:</h4>
@@ -37,19 +37,19 @@ Supplemental Files
 <h4 id="Figure_S3">File S3:</h4>
 	<p><a href="{{ STATIC_URL }}/img/supplement/Figure_S3.svg">Download</p>
 	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S3.png" width="350px" /></a>
-
+  <!-- No more figure S4
 <h4 id="Figure_S4">File S4:</h4>
 	<p><a href="{{ STATIC_URL }}/img/supplement/Figure_S4.svg">Download</p>
 	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S4.png" width="350px" /></a>
-
+-->
 <h2>Supplemental Files</h2>
 <h4 id="File_S1">File S1: RNA-Seq read alignment summary</h4>
 	<blockquote>
 	<p>Format: .xlsx</p>
-	
+
 	<a href="{{ STATIC_URL }}/data/supplement/RNA-Seq sample summary.xlsx" target="_blank">Download</a>
 	</blockquote>
-	
+
 
 <h4 id="File_S2">File S2: Significant gene expression matrix</h4>
 	<blockquote>
@@ -64,7 +64,7 @@ Supplemental Files
 	...</pre>
 	<a href="{{ STATIC_URL }}/data/supplement/sigGenes.csv" target="_blank">Download</a>
 	</blockquote>
-	
+
 <h4 id="File_S3">File S3: Significant regulatory event list</h4>
 	<blockquote>
 	<p>Format:</p>
@@ -79,17 +79,17 @@ Supplemental Files
 	<p>1 = significant event; 0 = no significant event</p>
 	<a href="{{ STATIC_URL }}/data/supplement/sigEvents.csv" target="_blank">Download</a>
 	</blockquote>
-	
+
 <h4 id="File_S4">File S4: Significant lncRNAs with human syntenic positional equivalents</h4>
 	<blockquote>
 	<p>Format:</p>
 	<pre>
 	gene_id,hyperlink
-	XLOC_000003,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000003
-	XLOC_000023,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000023
-	XLOC_000024,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000024
-	XLOC_000025,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000025
-	XLOC_000033,http://rinnlab.rc.fas.harvard.edu/pyramidal/gene/XLOC_000033
+	XLOC_000003,http://decon.fas.harvard.edu/pyramidal/gene/XLOC_000003
+	XLOC_000023,http://decon.fas.harvard.edu/pyramidal/gene/XLOC_000023
+	XLOC_000024,http://decon.fas.harvard.edu/pyramidal/gene/XLOC_000024
+	XLOC_000025,http://decon.fas.harvard.edu/pyramidal/gene/XLOC_000025
+	XLOC_000033,http://decon.fas.harvard.edu/pyramidal/gene/XLOC_000033
 	...</pre>
 	<a href="{{ STATIC_URL }}/data/supplement/sigLincs.csv" target="_blank">Download</a>
  	</blockquote>
