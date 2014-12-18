@@ -19,6 +19,8 @@ Supplemental Files
  	<li><a href="#File_S2">File S2</a></li>
  	<li><a href="#File_S3">File S3</a></li>
  	<li><a href="#File_S4">File S4</a></li>
+  <li><a href="#File_S4">File S5</a></li>
+  <li><a href="#File_S4">File S6</a></li>
  	</ul>
 
  	</ul>
@@ -35,7 +37,7 @@ Supplemental Files
 	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S2.png" width="350px" /></a>
 
 <h4 id="Figure_S3">File S3:</h4>
-	<p><a href="{{ STATIC_URL }}/img/supplement/Figure_S3.svg">Download</p>
+	<p><a href="{{ STATIC_URL }}/img/supplement/FigureS3.pdf">Download</p>
 	<img src="{{ STATIC_URL}}/img/supplement/thumbnails/Figure_S3.png" width="350px" /></a>
   <!-- No more figure S4
 <h4 id="Figure_S4">File S4:</h4>
@@ -50,8 +52,20 @@ Supplemental Files
 	<a href="{{ STATIC_URL }}/data/supplement/RNA-Seq sample summary.xlsx" target="_blank">Download</a>
 	</blockquote>
 
+<h4 id="File_S2">File S2: Genes with known subtype or layer-specific expression used to validated RNA-Seq data</h4>
+  <blockquote>
+    <p>Format:</p>
+    <pre>
+      Gene Name,Entrez Gene ID
+      Adcyap1,11516
+      Akap12,83397
+      Btg1,12226
+      C1ql3,227580
+      ...</pre>
+      <a href="{{ STATIC_URL }}/data/supplement/marker_genes.csv" target="_blank">Download</a>
+    </blockquote>
 
-<h4 id="File_S2">File S2: Significant gene expression matrix</h4>
+<h4 id="File_S3">File S3: Significant gene expression matrix</h4>
 	<blockquote>
 	<p>Format:</p>
 	<pre>
@@ -65,7 +79,7 @@ Supplemental Files
 	<a href="{{ STATIC_URL }}/data/supplement/sigGenes.csv" target="_blank">Download</a>
 	</blockquote>
 
-<h4 id="File_S3">File S3: Significant regulatory event list</h4>
+<h4 id="File_S4">File S4: Significant regulatory event list</h4>
 	<blockquote>
 	<p>Format:</p>
 	<pre>
@@ -80,7 +94,7 @@ Supplemental Files
 	<a href="{{ STATIC_URL }}/data/supplement/sigEvents.csv" target="_blank">Download</a>
 	</blockquote>
 
-<h4 id="File_S4">File S4: Significant lncRNAs with human syntenic positional equivalents</h4>
+<h4 id="File_S5">File S5: Significant lncRNAs with human syntenic positional equivalents</h4>
 	<blockquote>
 	<p>Format:</p>
 	<pre>
@@ -93,11 +107,22 @@ Supplemental Files
 	...</pre>
 	<a href="{{ STATIC_URL }}/data/supplement/sigLincs.csv" target="_blank">Download</a>
  	</blockquote>
- 	<h4>File S4: Assembled reference transcriptome .gtf</h4>
- 	<blockquote>
- 	<p>Format: .gtf (compressed)</p>
- 	<a href="{{ STATIC_URL }}/data/supplement/mm9_reference_transcriptome_UCSC_and_lncRNAs.gtf.gz" target="_blank">Download</a>
- 	</blockquote>
+
+   <h4 id="File_S6">File S6: Probes used for <i>in situ</i> hybridization</h4>
+   <blockquote>
+     <p>Format:</p>
+     <pre>
+       Gene,Probe length,Forward Primer,Reverse Primer,Probe Sequence
+       Chst8,817,CCCCAGCATGATAGCCAC,CGGCTAACATGGTCCCAG,CCCCAGCATGATAGCCACTTGAGGATATCCACAGAAAAGGGCACACGAGATTCA...
+       ...</pre>
+       <a href="{{ STATIC_URL }}/data/supplement/insitu_probes.csv" target="_blank">Download</a>
+     </blockquote>
+     <h4> Assembled reference transcriptome .gtf</h4>
+     <blockquote>
+       <p>Format: .gtf (compressed)</p>
+       <a href="{{ STATIC_URL }}/data/supplement/mm9_reference_transcriptome_UCSC_and_lncRNAs.gtf.gz" target="_blank">Download</a>
+     </blockquote>
+
 
 
 
