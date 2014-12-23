@@ -1,0 +1,31 @@
+{% extends 'pyramidal/geneBase.html' %}
+
+{% block title %}
+About
+{% endblock title %}
+
+
+{% block navleft%}
+ 	<h5><a href="#cite">Citation</a></h5>
+  <h5><a href="#corresponding">Corresponding Authors</a></h5>
+  <h5><a href="#webcontact">Website issues</a></h5>
+{% endblock navleft %}
+
+{% block main %}
+<h2>About</h2>
+<h3 id="cite">Citation</h3>
+<p>If you would like to reference the DeCoN web resource or any associated data please cite the following manuscript:</p>
+
+<cite>Molyneaux, B.J.*, Goff, L.A.*, Brettler, A.C., Chen, H., Brown, J.R., Hrvatin, S., Rinn, J.L., Arlotta, P. <em>DeCoN: Genome-wide Analysis of InVivo Transcriptional Dynamics during Pyramidal Neuron Fate Selection in Neocortex.</em> Neuron 2014.</cite>
+
+<h3 id="corresponding">Corresponding Authors</a></h3>
+  <ul>
+    <li><h5><a href="http://www.scrb.harvard.edu/lab/41/home">Paola Arlotta</a></h5> (paola_arlotta[at]harvard[dot]edu)</li>
+    <li><h5><a href="http://www.rinnlab.com">John Rinn</a></h5> (johnrinn[at]fas[dot]harvard[dot]edu)</li>
+  </ul>
+
+<h3 id="webcontact">DeCoN web resource</h3>
+<p>The DeCoN web resource was designed and built by <a href="http://gofflab.github.io/">Loyal Goff</a> and Dave Wilkinson. Any issues or questions regarding the functionality of the website itself should be addressed to <a href="http://gofflab.github.io">Loyal Goff</a> (loyalgoff[at]jhmi[dot]edu)</p>
+
+
+{% endblock main %}

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
-{% block header }
-{% endblock header }
+{% block header %}
+{% endblock header %}
 
 {% block content %}
 
@@ -24,6 +24,9 @@
 	<li>E18.5</li>
 	<li>P1</li>
 </ul>
+
+<h3>Manuscript</h3>
+<p>The DeCoN manuscript has been accepted for publication in <a href="www.cell.com/neuron/home">Neuron</a> and is currently in press. More information and a direct link will be available shortly. </p>
 
 <h3>Quick Tips</h3>
 <img src="{{ STATIC_URL }}/img/search.png" style="float:right;"/>
@@ -56,7 +59,7 @@
 <code><a href="http://decon.fas.harvard.edu/pyramidal/geneset/Vsx2+Epha1+Epha2+Epha3+Epha4+Epha5+Epha6+Epha7+Epha8+Epha10">http://decon.fas.harvard.edu/pyramidal/geneset/Vsx2+Epha1+Epha2+Epha3+Epha4+Epha5+Epha6+Epha7+Epha8+Epha10</a></blockquote></code>
 
 <img src="{{ STATIC_URL }}/img/gene_set_menu.png" style="float:right;padding-left:10px;"/>
-<p>Alternatively, you can build a gene set as you explore <a style="font-size:1.1em;color:#1111aa;text-decoration:none;font-weight:bold;">DeCoN</a>. Clicking on the green <a class="gene_set_button add_to_gene_set" style="text-decoration:none;margin-left:0px;">gene set</a> button will add your gene to a temporary gene set which can be viewed by clicking on the GeneSet menu in the top right of your screen and selecting 'View'. To remove a gene click the red <a class="gene_set_button remove_from_gene_set" style="text-decoration:none;margin-left:0px;">added</a> button or select that gene from the drop down gene set menu.</p> 
+<p>Alternatively, you can build a gene set as you explore <a style="font-size:1.1em;color:#1111aa;text-decoration:none;font-weight:bold;">DeCoN</a>. Clicking on the green <a class="gene_set_button add_to_gene_set" style="text-decoration:none;margin-left:0px;">gene set</a> button will add your gene to a temporary gene set which can be viewed by clicking on the GeneSet menu in the top right of your screen and selecting 'View'. To remove a gene click the red <a class="gene_set_button remove_from_gene_set" style="text-decoration:none;margin-left:0px;">added</a> button or select that gene from the drop down gene set menu.</p>
 
 <h4>Marker Discovery</h4>
 <p>The <a href="/pyramidal/markers/">Marker discovery tool</a> allows you to quickly mine through >8000 significantly regulated genes to identify those genes that best match your expression profile of interest. Here you can filter by gene type (lncRNA vs Protein coding gene) or pre-assigned cluster id (see Manuscript) to quickly subset the broad list of dynamically regulated genes to find those most applicable to your research. Individual filters can also be applied to expression estimates for each cell type at each time point, to precisely refine a list of genes with expression profiles of interest.

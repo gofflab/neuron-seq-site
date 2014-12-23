@@ -322,6 +322,15 @@ def help(request):
     context = {}
     return render(request,'pyramidal/help.html',context)
 
+
+####################
+# About
+#####################
+def about(request):
+    context = {}
+    return render(request,'pyramidal/about.html',context)
+
+
 ####################
 # Devel
 #####################
@@ -339,6 +348,3 @@ def devel(request):
         'expressionData': expressionData,
     }
     return render(request,'pyramidal/devel.html',context)
-
-
-

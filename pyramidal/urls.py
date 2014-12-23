@@ -55,4 +55,7 @@ urlpatterns = patterns('',
 
 	#Devel
 	url(r'^devel/?$',views.devel,name='devel'),
+
+	#About
+	url(r'^about/?$',views.about,name='about'),
 )
